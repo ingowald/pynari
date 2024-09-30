@@ -87,7 +87,6 @@ namespace pynari {
     // handle = importArray(device->handle,buffer)
     py::buffer_info info = buffer.request();
     // int numElems = asArray.shape()[0] / N;
-    // PRINT(numElems);
     switch(info.ndim) {
     case 1:
       nDims = 1;
