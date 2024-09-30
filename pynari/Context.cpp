@@ -37,11 +37,16 @@ namespace pynari {
 
     std::string libName = explicitLibName;
     if (libName == "default" || libName == "<default>") {
-      char *envlib = getenv("ANARI_LIBRARY");
-      libName = envlib ? "environment" : "barney";
+      char *envLib = getenv("ANARI_LIBRARY");
+      libName = envLib ? envLib : "barney";
     }
-    anari::Library library = anari::loadLibrary(libName.c_str(), nullptr);
-    anari::Device device = anari::newDevice(library, "default");
+    anari::Library library
+      = anari::loadLibrary(libName.c_str(), nullptr);
+    if (!library)
+      throw std::runtime_error("pynari: could not load anari library '"
+                               +libName+"'");
+    anari::Device device
+      = anari::newDevice(library, "default");
     this->device = std::make_shared<Device>(device);//anari::bnContextCreate());
     std::cout << OWL_TERMINAL_GREEN
               << "#pynari: context created."
