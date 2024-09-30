@@ -1,4 +1,4 @@
-# `'pyNari` - a Python Interface for ANARI
+# `pyNari` - a Python Interface for ANARI
 
 PyNari is a thin python wrapper over the Khronos `ANARI` API
 (https://registry.khronos.org/ANARI/) that allows to use ANARI
