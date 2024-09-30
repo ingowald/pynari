@@ -16,11 +16,16 @@
 
 #include "pynari/Context.h"
 #include "pynari/Data.h"
-#include "pynari/Model.h"
+#include "pynari/World.h"
+#include "pynari/Frame.h"
 #include "pynari/Camera.h"
+#include "pynari/Renderer.h"
+#include "pynari/Surface.h"
+#include "pynari/Material.h"
 #include "pynari/Geometry.h"
 #include "pynari/Group.h"
-
+#include "pynari/Array.h"
+ 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
@@ -93,31 +98,70 @@ PYBIND11_MODULE(pynari, m) {
   auto object
     = py::class_<pynari::Object,
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
+  object.def("setParameter",  &pynari::Object::set);
+  object.def("setParameter",  &pynari::Object::set_list);
+  object.def("setParameter_type",  &pynari::Object::set_type);
   object.def("setParameter_float",  &pynari::Object::set_float);
+  object.def("setParameter_float2", &pynari::Object::set_float2_tuple);
+  object.def("setParameter_float2", &pynari::Object::set_float2_list);
   object.def("setParameter_float3", &pynari::Object::set_float3_tuple);
-  object.def("setParameter_float3", &pynari::Object::set_float3_numpy);
   object.def("setParameter_float3", &pynari::Object::set_float3_list);
+  object.def("setParameter_float4", &pynari::Object::set_float4_tuple);
+  object.def("setParameter_float4", &pynari::Object::set_float4_list);
+  object.def("setParameter_uint",  &pynari::Object::set_uint);
+  object.def("setParameter_uint2", &pynari::Object::set_uint2_tuple);
+  object.def("setParameter_uint2", &pynari::Object::set_uint2_list);
+  object.def("setParameter_uint3", &pynari::Object::set_uint3_tuple);
+  object.def("setParameter_uint3", &pynari::Object::set_uint3_list);
+  object.def("setParameter_uint4", &pynari::Object::set_uint4_tuple);
+  object.def("setParameter_uint4", &pynari::Object::set_uint4_list);
   object.def("commitParameters", &pynari::Object::commit);
   // -------------------------------------------------------
   auto camera
     = py::class_<pynari::Camera,pynari::Object,
                  std::shared_ptr<pynari::Camera>>(m, "anari::Camera");
-  // camera.def("set_float3", &pynari::Camera::set3f);
-  // camera.def("set_float3", &pynari::Camera::set3fv);
-  // camera.def("set_float",  &pynari::Camera::set_float);
-  // camera.def("set_float3", &pynari::Camera::set_float3_tuple);
-  // camera.def("set_float3", &pynari::Camera::set_float3_numpy);
-  // camera.def("set_float3", &pynari::Camera::set_float3_list);
-  // camera.def("from_at_up", &pynari::Camera::from_at_up);
+  // -------------------------------------------------------
+  auto renderer
+    = py::class_<pynari::Renderer,pynari::Object,
+                 std::shared_ptr<pynari::Renderer>>(m, "anari::Renderer");
+  // -------------------------------------------------------
+  auto surface
+    = py::class_<pynari::Surface,pynari::Object,
+                 std::shared_ptr<pynari::Surface>>(m, "anari::Surface");
+  // -------------------------------------------------------
+  auto material
+    = py::class_<pynari::Material,pynari::Object,
+                 std::shared_ptr<pynari::Material>>(m, "anari::Material");
+  // -------------------------------------------------------
+  auto geometry
+    = py::class_<pynari::Geometry,pynari::Object,
+                 std::shared_ptr<pynari::Geometry>>(m, "anari::Geometry");
+  // -------------------------------------------------------
+  auto world
+    = py::class_<pynari::World,pynari::Object,
+                 std::shared_ptr<pynari::World>>(m, "anari::World");
+  // -------------------------------------------------------
+  auto frame
+    = py::class_<pynari::Frame,pynari::Object,
+                 std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
+  frame.def("render", &pynari::Frame::render);
   
+  // -------------------------------------------------------
+  auto array
+    = py::class_<pynari::Array,pynari::Object,
+                 std::shared_ptr<pynari::Array>>(m, "anari::Array");
   // // -------------------------------------------------------
   auto context
     = py::class_<pynari::Context,
-                 std::shared_ptr<Context>>(m, "pynari::Device");
+                 std::shared_ptr<Context>>(m, "anari::Device");
+  // // -------------------------------------------------------
   
-  // context.def(py::init<>());
-  // context.def("newDevice", &pynari::Context::create);
   context.def("newCamera", &pynari::Context::newCamera);
-   // context.def("create_frame_buffer", &pynari::Context::fbCreate);
-   // context.def("destroy",&pynari::Context::destroy);
+  context.def("newRenderer", &pynari::Context::newRenderer);
+  context.def("newSurface", &pynari::Context::newSurface);
+  context.def("newMaterial", &pynari::Context::newMaterial);
+  context.def("newWorld", &pynari::Context::newWorld);
+  context.def("newFrame", &pynari::Context::newFrame);
+  context.def("newGeometry", &pynari::Context::newGeometry);
+  context.def("newArray", &pynari::Context::newArray);
 }

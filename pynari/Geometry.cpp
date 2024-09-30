@@ -15,7 +15,7 @@
 // ======================================================================== //
 
 #include "pynari/Geometry.h"
-#include "pynari/Model.h"
+#include "pynari/World.h"
 
 namespace pynari {
 

@@ -14,7 +14,7 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#include "pynari/Model.h"
+#include "pynari/World.h"
 #include "pynari/Group.h"
 #include "pynari/Geometry.h"
 
@@ -33,7 +33,7 @@ namespace pynari {
     //     geoms.push_back(geom->handle);
     //   }
     // }
-    // handle = bnGroupCreate(model->handle,slot,
+    // handle = bnGroupCreate(world->handle,slot,
     //                        geoms.data(),geoms.size(),
     //                        volumes.data(),volumes.size());
     // bnGroupBuild(handle);

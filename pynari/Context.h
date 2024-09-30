@@ -25,13 +25,18 @@
 // #include "pynari/MissProg.h"
 // #include "pynari/RayGen.h"
 #include "pynari/FrameBuffer.h"
-#include "pynari/Model.h"
-#include "pynari/Material.h"
+#include "pynari/World.h"
 
 namespace pynari {
 
   struct Camera;
-  struct Model;
+  struct Renderer;
+  struct Surface;
+  struct World;
+  struct Frame;
+  struct Geometry;
+  struct Array;
+  struct Material;
   
   struct Context {
     typedef std::shared_ptr<Context> SP;
@@ -43,8 +48,14 @@ namespace pynari {
     static SP create(const std::string &libName);
 
     std::shared_ptr<FrameBuffer> fbCreate(int sx, int sy);
-    std::shared_ptr<Model> modelCreate();
+    std::shared_ptr<World> newWorld();
+    std::shared_ptr<Frame> newFrame();
+    std::shared_ptr<Geometry> newGeometry(const std::string &type);
     std::shared_ptr<Camera> newCamera(const std::string &type);
+    std::shared_ptr<Renderer> newRenderer(const std::string &type);
+    std::shared_ptr<Surface> newSurface();
+    std::shared_ptr<Array>  newArray(const char *type, const py::buffer &buffer);
+    std::shared_ptr<Material> newMaterial(const std::string &type);
 
     // /*! create a new PTX Module from ptx file indicated by given
     //     fileName */

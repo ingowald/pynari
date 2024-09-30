@@ -44,5 +44,58 @@ camera.setParameter_float3('direction',cam_view)
 camera.setParameter_float3('up',cam_up)
 #anariSetParameter(device, camera, 'up', ANARI_FLOAT32_VEC3, cam_up)
 #anariCommitParameters(device, camera)
-camera.commitParameters
+camera.commitParameters()
+
+world = device.newWorld()
+
+mesh = device.newGeometry('triangle')
+
+
+array = device.newArray('float3',vertex)
+mesh.setParameter('vertex.position', array)
+
+array = device.newArray('float4', color)
+mesh.setParameter('vertex.color', array)
+
+array = device.newArray('uint3' , index)
+mesh.setParameter('primitive.index', array)
+mesh.commitParameters()
+
+material = device.newMaterial('matte')
+material.commitParameters()
+
+surface = device.newSurface()
+surface.setParameter('geometry', mesh)
+surface.setParameter('material', material)
+surface.commitParameters()
+
+world.setParameter('surface', [ surface ])
+
+#light = anariNewLight(device, 'directional')
+#anariCommitParameters(device, light)
+
+#lights = ffi.new('ANARILight[]', [light])
+#array = anariNewArray1D(device, lights, ANARI_LIGHT, 1)
+#anariSetParameter(device, world, 'light', ANARI_ARRAY1D, array)
+
+world.commitParameters()
+
+
+renderer = device.newRenderer('default')
+renderer.setParameter_float4('background', bg_color)
+renderer.commitParameters()
+
+
+
+frame = device.newFrame()
+
+frame.setParameter_uint2('size', [width, height])
+frame.setParameter_type('channel.color', 'ANARI_UFIXED8_RGBA_SRGB')
+frame.setParameter('renderer', renderer)
+frame.setParameter('camera', camera)
+frame.setParameter('world', world)
+frame.commitParameters()
+
+frame.render()
+
 

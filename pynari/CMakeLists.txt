@@ -16,20 +16,29 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-find_package(anari 0.10.0 COMPONENTS code_gen)
+find_package(anari 0.1.0 COMPONENTS code_gen)
 pybind11_add_module(pynari
   Context.cpp
   Object.h
+  Object.cpp
   Material.h
   Material.cpp
-  Model.h
-  Model.cpp
+  World.h
+  World.cpp
+  Frame.h
+  Frame.cpp
   Group.h
   Group.cpp
   Geometry.h
   Geometry.cpp
   Camera.h
   Camera.cpp
+  Renderer.h
+  Renderer.cpp
+  Surface.h
+  Surface.cpp
+  Array.h
+  Array.cpp
   FrameBuffer.h
   FrameBuffer.cpp
   bindings.cpp

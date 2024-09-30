@@ -21,7 +21,6 @@
 
 namespace pynari {
 
-  struct Material;
   struct Geometry;
   
   struct Group : public Object {

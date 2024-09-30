@@ -20,23 +20,28 @@
 
 namespace pynari {
 
-  struct Material : public Object {
-    typedef std::shared_ptr<Material> SP;
+  struct Material;
+  struct Geometry;
+  struct Group;
+  struct Camera;
+  struct FrameBuffer;
+  struct Data;
+  
+  struct World : public Object {
+    typedef std::shared_ptr<World> SP;
     
-    Material(Device::SP device,
-             const std::string type);
-    virtual ~Material() = default;
-    std::string toString() const override { return "py_barn::Material"; }
+    World(Device::SP device);
+    virtual ~World() = default;
+    std::string toString() const override { return "pynari::World"; }
     anari::Object getHandle() const override { return handle; }
 
     void assignTo(Object::SP object, const std::string &name) override
     {
       anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_MATERIAL,&this->handle);
+                        name.c_str(),ANARI_WORLD,&this->handle);
     }
     
-    const std::string type;
-    anari::Material handle = 0;
+    anari::World handle = 0;
   };
 
 }

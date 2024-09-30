@@ -22,8 +22,6 @@
 
 namespace pynari {
 
-  struct Model;
-  
   struct Geometry : public Object {
     typedef std::shared_ptr<Geometry> SP;
     
@@ -31,11 +29,17 @@ namespace pynari {
              const std::string &type);
     virtual ~Geometry() = default;
     anari::Object getHandle() const override { return handle; }
-    std::string toString() const override { return "py_barn::Geometry<"+type+">"; }
+    std::string toString() const override { return "pynari::Geometry<"+type+">"; }
     // void commit() { bnCommit(handle); }
     // void setData(const std::string &name, Data::SP data)
     // { bnSetData(handle,name.c_str(),data->handle); }
 
+    void assignTo(Object::SP object, const std::string &name) override
+    {
+      anariSetParameter(device->handle,object->getHandle(),
+                        name.c_str(),ANARI_GEOMETRY,&this->handle);
+    }
+    
     const std::string type;
     anari::Geometry     handle = 0;
   };

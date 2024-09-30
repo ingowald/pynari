@@ -15,9 +15,15 @@
 // ======================================================================== //
 
 #include "pynari/Context.h"
-#include "pynari/Model.h"
 #include "pynari/FrameBuffer.h"
 #include "pynari/Camera.h"
+#include "pynari/Renderer.h"
+#include "pynari/Surface.h"
+#include "pynari/Material.h"
+#include "pynari/World.h"
+#include "pynari/Frame.h"
+#include "pynari/Geometry.h"
+#include "pynari/Array.h"
 
 namespace pynari {
 
@@ -55,18 +61,52 @@ namespace pynari {
     return fb;
   }
   
-  std::shared_ptr<Model>
-  Context::modelCreate()
+  std::shared_ptr<World>
+  Context::newWorld()
   {
-    Model::SP model = std::make_shared<Model>(device);
-    return model;
+    return std::make_shared<World>(device);
+  }
+  
+  std::shared_ptr<Frame>
+  Context::newFrame()
+  {
+    return std::make_shared<Frame>(device);
+  }
+  
+  std::shared_ptr<Geometry>
+  Context::newGeometry(const std::string &type)
+  {
+    return std::make_shared<Geometry>(device,type);
+  }
+  
+  std::shared_ptr<Renderer>
+  Context::newRenderer(const std::string &type)
+  {
+    return std::make_shared<Renderer>(device,type);
   }
   
   std::shared_ptr<Camera>
   Context::newCamera(const std::string &type)
   {
-    Camera::SP camera = std::make_shared<Camera>(device,type);
-    return camera;
+    return std::make_shared<Camera>(device,type);
+  }
+  
+  std::shared_ptr<Surface>
+  Context::newSurface()
+  {
+    return std::make_shared<Surface>(device);
+  }
+  
+  std::shared_ptr<Material>
+  Context::newMaterial(const std::string &type)
+  {
+    return std::make_shared<Material>(device,type);
+  }
+  
+  std::shared_ptr<Array>
+  Context::newArray(const char *type, const py::buffer &buffer)
+  {
+    return std::make_shared<Array>(device,type,buffer);
   }
   
   std::shared_ptr<Context> createContext(const std::string &libName)

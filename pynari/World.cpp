@@ -14,29 +14,20 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
-#include "pynari/Object.h"
+#include "pynari/World.h"
+#include "pynari/Material.h"
+#include "pynari/Geometry.h"
+#include "pynari/Data.h"
+#include "pynari/Group.h"
+#include "pynari/Camera.h"
+#include "pynari/FrameBuffer.h"
 
 namespace pynari {
 
-  struct Material : public Object {
-    typedef std::shared_ptr<Material> SP;
-    
-    Material(Device::SP device,
-             const std::string type);
-    virtual ~Material() = default;
-    std::string toString() const override { return "py_barn::Material"; }
-    anari::Object getHandle() const override { return handle; }
-
-    void assignTo(Object::SP object, const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_MATERIAL,&this->handle);
-    }
-    
-    const std::string type;
-    anari::Material handle = 0;
-  };
+  World::World(Device::SP device)
+    : Object(device)
+  {
+    handle = anari::newObject<anari::World>(device->handle);
+  }
 
 }

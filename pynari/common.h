@@ -30,19 +30,20 @@
 #include <iostream>
 
 namespace pynari {
-
+  using uint = uint32_t;
+  
   namespace py = pybind11;
   using namespace anari;
   
   /*! convert pybind tuple to owl vector type (w/ size sanity check) */
-  inline math::int2 make_vec2i(const std::vector<int> &vec)
+  inline math::float2 make_float2(const std::vector<float> &vec)
   {
     if (vec.size() != 2)
       throw std::runtime_error("the tuple passed didn't have the"
-                               " expected number of elements (2)");
-    return math::int2(vec[0],vec[1]);
+                               " expected number of elements (3)");
+    return math::float2(vec[0],vec[1]);
   }
-  
+
   /*! convert pybind tuple to owl vector type (w/ size sanity check) */
   inline math::float3 make_float3(const std::vector<float> &vec)
   {
@@ -52,10 +53,60 @@ namespace pynari {
     return math::float3(vec[0],vec[1],vec[2]);
   }
 
+  /*! convert pybind tuple to owl vector type (w/ size sanity check) */
+  inline math::float4 make_float4(const std::vector<float> &vec)
+  {
+    if (vec.size() != 4)
+      throw std::runtime_error("the tuple passed didn't have the"
+                               " expected number of elements (3)");
+    return math::float4(vec[0],vec[1],vec[2],vec[3]);
+  }
+
+  inline math::float2 make_float2(const std::tuple<float,float> &v)
+  { return math::float2(std::get<0>(v),std::get<1>(v)); }
   inline math::float3 make_float3(const std::tuple<float,float,float> &v)
   { return math::float3(std::get<0>(v),std::get<1>(v),std::get<2>(v)); }
+  inline math::float4 make_float4(const std::tuple<float,float,float,float> &v)
+  { return math::float4(std::get<0>(v),std::get<1>(v),std::get<2>(v),std::get<3>(v)); }
   
 
+
+
+  /*! convert pybind tuple to owl vector type (w/ size sanity check) */
+  inline math::uint2 make_uint2(const std::vector<uint> &vec)
+  {
+    if (vec.size() != 2)
+      throw std::runtime_error("the tuple passed didn't have the"
+                               " expected number of elements (3)");
+    return math::uint2(vec[0],vec[1]);
+  }
+
+  /*! convert pybind tuple to owl vector type (w/ size sanity check) */
+  inline math::uint3 make_uint3(const std::vector<uint> &vec)
+  {
+    if (vec.size() != 3)
+      throw std::runtime_error("the tuple passed didn't have the"
+                               " expected number of elements (3)");
+    return math::uint3(vec[0],vec[1],vec[2]);
+  }
+
+  /*! convert pybind tuple to owl vector type (w/ size sanity check) */
+  inline math::uint4 make_uint4(const std::vector<uint> &vec)
+  {
+    if (vec.size() != 4)
+      throw std::runtime_error("the tuple passed didn't have the"
+                               " expected number of elements (3)");
+    return math::uint4(vec[0],vec[1],vec[2],vec[3]);
+  }
+
+  inline math::uint2 make_uint2(const std::tuple<uint,uint> &v)
+  { return math::uint2(std::get<0>(v),std::get<1>(v)); }
+  inline math::uint3 make_uint3(const std::tuple<uint,uint,uint> &v)
+  { return math::uint3(std::get<0>(v),std::get<1>(v),std::get<2>(v)); }
+  inline math::uint4 make_uint4(const std::tuple<uint,uint,uint,uint> &v)
+  { return math::uint4(std::get<0>(v),std::get<1>(v),std::get<2>(v),std::get<3>(v)); }
+  
+  
 #if defined(_MSC_VER)
 //&& !defined(__PRETTY_FUNCTION__)
 #  define __PRETTY_FUNCTION__ __FUNCTION__

@@ -27,41 +27,16 @@ namespace pynari {
   struct FrameBuffer;
   struct Data;
   
-  struct Model : public Object {
-    typedef std::shared_ptr<Model> SP;
+  struct Frame : public Object {
+    typedef std::shared_ptr<Frame> SP;
     
-    Model(Device::SP device);
-    virtual ~Model() = default;
-    std::string toString() const override { return "pynari::Model"; }
+    Frame(Device::SP device);
+    virtual ~Frame() = default;
+    std::string toString() const override { return "pynari::Frame"; }
     anari::Object getHandle() const override { return handle; }
-    
-    // std::shared_ptr<Material> createMaterial(const std::string &type);
-    // // std::shared_ptr<Geometry> createSphere(float x, float y, float z,
-    // //                                        float r,
-    // //                                        const std::shared_ptr<Material> &material);
-    // // std::shared_ptr<Geometry> createSphere(const py::tuple &pos,//std::array<float,3> &pos,
-    // std::shared_ptr<Geometry>
-    // createSphere(const std::tuple<float,float,float> &pos,
-    //              float r,
-    //              const std::shared_ptr<Material> &material);
 
-    // std::shared_ptr<Geometry>
-    // createGeometry(const std::string &type,
-    //                const std::shared_ptr<Material> &material);
-    
-    // std::shared_ptr<Group>
-    // createGroup(const py::list &list);
-    
-    // std::shared_ptr<Data>
-    // createData(const std::string &type, const py::list &list);
-    
-    // void 
-    // setInstances(const py::list &list);
-    
-    // void render(const std::shared_ptr<Camera> &camera,
-    //             const std::shared_ptr<FrameBuffer> &fb);
-    
-    anari::World handle = 0;
+    void render();
+    anari::Frame handle = 0;
   };
 
 }
