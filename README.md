@@ -1,4 +1,46 @@
-# pynari - a Python Interface for ANARI
+# `'pyNari` - a Python Interface for ANARI
+
+PyNari is a thin python wrapper over the Khronos `ANARI` API
+(https://registry.khronos.org/ANARI/) that allows to use ANARI
+functionality directly from python program.
+
+Pynari has a 1:1 mapping between ANARI and pynari types and
+functionality, with just minor changes to make the API more "pythonic"
+(eg, functions that operate on actual objects are python *methods* on
+those objects), as well as a bit more consice and readable.
+
+For a more complete example see, e.g.,
+https://github.com/ingowald/pynari/blob/master/test01.py , but in
+short, the syntax is about like this:
+
+```
+import pynari as anari
+import numpy as np
+ 
+device = anari.newDevice('default')
+
+camera = device.newCamera('perspective')
+camera.setParameter('position',anari.FLOAT32_VEC3, [0.,0.,0.f])
+...
+mesh = device.newGeometry('triangle')
+vertex = np.array([
+  -1.0, -1.0, 3.0,
+  -1.0,  1.0, 3.0,
+   1.0, -1.0, 3.0,
+   0.1,  0.1, 0.3
+], dtype = np.float32)
+array = device.newArray(anari.FLOAT32_VEC3,vertex)
+mesh.setParameter('vertex.position', anari.ARRAY, array)
+...
+frame = device.newFrame()
+...
+frame.render()
+...
+# returns a numpy array of [width,height,4] of np.float32
+color_buffer = frame.get('channel.color')
+```
+
+
 
 # PyNari equivalents of ANARI Data Types
 
