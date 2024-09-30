@@ -18,18 +18,72 @@
 
 namespace pynari {
 
+  std::string to_string(anari::DataType type)
+  {
+    switch(type) {
+    case ANARI_DATA_TYPE:      return "ANARI_DATA_TYPE";
+    case ANARI_STRING:         return "ANARI_STRING";
+    case ANARI_OBJECT:         return "ANARI_OBJECT";
+    case ANARI_ARRAY:          return "ANARI_ARRAY";
+    case ANARI_ARRAY1D:        return "ANARI_ARRAY1D";
+    case ANARI_ARRAY2D:        return "ANARI_ARRAY2D";
+    case ANARI_ARRAY3D:        return "ANARI_ARRAY3D";
+    case ANARI_WORLD:          return "ANARI_WORLD";
+    case ANARI_RENDERER:       return "ANARI_RENDERER";
+    case ANARI_MATERIAL:       return "ANARI_MATERIAL";
+    case ANARI_GEOMETRY:       return "ANARI_GEOMETRY";
+    case ANARI_SURFACE:        return "ANARI_SURFACE";
+    case ANARI_FLOAT32:        return "ANARI_FLOAT32";
+    case ANARI_FLOAT32_VEC2:   return "ANARI_FLOAT32_VEC2";
+    case ANARI_FLOAT32_VEC3:   return "ANARI_FLOAT32_VEC3";
+    case ANARI_FLOAT32_VEC4:   return "ANARI_FLOAT32_VEC4";
+    case ANARI_UINT32:         return "ANARI_UINT32";
+    case ANARI_UINT32_VEC2:    return "ANARI_UINT32_VEC2";
+    case ANARI_UINT32_VEC3:    return "ANARI_UINT32_VEC3";
+    case ANARI_UINT32_VEC4:    return "ANARI_UINT32_VEC4";
+    default:
+      throw std::runtime_error
+        ("unsupported type "
+         +std::to_string((int)type)
+         +" in pyName::toString(ANARIDataType)");
+    }
+  }
+  
   Object::Object(Device::SP device)
     : device(device)
   {}
   
+  void Object::assignTo(Object::SP object,
+                        anari::DataType intendedType,
+                        const std::string &name)
+  { throw std::runtime_error("Object::assignTo not implemented for object "
+                             +object->toString()); };
   std::string Object::toString() const { return "<Object>"; }
 
   void Object::commit() { anariCommitParameters(device->handle,getHandle()); }
 
-  void Object::set(const std::string &name, Object::SP object)
-  { object->assignTo(shared_from_this(),name); }
-  //anari::setParameter(device->handle,getHandle(),object->getHandle()); }
-
+  void Object::setArray_list(const char *name,
+                             int type, 
+                             const py::list &list)
+  { 
+    std::vector<ANARIObject> objects;
+    for (auto item : list) {
+      Object::SP object = item.cast<Object::SP>();
+      assert(object);
+      ANARIObject handle = object->getHandle();
+      objects.push_back(handle);
+    }
+    anari::Array array
+      = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
+      
+    ANARIObject *mapped
+      = (ANARIObject*)anariMapArray(device->handle,array);
+    std::copy(objects.begin(),objects.end(),mapped);
+    anariUnmapArray(device->handle,array);
+      
+    anari::setParameter(device->handle,getHandle(),name,array);
+  }
+  
   ANARIDataType parseType(const std::string &typeName)
   {
     if (typeName == "ANARI_UFIXED8_RGBA_SRGB")
@@ -40,102 +94,6 @@ namespace pynari {
       return ANARI_UFIXED8_VEC4;
     throw std::runtime_error("un-implmemented anari type "+typeName);
   }
-  
-  void Object::set_type(const std::string &name, const std::string &typeName)
-  {
-    ANARIDataType type = parseType(typeName);
-    anariSetParameter(device->handle,getHandle(),name.c_str(),
-                      ANARI_DATA_TYPE,&type);
-  }
-  
-  void Object::set_float(const std::string &name, float x)
-  { anari::setParameter(device->handle,getHandle(),name.c_str(),x); }
-    
-  void Object::set_float2_tuple(const char *name,
-                                const std::tuple<float,float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float2(v)); }
-
-  void Object::set_float2_list(const char *name,
-                               const std::vector<float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float2(v)); }
-  
-  void Object::set_float3_tuple(const char *name,
-                                const std::tuple<float,float,float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float3(v)); }
-
-  void Object::set_float3_list(const char *name,
-                               const std::vector<float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float3(v)); }
-  
-  void Object::set_float4_tuple(const char *name,
-                                const std::tuple<float,float,float,float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float4(v)); }
-
-  void Object::set_float4_list(const char *name,
-                               const std::vector<float> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_float4(v)); }
-  
-
-  void Object::set_uint(const std::string &name, uint x)
-  { anari::setParameter(device->handle,getHandle(),name.c_str(),x); }
-    
-  void Object::set_uint2_tuple(const char *name,
-                                const std::tuple<uint,uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint2(v)); }
-
-  void Object::set_uint2_list(const char *name,
-                               const std::vector<uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint2(v)); }
-  
-  void Object::set_uint3_tuple(const char *name,
-                                const std::tuple<uint,uint,uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint3(v)); }
-
-  void Object::set_uint3_list(const char *name,
-                               const std::vector<uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint3(v)); }
-  
-  void Object::set_uint4_tuple(const char *name,
-                                const std::tuple<uint,uint,uint,uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint4(v)); }
-
-  void Object::set_uint4_list(const char *name,
-                               const std::vector<uint> &v)
-  { anari::setParameter(device->handle,getHandle(),name,make_uint4(v)); }
-  
-
-  void Object::set_list(const std::string &name,
-                        const py::list &list)
-  {
-    std::vector<ANARIObject> objects;
-    for (auto item : list) {
-      Object::SP object = item.cast<Object::SP>();
-      assert(object);
-      ANARIObject handle = object->getHandle();
-      anariRetain(device->handle,handle);
-      objects.push_back(handle);
-    }
-    anari::Array array = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
-    void *ptr = anariMapArray(device->handle,array);
-    memcpy(ptr,objects.data(),objects.size()*sizeof(objects[0]));
-    anariUnmapArray(device->handle,array);
-
-
-    anari::setParameter(device->handle,getHandle(),name.c_str(),array);
-    
-    // OWLGroup handle = anariNewArray1D(device->handle,
-    //                                               geoms.size(),
-    //                                               geoms.data());
-    // assert(handle);
-    // return std::make_shared<Group>(handle);
-    // PING;
-  }
-  
-    
-  
-  // void Object::set_float3_numpy(const char *name,
-  //                               const py::buffer &buffer)
-  // { anari::setParameter(device->handle,getHandle(),name,make_float3(buffer)); }
   
 }
 

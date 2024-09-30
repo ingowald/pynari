@@ -20,13 +20,13 @@
 
 namespace pynari {
 
-  struct Material : public Object {
-    typedef std::shared_ptr<Material> SP;
+  struct Light : public Object {
+    typedef std::shared_ptr<Light> SP;
     
-    Material(Device::SP device,
+    Light(Device::SP device,
              const std::string type);
-    virtual ~Material() = default;
-    std::string toString() const override { return "py_barn::Material"; }
+    virtual ~Light() = default;
+    std::string toString() const override { return "py_barn::Light"; }
     anari::Object getHandle() const override { return handle; }
 
     void assignTo(Object::SP object,
@@ -34,11 +34,11 @@ namespace pynari {
                   const std::string &name) override
     {
       anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_MATERIAL,&this->handle);
+                        name.c_str(),ANARI_LIGHT,&this->handle);
     }
     
     const std::string type;
-    anari::Material handle = 0;
+    anari::Light handle = 0;
   };
 
 }

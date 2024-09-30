@@ -36,7 +36,9 @@ namespace pynari {
     return handle;
   }
 
-  void Array::assignTo(Object::SP object, const std::string &name) 
+  void Array::assignTo(Object::SP object,
+                       anari::DataType intendedType,
+                       const std::string &name) 
   {
     switch(nDims) {
     case 1:
@@ -44,39 +46,42 @@ namespace pynari {
                         name.c_str(),ANARI_ARRAY1D,&this->handle);
       return;
     default:
-      throw std::runtime_error("not implemented"); 
+      throw std::runtime_error("Array::assignTo not implemented for nDims="
+                               +std::to_string(nDims)); 
     }
   }
   
   anari::Array importArray1D(anari::Device device,
-                             const std::string &type,
+                             anari::DataType type,
                              const py::buffer_info &info,
                              const py::buffer &buffer)
   {
-    if (type == "float")
+    switch (type) {
+    case ANARI_FLOAT32:
       return import1D<float,1>(device,ANARI_FLOAT32,info,buffer);
-    if (type == "float2")
+    case ANARI_FLOAT32_VEC2:
       return import1D<float,2>(device,ANARI_FLOAT32_VEC2,info,buffer);
-    if (type == "float3")
+    case ANARI_FLOAT32_VEC3:
       return import1D<float,3>(device,ANARI_FLOAT32_VEC3,info,buffer);
-    if (type == "float4")
+    case ANARI_FLOAT32_VEC4:
       return import1D<float,4>(device,ANARI_FLOAT32_VEC4,info,buffer);
 
-    if (type == "uint")
+    case ANARI_UINT32:
       return import1D<uint32_t,1>(device,ANARI_UINT32,info,buffer);
-    if (type == "uint2")
+    case ANARI_UINT32_VEC2:
       return import1D<uint32_t,2>(device,ANARI_UINT32_VEC2,info,buffer);
-    if (type == "uint3")
+    case ANARI_UINT32_VEC3:
       return import1D<uint32_t,3>(device,ANARI_UINT32_VEC3,info,buffer);
-    if (type == "uint4")
+    case ANARI_UINT32_VEC4:
       return import1D<uint32_t,4>(device,ANARI_UINT32_VEC4,info,buffer);
-
+    default:
     // if (info.format == "f")
     //   return importArray1D<float>(info,buffer);
-    throw std::runtime_error("un-implemented array type of "+type);
+      throw std::runtime_error("un-implemented array type of "+type);
+    }
   }
   
-  Array::Array(Device::SP device, const char *type, const py::buffer &buffer)
+  Array::Array(Device::SP device, anari::DataType type, const py::buffer &buffer)
     : Object(device)
   {
     // handle = importArray(device->handle,buffer)
@@ -92,6 +97,24 @@ namespace pynari {
     default:
       throw std::runtime_error("un-supported array dimensionality for anari::Array");
     }
+  }
+  
+  Array::Array(Device::SP device,
+               anari::DataType type,
+               const std::vector<Object::SP> &objects)
+    : Object(device)
+  {
+    anari::Array array
+      = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
+    
+    ANARIObject *mapped
+      = (ANARIObject*)anariMapArray(device->handle,array);
+    for (int i=0;i<objects.size();i++)
+      mapped[i] = objects[i]->getHandle();
+    // std::copy(objects.begin(),objects.end(),mapped);
+    anariUnmapArray(device->handle,array);
+    this->handle = array;
+    nDims = 1;
   }
   
 }

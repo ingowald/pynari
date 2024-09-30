@@ -30,32 +30,37 @@ namespace pynari {
     anariFrameReady(device->handle, handle, ANARI_WAIT);
   }
  
-  py::object Frame::color()
+  py::object Frame::get(const std::string &channelName)
   {
-    uint32_t width, height;
-    ANARIDataType pixelType;
-
-    const void *mapped
-      = anariMapFrame(device->handle,handle,
-                      "channel.color",
-                      &width,&height,&pixelType);
-    py::object frame;
-    if (pixelType == ANARI_FLOAT32_VEC4) {
-      frame
-        = py::array_t<float>(
-                             {(int)height,(int)width,4}, // shape
-                             // {(int)width,(int)height,4}, // shape
-                             {width*4*sizeof(float),
-                              4*sizeof(float),
-                              sizeof(float)}, // C-style contiguous strides for double
-                             (float*)mapped);
-    }
-    else
-      throw std::runtime_error("currently only supporting frame buffers "
-                               "of format 'ANARI_FLOAT32_VEC4");
+    if (channelName == "channel.color") {
+      uint32_t width, height;
+      ANARIDataType pixelType;
+      
+      const void *mapped
+        = anariMapFrame(device->handle,handle,
+                        "channel.color",
+                        &width,&height,&pixelType);
+      py::object frame;
+      if (pixelType == ANARI_FLOAT32_VEC4) {
+        frame
+          = py::array_t<float>(
+                               {(int)height,(int)width,4}, // shape
+                               // {(int)width,(int)height,4}, // shape
+                               {width*4*sizeof(float),
+                                4*sizeof(float),
+                                sizeof(float)}, // C-style contiguous strides for double
+                               (float*)mapped);
+      }
+      else
+        throw std::runtime_error("currently only supporting frame buffers "
+                                 "of format 'ANARI_FLOAT32_VEC4");
                                
-    anariUnmapFrame(device->handle,handle,"color");
-    return frame;
+      anariUnmapFrame(device->handle,handle,"color");
+      return frame;
+    }
+
+    throw std::runtime_error("unsupported channel name '"+channelName
+                             +"' in pynari::Frame::get()");
   }
 
 }

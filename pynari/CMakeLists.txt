@@ -23,6 +23,8 @@ pybind11_add_module(pynari
   Object.cpp
   Material.h
   Material.cpp
+  Light.h
+  Light.cpp
   World.h
   World.cpp
   Frame.h

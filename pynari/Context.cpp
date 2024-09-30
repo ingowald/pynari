@@ -20,6 +20,7 @@
 #include "pynari/Renderer.h"
 #include "pynari/Surface.h"
 #include "pynari/Material.h"
+#include "pynari/Light.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
 #include "pynari/Geometry.h"
@@ -103,10 +104,31 @@ namespace pynari {
     return std::make_shared<Material>(device,type);
   }
   
-  std::shared_ptr<Array>
-  Context::newArray(const char *type, const py::buffer &buffer)
+  std::shared_ptr<Light>
+  Context::newLight(const std::string &type)
   {
-    return std::make_shared<Array>(device,type,buffer);
+    return std::make_shared<Light>(device,type);
+  }
+
+  std::shared_ptr<Array>
+  Context::newArray_objects(int type, const py::list &list)
+  {
+    // std::vector<Object::SP> objects;
+    std::vector<Object::SP> objects;
+    for (auto item : list) {
+      Object::SP object = item.cast<Object::SP>();
+      assert(object);
+      objects.push_back(object);
+      // ANARIObject handle = object->getHandle();
+      // objects.push_back(handle);
+    }
+    return std::make_shared<Array>(device,(anari::DataType)type,objects);
+  }
+
+  std::shared_ptr<Array>
+  Context::newArray(int type, const py::buffer &buffer)
+  {
+    return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
   std::shared_ptr<Context> createContext(const std::string &libName)
@@ -172,11 +194,4 @@ namespace pynari {
     device = 0;
   }
   
-  // Group::SP Context::createTrianglesGeomGroup(const std::vector<Geom::SP> &list
-  //                                             //const py::list &list
-  //                                             )
-  // {
-  //   // return Group::createTrianglesGG(this,list);
-  // }
-
 }

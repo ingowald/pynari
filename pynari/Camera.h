@@ -29,7 +29,9 @@ namespace pynari {
     anari::Object getHandle() const override { return handle; }
     std::string toString() const override { return "pynari::Camera<"+type+">"; }
 
-    void assignTo(Object::SP object, const std::string &name) override
+    void assignTo(Object::SP object,
+                  anari::DataType intendedType,
+                  const std::string &name) override
     {
       anariSetParameter(device->handle,object->getHandle(),
                         name.c_str(),ANARI_CAMERA,&this->handle);

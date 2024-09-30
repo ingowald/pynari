@@ -14,6 +14,7 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
+#define PYBIND11_DETAILED_ERROR_MESSAGES 1
 #include "pynari/Context.h"
 #include "pynari/Data.h"
 #include "pynari/World.h"
@@ -22,10 +23,11 @@
 #include "pynari/Renderer.h"
 #include "pynari/Surface.h"
 #include "pynari/Material.h"
+#include "pynari/Light.h"
 #include "pynari/Geometry.h"
 #include "pynari/Group.h"
 #include "pynari/Array.h"
- 
+
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
@@ -37,84 +39,76 @@ PYBIND11_MODULE(pynari, m) {
   // create one context; almost all functions are then per context
   m.def("newDevice", &createContext,
         "Creates an barney Context object");
-  // m.def("newDevice", &pynari::newDevice,
-  //       "Creates an barney Context object");
+ 
+  m.attr("OBJECT")       = py::int_((int)ANARI_OBJECT);
+  m.attr("SURFACE")      = py::int_((int)ANARI_SURFACE);
+  m.attr("GEOMETRY")     = py::int_((int)ANARI_GEOMETRY);
+  m.attr("MATERIAL")     = py::int_((int)ANARI_MATERIAL);
+  m.attr("LIGHT")        = py::int_((int)ANARI_LIGHT);
+  m.attr("ARRAY")        = py::int_((int)ANARI_ARRAY);
+  m.attr("RENDERER")     = py::int_((int)ANARI_RENDERER);
+  m.attr("CAMERA")       = py::int_((int)ANARI_CAMERA);
+  m.attr("WORLD")        = py::int_((int)ANARI_WORLD);
+  m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
+  
+  m.attr("ARRAY1D")      = py::int_((int)ANARI_ARRAY1D);
+  m.attr("ARRAY2D")      = py::int_((int)ANARI_ARRAY2D);
+  m.attr("ARRAY3D")      = py::int_((int)ANARI_ARRAY3D);
+  
+  m.attr("FLOAT32")      = py::int_((int)ANARI_FLOAT32);
+  m.attr("FLOAT32_VEC2") = py::int_((int)ANARI_FLOAT32_VEC2);
+  m.attr("FLOAT32_VEC3") = py::int_((int)ANARI_FLOAT32_VEC3);
+  m.attr("FLOAT32_VEC4") = py::int_((int)ANARI_FLOAT32_VEC4);
 
-  // // define add function
-  // m.def("save_png_rgba8", &pynari::save_png_rgba8,
-  //       "Saves a OWLBuffer of rgba8 values to a given file, in PNG format");
-  
-  // // -------------------------------------------------------
-  // auto module
-  //   = py::class_<pynari::Module,
-  //                std::shared_ptr<Module>>(m, "Module");
+  m.attr("UINT32")       = py::int_((int)ANARI_UINT32);
+  m.attr("UINT32_VEC2")  = py::int_((int)ANARI_UINT32_VEC2);
+  m.attr("UINT32_VEC3")  = py::int_((int)ANARI_UINT32_VEC3);
+  m.attr("UINT32_VEC4")  = py::int_((int)ANARI_UINT32_VEC4);
 
+  m.attr("float")        = py::int_((int)ANARI_FLOAT32);
+  m.attr("float2")       = py::int_((int)ANARI_FLOAT32_VEC2);
+  m.attr("float3")       = py::int_((int)ANARI_FLOAT32_VEC3);
+  m.attr("float4")       = py::int_((int)ANARI_FLOAT32_VEC4);
+
+  m.attr("uint")         = py::int_((int)ANARI_UINT32);
+  m.attr("uint2")        = py::int_((int)ANARI_UINT32_VEC2);
+  m.attr("uint3")        = py::int_((int)ANARI_UINT32_VEC3);
+  m.attr("uint4")        = py::int_((int)ANARI_UINT32_VEC4);
   
-  // // -------------------------------------------------------
-  // auto group
-  //   = py::class_<pynari::Group,
-  //                std::shared_ptr<Group>>(m, "Group");
-  
-  // // -------------------------------------------------------
-  // auto model
-  //   = py::class_<pynari::Model,
-  //                std::shared_ptr<Model>>(m, "Model");
-  // model.def("create_material", &pynari::Model::createMaterial);
-  // model.def("create_sphere",   &pynari::Model::createSphere);
-  // model.def("create_geometry", &pynari::Model::createGeometry);
-  // model.def("create_group",    &pynari::Model::createGroup);
-  // model.def("set_instances",   &pynari::Model::setInstances);
-  // model.def("render",          &pynari::Model::render);
-  // model.def("create_data",     &pynari::Context::createData);
-  // // model.def("test", &pynari::Model::test);
-  
-  // // -------------------------------------------------------
-  // auto data
-  //   = py::class_<pynari::Data,
-  //                std::shared_ptr<Data>>(m, "Data");
-  // // -------------------------------------------------------
-  // auto material
-  //   = py::class_<pynari::Material,
-  //                std::shared_ptr<Material>>(m, "Material");
-  // material.def("set_float3", &pynari::Material::set3f);
-  // material.def("set_float3", &pynari::Material::set3fv);
-  // material.def("set_float",  &pynari::Material::set1f);
-  
-  // // -------------------------------------------------------
-  // auto frameBuffer
-  //   = py::class_<pynari::FrameBuffer,
-  //                std::shared_ptr<FrameBuffer>>(m, "FrameBuffer");
-  // frameBuffer.def("save", &pynari::FrameBuffer::save);
-  
-  
-  // // -------------------------------------------------------
-  // auto geometry
-  //   = py::class_<pynari::Geometry,
-  //                std::shared_ptr<Geometry>>(m, "Geometry");
-  // geometry.def("commit",   &pynari::Geometry::commit);
-  // geometry.def("set_data", &pynari::Geometry::setData);
 
   // -------------------------------------------------------
   auto object
     = py::class_<pynari::Object,
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
   object.def("setParameter",  &pynari::Object::set);
-  object.def("setParameter",  &pynari::Object::set_list);
-  object.def("setParameter_type",  &pynari::Object::set_type);
-  object.def("setParameter_float",  &pynari::Object::set_float);
-  object.def("setParameter_float2", &pynari::Object::set_float2_tuple);
-  object.def("setParameter_float2", &pynari::Object::set_float2_list);
-  object.def("setParameter_float3", &pynari::Object::set_float3_tuple);
-  object.def("setParameter_float3", &pynari::Object::set_float3_list);
-  object.def("setParameter_float4", &pynari::Object::set_float4_tuple);
-  object.def("setParameter_float4", &pynari::Object::set_float4_list);
-  object.def("setParameter_uint",  &pynari::Object::set_uint);
-  object.def("setParameter_uint2", &pynari::Object::set_uint2_tuple);
-  object.def("setParameter_uint2", &pynari::Object::set_uint2_list);
-  object.def("setParameter_uint3", &pynari::Object::set_uint3_tuple);
-  object.def("setParameter_uint3", &pynari::Object::set_uint3_list);
-  object.def("setParameter_uint4", &pynari::Object::set_uint4_tuple);
-  object.def("setParameter_uint4", &pynari::Object::set_uint4_list);
+  // object.def("setParameter",  &pynari::Object::set_list);
+  //  object.def("setParameter",  &pynari::Object::set_list);
+  object.def("setParameterArray",  &pynari::Object::setArray_list);
+  // object.def("setParameter",  &pynari::Object::set_type);
+  object.def("setParameter",  &pynari::Object::set_float);
+  object.def("setParameter",  &pynari::Object::set_float2);
+  object.def("setParameter",  &pynari::Object::set_float3);
+  object.def("setParameter",  &pynari::Object::set_float4);
+  object.def("setParameter",  &pynari::Object::set_float_vec);
+
+  object.def("setParameter",  &pynari::Object::set_uint);
+  object.def("setParameter",  &pynari::Object::set_uint2);
+  object.def("setParameter",  &pynari::Object::set_uint3);
+  object.def("setParameter",  &pynari::Object::set_uint4);
+  object.def("setParameter",  &pynari::Object::set_uint_vec);
+  // object.def("setParameter",  &pynari::Object::set_float2_tuple);
+  // object.def("setParameter",  &pynari::Object::set_float2_list);
+  // object.def("setParameter",  &pynari::Object::set_float3_tuple);
+  // object.def("setParameter",  &pynari::Object::set_float3_list);
+  // object.def("setParameter",  &pynari::Object::set_float4_tuple);
+  // object.def("setParameter",  &pynari::Object::set_float4_list);
+  // object.def("setParameter",  &pynari::Object::set_uint);
+  // object.def("setParameter",  &pynari::Object::set_uint2_tuple);
+  // object.def("setParameter",  &pynari::Object::set_uint2_list);
+  // object.def("setParameter",  &pynari::Object::set_uint3_tuple);
+  // object.def("setParameter",  &pynari::Object::set_uint3_list);
+  // object.def("setParameter",  &pynari::Object::set_uint4_tuple);
+  // object.def("setParameter",  &pynari::Object::set_uint4_list);
   object.def("commitParameters", &pynari::Object::commit);
   // -------------------------------------------------------
   auto camera
@@ -133,6 +127,10 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Material,pynari::Object,
                  std::shared_ptr<pynari::Material>>(m, "anari::Material");
   // -------------------------------------------------------
+  auto light
+    = py::class_<pynari::Light,pynari::Object,
+                 std::shared_ptr<pynari::Light>>(m, "anari::Light");
+  // -------------------------------------------------------
   auto geometry
     = py::class_<pynari::Geometry,pynari::Object,
                  std::shared_ptr<pynari::Geometry>>(m, "anari::Geometry");
@@ -145,7 +143,7 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Frame,pynari::Object,
                  std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
   frame.def("render", &pynari::Frame::render);
-  frame.def("color", &pynari::Frame::color);
+  frame.def("get", &pynari::Frame::get);
   
   // -------------------------------------------------------
   auto array
@@ -161,8 +159,10 @@ PYBIND11_MODULE(pynari, m) {
   context.def("newRenderer", &pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);
   context.def("newMaterial", &pynari::Context::newMaterial);
+  context.def("newLight", &pynari::Context::newLight);
   context.def("newWorld", &pynari::Context::newWorld);
   context.def("newFrame", &pynari::Context::newFrame);
   context.def("newGeometry", &pynari::Context::newGeometry);
   context.def("newArray", &pynari::Context::newArray);
+  context.def("newArray", &pynari::Context::newArray_objects);
 }

@@ -23,15 +23,20 @@ namespace pynari {
   struct Array : public Object {
     typedef std::shared_ptr<Array> SP;
     
-    Array(Device::SP device, const char *type, const py::buffer &buffer);
+    Array(Device::SP device, anari::DataType type,
+          const py::buffer &buffer);
+    Array(Device::SP device, anari::DataType type,
+          const std::vector<Object::SP> &list);
     virtual ~Array() = default;
     std::string toString() const override { return "pynari::Array"; }
     anari::Object getHandle() const override { return handle; }
 
-    void assignTo(Object::SP object, const std::string &name) override;
+    void assignTo(Object::SP object,
+                  anari::DataType intendedType,
+                  const std::string &name) override;
     
-    int nDims;
-    anari::Array handle = 0;
+    int          nDims  = -1;
+    anari::Array handle =  0;
   };
 
 }

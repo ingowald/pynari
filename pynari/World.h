@@ -35,7 +35,9 @@ namespace pynari {
     std::string toString() const override { return "pynari::World"; }
     anari::Object getHandle() const override { return handle; }
 
-    void assignTo(Object::SP object, const std::string &name) override
+    void assignTo(Object::SP object,
+                  anari::DataType intendedType,
+                  const std::string &name) override
     {
       anariSetParameter(device->handle,object->getHandle(),
                         name.c_str(),ANARI_WORLD,&this->handle);
