@@ -36,6 +36,8 @@ namespace pynari {
     anari::Object getHandle() const override { return handle; }
 
     void render();
+    py::object color();
+
     anari::Frame handle = 0;
   };
 

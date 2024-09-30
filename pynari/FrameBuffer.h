@@ -30,6 +30,7 @@ namespace pynari {
     void resize(math::int2 size);
 
     void save(const std::string &fileName);
+
     
     std::vector<uint32_t> color;
     std::vector<float>    depth;

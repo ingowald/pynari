@@ -145,6 +145,7 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Frame,pynari::Object,
                  std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
   frame.def("render", &pynari::Frame::render);
+  frame.def("color", &pynari::Frame::color);
   
   // -------------------------------------------------------
   auto array

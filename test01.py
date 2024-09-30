@@ -39,17 +39,17 @@ camera = device.newCamera('perspective')
 #anariSetParameter(device, camera, 'aspect', ANARI_FLOAT32, width/height)
 camera.setParameter_float('aspect', width/height)
 #anariSetParameter(device, camera, 'position', ANARI_FLOAT32_VEC3, cam_pos)
-camera.setParameter_float3('direction',cam_view)
+camera.setParameter_float3('position',cam_pos)
 #anariSetParameter(device, camera, 'direction', ANARI_FLOAT32_VEC3, cam_view)
-camera.setParameter_float3('up',cam_up)
+camera.setParameter_float3('direction',cam_view)
 #anariSetParameter(device, camera, 'up', ANARI_FLOAT32_VEC3, cam_up)
+camera.setParameter_float3('up',cam_up)
 #anariCommitParameters(device, camera)
 camera.commitParameters()
 
 world = device.newWorld()
 
 mesh = device.newGeometry('triangle')
-
 
 array = device.newArray('float3',vertex)
 mesh.setParameter('vertex.position', array)
@@ -83,6 +83,7 @@ world.commitParameters()
 
 renderer = device.newRenderer('default')
 renderer.setParameter_float4('background', bg_color)
+renderer.setParameter_float('ambientRadiance',1.)
 renderer.commitParameters()
 
 
@@ -90,12 +91,21 @@ renderer.commitParameters()
 frame = device.newFrame()
 
 frame.setParameter_uint2('size', [width, height])
-frame.setParameter_type('channel.color', 'ANARI_UFIXED8_RGBA_SRGB')
+
+#frame.setParameter_type('channel.color', 'ANARI_UFIXED8_VEC4')
+#frame.setParameter_type('channel.color', 'ANARI_UFIXED8_RGBA_SRGB')
+frame.setParameter_type('channel.color', 'ANARI_FLOAT32_VEC4')
 frame.setParameter('renderer', renderer)
 frame.setParameter('camera', camera)
 frame.setParameter('world', world)
 frame.commitParameters()
 
 frame.render()
+fb_color = frame.color()
+
+pixels = np.array(fb_color).reshape([height, width, 4])
+plt.imshow(pixels)
+plt.show()
+
 
 

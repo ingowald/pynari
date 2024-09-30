@@ -34,14 +34,17 @@ namespace pynari {
   {
     if (typeName == "ANARI_UFIXED8_RGBA_SRGB")
       return ANARI_UFIXED8_RGBA_SRGB;
-    else
-      throw std::runtime_error("un-implmemented anari type "+typeName);
+    if (typeName == "ANARI_FLOAT32_VEC4")
+      return ANARI_FLOAT32_VEC4;
+    if (typeName == "ANARI_UFIXED8_VEC4")
+      return ANARI_UFIXED8_VEC4;
+    throw std::runtime_error("un-implmemented anari type "+typeName);
   }
   
   void Object::set_type(const std::string &name, const std::string &typeName)
   {
     ANARIDataType type = parseType(typeName);
-    anariSetParameter(device->handle,getHandle(),typeName.c_str(),
+    anariSetParameter(device->handle,getHandle(),name.c_str(),
                       ANARI_DATA_TYPE,&type);
   }
   
