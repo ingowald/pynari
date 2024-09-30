@@ -74,17 +74,13 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("uint2")        = py::int_((int)ANARI_UINT32_VEC2);
   m.attr("uint3")        = py::int_((int)ANARI_UINT32_VEC3);
   m.attr("uint4")        = py::int_((int)ANARI_UINT32_VEC4);
-  
 
   // -------------------------------------------------------
   auto object
     = py::class_<pynari::Object,
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
   object.def("setParameter",  &pynari::Object::set);
-  // object.def("setParameter",  &pynari::Object::set_list);
-  //  object.def("setParameter",  &pynari::Object::set_list);
   object.def("setParameterArray",  &pynari::Object::setArray_list);
-  // object.def("setParameter",  &pynari::Object::set_type);
   object.def("setParameter",  &pynari::Object::set_float);
   object.def("setParameter",  &pynari::Object::set_float2);
   object.def("setParameter",  &pynari::Object::set_float3);
@@ -96,19 +92,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_uint3);
   object.def("setParameter",  &pynari::Object::set_uint4);
   object.def("setParameter",  &pynari::Object::set_uint_vec);
-  // object.def("setParameter",  &pynari::Object::set_float2_tuple);
-  // object.def("setParameter",  &pynari::Object::set_float2_list);
-  // object.def("setParameter",  &pynari::Object::set_float3_tuple);
-  // object.def("setParameter",  &pynari::Object::set_float3_list);
-  // object.def("setParameter",  &pynari::Object::set_float4_tuple);
-  // object.def("setParameter",  &pynari::Object::set_float4_list);
-  // object.def("setParameter",  &pynari::Object::set_uint);
-  // object.def("setParameter",  &pynari::Object::set_uint2_tuple);
-  // object.def("setParameter",  &pynari::Object::set_uint2_list);
-  // object.def("setParameter",  &pynari::Object::set_uint3_tuple);
-  // object.def("setParameter",  &pynari::Object::set_uint3_list);
-  // object.def("setParameter",  &pynari::Object::set_uint4_tuple);
-  // object.def("setParameter",  &pynari::Object::set_uint4_list);
+  
   object.def("commitParameters", &pynari::Object::commit);
   // -------------------------------------------------------
   auto camera

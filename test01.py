@@ -86,13 +86,10 @@ renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.commitParameters()
 
 
-
 frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, [width, height])
 
-#frame.setParameter_type('channel.color', 'ANARI_UFIXED8_VEC4')
-#frame.setParameter_type('channel.color', 'ANARI_UFIXED8_RGBA_SRGB')
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)

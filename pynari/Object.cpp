@@ -84,16 +84,154 @@ namespace pynari {
     anari::setParameter(device->handle,getHandle(),name,array);
   }
   
-  ANARIDataType parseType(const std::string &typeName)
+  void Object::set(const char *name, int type, const Object::SP &object)
   {
-    if (typeName == "ANARI_UFIXED8_RGBA_SRGB")
-      return ANARI_UFIXED8_RGBA_SRGB;
-    if (typeName == "ANARI_FLOAT32_VEC4")
-      return ANARI_FLOAT32_VEC4;
-    if (typeName == "ANARI_UFIXED8_VEC4")
-      return ANARI_UFIXED8_VEC4;
-    throw std::runtime_error("un-implmemented anari type "+typeName);
+    object->assignTo(shared_from_this(),type,name);
   }
+    
+  void Object::set_float(const char *name,
+                         int type,
+                         float v)
+  {
+    switch(type) {
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,getHandle(),name,(float)v);
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_float2(const char *name,
+                          int type, 
+                          const std::tuple<float,float> &v)
+  { PING; }
+    
+  void Object::set_float3(const char *name,
+                          int type, 
+                          const std::tuple<float,float,float> &v)
+  {
+    switch(type) {
+    case ANARI_FLOAT32_VEC3:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::float3(std::get<0>(v),
+                                              std::get<1>(v),
+                                              std::get<2>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_float4(const char *name,
+                          int type, 
+                          const std::tuple<float,float,float,float> &v)
+  { switch(type) {
+    case ANARI_FLOAT32_VEC4:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::float4(std::get<0>(v),
+                                              std::get<1>(v),
+                                              std::get<2>(v),
+                                              std::get<3>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)+" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_float_vec(const char *name,
+                             int type, 
+                             const std::vector<float> &v)
+  { PING; }
+
+  void Object::set_uint(const char *name,
+                        int type,
+                        uint v)
+  {
+    switch(type) {
+    case ANARI_DATA_TYPE:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 (anari::DataType)v);
+    case ANARI_UINT32:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 (uint)v);
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 (float)v);
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_uint2(const char *name,
+                         int type, 
+                         const std::tuple<uint,uint> &v)
+  {
+    switch(type) {
+    case ANARI_UINT32_VEC2:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::uint2(std::get<0>(v),
+                                             std::get<1>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_uint3(const char *name,
+                         int type, 
+                         const std::tuple<uint,uint,uint> &v)
+  { 
+    switch(type) {
+    case ANARI_FLOAT32_VEC3:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::float3(std::get<0>(v),
+                                              std::get<1>(v),
+                                              std::get<2>(v)));
+    case ANARI_UINT32_VEC3:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::uint3(std::get<0>(v),
+                                             std::get<1>(v),
+                                             std::get<2>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_uint4(const char *name,
+                         int type, 
+                         const std::tuple<uint,uint,uint,uint> &v)
+  { switch(type) {
+    case ANARI_UINT32_VEC4:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::uint4(std::get<0>(v),
+                                             std::get<1>(v),
+                                             std::get<2>(v),
+                                             std::get<3>(v)));
+    case ANARI_FLOAT32_VEC4:
+      return anari::setParameter(device->handle,getHandle(),name,
+                                 math::float4(std::get<0>(v),
+                                              std::get<1>(v),
+                                              std::get<2>(v),
+                                              std::get<3>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)+" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+    
+  void Object::set_uint_vec(const char *name,
+                            int type, 
+                            const std::vector<uint> &v)
+  { PING; }
+
   
 }
 
