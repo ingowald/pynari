@@ -90,25 +90,19 @@ world.commitParameters()
 
 
 camera = device.newCamera('perspective')
-#anariSetParameter(device, camera, 'aspect', ANARI_FLOAT32, width/height)
 camera.setParameter('aspect', anari.FLOAT32, fb_size[0]/fb_size[1])
-#anariSetParameter(device, camera, 'position', ANARI_FLOAT32_VEC3, cam_pos)
 camera.setParameter('position',anari.FLOAT32_VEC3, look_from)
-#anariSetParameter(device, camera, 'direction', ANARI_FLOAT32_VEC3, cam_view)
 direction = [ look_at[0] - look_from[0],
               look_at[1] - look_from[1],
               look_at[2] - look_from[2] ] 
 camera.setParameter('direction',anari.float3, direction)
-#anariSetParameter(device, camera, 'up', ANARI_FLOAT32_VEC3, cam_up)
 camera.setParameter('up',anari.float3,look_up)
 camera.setParameter('fovy',anari.float,fovy*3.14/180)
-#anariCommitParameters(device, camera)
 camera.commitParameters()
 
 
 
 renderer = device.newRenderer('default')
-#renderer.setParameter('background', anari.FLOAT32_VEC4, bg_color)
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
 renderer.commitParameters()
 

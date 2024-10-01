@@ -14,16 +14,25 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#include "pynari/Material.h"
+#pragma once
+
+#include "pynari/Object.h"
 
 namespace pynari {
 
-  Material::Material(Device::SP device,
-                     const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-  }
+  struct Volume : public Object {
+    typedef std::shared_ptr<Volume> SP;
+    
+    Volume(Device::SP device,
+                 const std::string &type);
+    virtual ~Volume() = default;
+    std::string toString() const override
+    { return "pynari::Volume<"+type+">"; }
+    
+    anari::Object getHandle() const override { return handle; }
+
+    anari::Volume handle = 0;
+    const std::string type;
+  };
 
 }

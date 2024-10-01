@@ -25,9 +25,11 @@
 #include "pynari/Frame.h"
 #include "pynari/Geometry.h"
 #include "pynari/Array.h"
+#include "pynari/SpatialField.h"
+#include "pynari/Volume.h"
 
 namespace pynari {
-
+  
   Context::Context(const std::string &explicitLibName)
   {
     std::cout << OWL_TERMINAL_LIGHT_GREEN
@@ -101,6 +103,18 @@ namespace pynari {
   Context::newSurface()
   {
     return std::make_shared<Surface>(device);
+  }
+  
+  std::shared_ptr<Volume>
+  Context::newVolume(const std::string &type)
+  {
+    return std::make_shared<Volume>(device,type);
+  }
+  
+  std::shared_ptr<SpatialField>
+  Context::newSpatialField(const std::string &type)
+  {
+    return std::make_shared<SpatialField>(device,type);
   }
   
   std::shared_ptr<Material>

@@ -38,6 +38,8 @@ namespace pynari {
   struct Array;
   struct Material;
   struct Light;
+  struct SpatialField;
+  struct Volume;
   
   struct Context {
     typedef std::shared_ptr<Context> SP;
@@ -55,9 +57,11 @@ namespace pynari {
     std::shared_ptr<Camera> newCamera(const std::string &type);
     std::shared_ptr<Renderer> newRenderer(const std::string &type);
     std::shared_ptr<Surface> newSurface();
-    std::shared_ptr<Array>  newArray(int type, const py::buffer &buffer);
-    std::shared_ptr<Array>  newArray_objects(int type,
-                                             const py::list &list);
+    std::shared_ptr<SpatialField> newSpatialField(const std::string &type);
+    std::shared_ptr<Volume> newVolume(const std::string &type);
+    std::shared_ptr<Array> newArray(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray_objects(int type,
+                                                const py::list &list);
     std::shared_ptr<Material> newMaterial(const std::string &type);
     std::shared_ptr<Light> newLight(const std::string &type);
 

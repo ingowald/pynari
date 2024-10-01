@@ -27,6 +27,8 @@
 #include "pynari/Geometry.h"
 #include "pynari/Group.h"
 #include "pynari/Array.h"
+#include "pynari/SpatialField.h"
+#include "pynari/Volume.h"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
@@ -40,17 +42,19 @@ PYBIND11_MODULE(pynari, m) {
   m.def("newDevice", &createContext,
         "Creates an barney Context object");
  
+  m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
   m.attr("OBJECT")       = py::int_((int)ANARI_OBJECT);
   m.attr("SURFACE")      = py::int_((int)ANARI_SURFACE);
   m.attr("GEOMETRY")     = py::int_((int)ANARI_GEOMETRY);
   m.attr("MATERIAL")     = py::int_((int)ANARI_MATERIAL);
   m.attr("LIGHT")        = py::int_((int)ANARI_LIGHT);
-  m.attr("ARRAY")        = py::int_((int)ANARI_ARRAY);
   m.attr("RENDERER")     = py::int_((int)ANARI_RENDERER);
   m.attr("CAMERA")       = py::int_((int)ANARI_CAMERA);
   m.attr("WORLD")        = py::int_((int)ANARI_WORLD);
-  m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
+  m.attr("SPATIAL_FIELD")= py::int_((int)ANARI_SPATIAL_FIELD);
+  m.attr("VOLUME")       = py::int_((int)ANARI_VOLUME);
   
+  m.attr("ARRAY")        = py::int_((int)ANARI_ARRAY);
   m.attr("ARRAY1D")      = py::int_((int)ANARI_ARRAY1D);
   m.attr("ARRAY2D")      = py::int_((int)ANARI_ARRAY2D);
   m.attr("ARRAY3D")      = py::int_((int)ANARI_ARRAY3D);
@@ -107,6 +111,14 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Surface,pynari::Object,
                  std::shared_ptr<pynari::Surface>>(m, "anari::Surface");
   // -------------------------------------------------------
+  auto spatialField
+    = py::class_<pynari::SpatialField,pynari::Object,
+                 std::shared_ptr<pynari::SpatialField>>(m, "anari::SpatialField");
+  // -------------------------------------------------------
+  auto volume
+    = py::class_<pynari::Volume,pynari::Object,
+                 std::shared_ptr<pynari::Volume>>(m, "anari::Volume");
+  // -------------------------------------------------------
   auto material
     = py::class_<pynari::Material,pynari::Object,
                  std::shared_ptr<pynari::Material>>(m, "anari::Material");
@@ -142,11 +154,15 @@ PYBIND11_MODULE(pynari, m) {
   context.def("newCamera", &pynari::Context::newCamera);
   context.def("newRenderer", &pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);
+  context.def("newSpatialField", &pynari::Context::newSpatialField);
+  context.def("newVolume", &pynari::Context::newVolume);
   context.def("newMaterial", &pynari::Context::newMaterial);
   context.def("newLight", &pynari::Context::newLight);
   context.def("newWorld", &pynari::Context::newWorld);
   context.def("newFrame", &pynari::Context::newFrame);
   context.def("newGeometry", &pynari::Context::newGeometry);
+  context.def("newArray", &pynari::Context::newArray);
+  context.def("newArray", &pynari::Context::newArray_objects);
   context.def("newArray", &pynari::Context::newArray);
   context.def("newArray", &pynari::Context::newArray_objects);
 }

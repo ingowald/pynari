@@ -39,6 +39,10 @@ pybind11_add_module(pynari
   Renderer.cpp
   Surface.h
   Surface.cpp
+  SpatialField.h
+  SpatialField.cpp
+  Volume.h
+  Volume.cpp
   Array.h
   Array.cpp
   FrameBuffer.h

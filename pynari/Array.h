@@ -34,7 +34,8 @@ namespace pynari {
     void assignTo(Object::SP object,
                   anari::DataType intendedType,
                   const std::string &name) override;
-    
+
+    /*! number of DIMENSIONS of this array, NOT the 'size' */
     int          nDims  = -1;
     anari::Array handle =  0;
   };

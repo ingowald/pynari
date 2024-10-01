@@ -14,16 +14,25 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#include "pynari/Material.h"
+#pragma once
+
+#include "pynari/Object.h"
 
 namespace pynari {
 
-  Material::Material(Device::SP device,
-                     const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-  }
+  struct SpatialField : public Object {
+    typedef std::shared_ptr<SpatialField> SP;
+    
+    SpatialField(Device::SP device,
+                 const std::string &type);
+    virtual ~SpatialField() = default;
+    std::string toString() const override
+    { return "pynari::SpatialField<"+type+">"; }
+    
+    anari::Object getHandle() const override { return handle; }
+
+    anari::SpatialField handle = 0;
+    const std::string type;
+  };
 
 }

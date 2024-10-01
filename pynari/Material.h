@@ -24,7 +24,7 @@ namespace pynari {
     typedef std::shared_ptr<Material> SP;
     
     Material(Device::SP device,
-             const std::string type);
+             const std::string &type);
     virtual ~Material() = default;
     std::string toString() const override { return "py_barn::Material"; }
     anari::Object getHandle() const override { return handle; }
