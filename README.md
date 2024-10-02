@@ -42,7 +42,7 @@ color_buffer = frame.get('channel.color')
 
 
 
-# PyNari equivalents of ANARI Data Types
+# PyNARI equivalents of ANARI Data Types
 
 ## Low-level types
 
@@ -89,7 +89,7 @@ array of surfaces, etc, simply use a python list:
 world.setParameterArray('surface', anari.SURFACE, [ surface ])
 ```
 
-# PyNari equivalents of ANARI API Functions
+# PyNARI equivalents of ANARI API Functions
 
 In anari, API functions are C99 style functions, but almost always
  called "on" either a specific ANARI device (e.g.,
@@ -195,12 +195,16 @@ other backends may result in different results.
 
 ## Sample 1: A simple (bent) quad made of two triangles
 
+https://github.com/ingowald/pynari/blob/master/sample01.py
+
 Mainly tests that 'triangles' geometry exists, and that backend can
 create/set Camera, World, and render a Frame.
 
 ![](sample01.jpg)
 
 ## Sample 2: A python version of Pete Shirley's "Ray Tracing in One Weekend" Scene
+
+https://github.com/ingowald/pynari/blob/master/sample02.py
 
 Mainly added for fun (and as tribute to Pete's work!), but also very
 useful in testing different material configurations for the ANARI
@@ -212,7 +216,7 @@ renderer can actually handle such effects. Also useful to test ANARI
 
 # Sample 3: A tiny structured volume
 
-https://github.com/ingowald/pynari/blob/master/sample01.py
+https://github.com/ingowald/pynari/blob/master/sample03.py
 
 Mainly added to test structured volume data based volume rendering.
 In order to avoid any dependencies on external data files the created
@@ -221,4 +225,4 @@ both `transferFunction1D` volume and `structuredRegular` spatial
 field. If the renderer can handle those, it can probably also handle
 larger data.
 
-![https://github.com/ingowald/pynari/blob/master/sample03.py](sample03.jpg)
+![](sample03.jpg)
