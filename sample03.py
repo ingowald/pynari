@@ -5,37 +5,128 @@ import pynari as anari
 import random
 
 fb_size = (1600,800)
-look_from = (3.,1.,2.)
+look_from = (-3.,2.,-2.)
 look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
-fovy = 20.
+fovy = 40.
 
 #volume_dims = (512,512,512)
 #volume_fileName = 'magnetic_512_volume.raw'
 
 device = anari.newDevice('default')
 
+def get_volume_2():
+    cell_values = [ 0, 1, 0, 0, 0, 0, 0, 0 ]
+    volume_dims = (2,2,2)
+    return cell_values, volume_dims
+    
+def get_volume_3():
+    cell_values = [ 1, 0, 1,
+                    0, 0, 0,
+                    1, 0, 1,
+                    #
+                    0, 0, 0,
+                    0, 1, 0,
+                    0, 0, 0,
+                    #
+                    1, 1, 1,
+                    1, 0, 1,
+                    1, 1, 1
+                   ]
+    volume_dims = (3,3,3)
+    return cell_values, volume_dims
+    
+def get_volume_4():
+    cell_values = [ 0, 0, 0, 0,
+                    0, 0, 0, 0, 
+                    0, 0, 0, 0, 
+                    0, 0, 0, 0,
+                    #
+                    0, 0, 0, 0, 
+                    0, 1, 1, 0, 
+                    0, 1, 1, 0, 
+                    0, 0, 0, 0,
+                    #
+                    0, 0, 0, 0, 
+                    0, 1, 1, 0, 
+                    0, 1, 1, 0, 
+                    0, 0, 0, 0,
+                    #
+                    0, 0, 0, 0, 
+                    0, 0, 0, 0, 
+                    0, 0, 0, 0, 
+                    0, 0, 0, 0, 
+                   ]
+    volume_dims = (4,4,4)
+    return cell_values, volume_dims
 
-cell_values = [ 0, 1, 0, 0, 0, 0, 0, 0 ]
-volume_dims = (2,2,2)
+def get_volume_5():
+    cell_values = [ 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0,  
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0,
+                #
+                0, 0, 0, 0, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 0, 0, 0, 0,
+                #
+                0, 0, 0, 0, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 0, 0, 0, 0,
+                #
+                0, 0, 0, 0, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 1, 1, 1, 0, 
+                0, 0, 0, 0, 0,
+                #
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 
+               ]
+    volume_dims = (5,5,5)
+    return cell_values, volume_dims
+
+
+cell_values, volume_dims = get_volume_4()
+
+
 cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
 structured_data = device.newArray(anari.float,cell_array)
 
 cellSize = (2/volume_dims[0],2/volume_dims[1],2/volume_dims[2])
-field = device.newSpatialField('structuredRegular')
-field.setParameter('origin',anari.float3,(-1,-1,-1))
-field.setParameter('spacing',anari.float3,cellSize)
-field.setParameter('data',anari.ARRAY3D,structured_data)
-field.commitParameters()
+spatial_field = device.newSpatialField('structuredRegular')
+spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
+spatial_field.setParameter('spacing',anari.float3,cellSize)
+spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
+spatial_field.commitParameters()
 
-xf = np.array([ 0, 0, 0, 0,
-                1, 0, 1, 1,
-                0, 1, 0, 1,
-                0, 0, 0, 0 ],dtype=np.float32)
+xf = np.array([0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 1, 0,
+               0, 0, 1, 1,
+               0, 1, 0, 1,
+               0, 1, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0,
+               0, 0, 0, 0
+               ],dtype=np.float32)
 xf_array = device.newArray(anari.float4,xf)
 
 volume = device.newVolume('transferFunction1D')
 volume.setParameter('color',anari.ARRAY,xf_array)
+volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
+volume.setParameter('unitDistance',anari.FLOAT32,10.)
 volume.commitParameters()
                                                     
 world = device.newWorld()
@@ -58,7 +149,7 @@ camera.commitParameters()
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.commitParameters()
 
 

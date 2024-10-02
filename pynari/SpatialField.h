@@ -29,6 +29,14 @@ namespace pynari {
     std::string toString() const override
     { return "pynari::SpatialField<"+type+">"; }
     
+    void assignTo(Object::SP object,
+                  anari::DataType intendedType,
+                  const std::string &name) override
+    {
+      anariSetParameter(device->handle,object->getHandle(),
+                        name.c_str(),ANARI_SPATIAL_FIELD,&this->handle);
+    }
+    
     anari::Object getHandle() const override { return handle; }
 
     anari::SpatialField handle = 0;
