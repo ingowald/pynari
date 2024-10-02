@@ -32,16 +32,14 @@ namespace pynari {
     virtual ~Object() = default;
     virtual std::string toString() const;
 
-    virtual void assignTo(Object::SP object,
-                          anari::DataType intendedType,
-                          const std::string &name);
-    
     virtual ANARIDataType anariType() const = 0;
     
     void commit();
 
-    void set(const char *name, int type,
-             const Object::SP &object);
+    void set_object(const char *name, int type,
+                    const Object::SP &object);
+    void set_string(const char *name, int type,
+                    const std::string &stringValue) { PING; };
     void setArray_list(const char *name, int type, 
                        const py::list &list);
     void set_float(const char *name, int type,

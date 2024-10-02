@@ -35,4 +35,11 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Geometry::Geometry(Device::SP device,
+                     const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Geometry>(device->handle,type.c_str());
+  }
 }

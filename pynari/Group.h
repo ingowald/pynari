@@ -34,4 +34,10 @@ namespace pynari {
     ANARIDataType anariType() const override { return ANARI_GROUP; }
   };
 
+  inline Group::Group(Device::SP device,
+                      const py::list &list)
+    : Object(device)
+  {
+    handle = anari::newObject<anari::Group>(device->handle);
+  }
 }

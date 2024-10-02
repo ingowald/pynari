@@ -126,13 +126,11 @@ namespace pynari {
     switch(info.ndim) {
     case 1:
       nDims = 1;
-      handle = importArray1D(device->handle,type,info,buffer);
-      // throw std::runtime_error("array1d not implemented");
+      this->handle = importArray1D(device->handle,type,info,buffer);
       break;
     case 3:
       nDims = 3;
-      handle = importArray3D(device->handle,type,info,buffer);
-      // throw std::runtime_error("array1d not implemented");
+      this->handle = importArray3D(device->handle,type,info,buffer);
       break;
     default:
       throw std::runtime_error("un-supported array dimensionality for anari::Array1D");

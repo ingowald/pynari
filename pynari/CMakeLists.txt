@@ -21,17 +21,15 @@ pybind11_add_module(pynari
   Context.cpp
   Object.h
   Object.cpp
+  
   Material.h
-  Material.cpp
   Light.h
   Light.cpp
   World.h
   Frame.h
   Frame.cpp
   Group.h
-  Group.cpp
   Geometry.h
-  Geometry.cpp
   Camera.h
   Camera.cpp
   Renderer.h

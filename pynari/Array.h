@@ -30,10 +30,6 @@ namespace pynari {
     virtual ~Array() = default;
     std::string toString() const override { return "pynari::Array"; }
 
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override;
-
     ANARIDataType anariType() const override
     {
       switch (nDims) {

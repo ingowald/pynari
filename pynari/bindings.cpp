@@ -43,6 +43,7 @@ PYBIND11_MODULE(pynari, m) {
         "Creates an barney Context object");
  
   m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
+  m.attr("STRING")       = py::int_((int)ANARI_STRING);
   m.attr("OBJECT")       = py::int_((int)ANARI_OBJECT);
   m.attr("SURFACE")      = py::int_((int)ANARI_SURFACE);
   m.attr("GEOMETRY")     = py::int_((int)ANARI_GEOMETRY);
@@ -59,7 +60,7 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("ARRAY1D")      = py::int_((int)ANARI_ARRAY1D);
   m.attr("ARRAY2D")      = py::int_((int)ANARI_ARRAY2D);
   m.attr("ARRAY3D")      = py::int_((int)ANARI_ARRAY3D);
-  
+
   m.attr("FLOAT32")      = py::int_((int)ANARI_FLOAT32);
   m.attr("FLOAT32_VEC2") = py::int_((int)ANARI_FLOAT32_VEC2);
   m.attr("FLOAT32_VEC3") = py::int_((int)ANARI_FLOAT32_VEC3);
@@ -70,23 +71,32 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("UINT32_VEC3")  = py::int_((int)ANARI_UINT32_VEC3);
   m.attr("UINT32_VEC4")  = py::int_((int)ANARI_UINT32_VEC4);
 
+  // iw - not anari spelling, but ...
+  m.attr("FLOAT")        = py::int_((int)ANARI_FLOAT32);
   m.attr("float")        = py::int_((int)ANARI_FLOAT32);
   m.attr("float2")       = py::int_((int)ANARI_FLOAT32_VEC2);
   m.attr("float3")       = py::int_((int)ANARI_FLOAT32_VEC3);
   m.attr("float4")       = py::int_((int)ANARI_FLOAT32_VEC4);
 
+  m.attr("UINT")         = py::int_((int)ANARI_UINT32);
   m.attr("uint")         = py::int_((int)ANARI_UINT32);
   m.attr("uint2")        = py::int_((int)ANARI_UINT32_VEC2);
   m.attr("uint3")        = py::int_((int)ANARI_UINT32_VEC3);
   m.attr("uint4")        = py::int_((int)ANARI_UINT32_VEC4);
 
+  
   // -------------------------------------------------------
   auto object
     = py::class_<pynari::Object,
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
-  object.def("setParameter",  &pynari::Object::set);
+  /*! set FROM a python pynari object */
+  object.def("setParameter",  &pynari::Object::set_object);
+  /*! set FROM a python string */
+  object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameterArray",  &pynari::Object::setArray_list);
+  /*! set FROM a python float value */
   object.def("setParameter",  &pynari::Object::set_float);
+  /*! set FROM a python float tuple */
   object.def("setParameter",  &pynari::Object::set_float2);
   object.def("setParameter",  &pynari::Object::set_float3);
   object.def("setParameter",  &pynari::Object::set_float4);

@@ -79,11 +79,13 @@ namespace pynari {
     anari::setParameter(device->handle,this->handle,name,array);
   }
   
-  void Object::set(const char *name, int type, const Object::SP &object)
+  void Object::set_object(const char *name, int type, const Object::SP &object)
   {
     /* TODO: do some checking if 'type' matches anariType() */
     anari::setParameter(device->handle,this->handle,
-                        name,anariType(),object->handle);
+                        name,
+                        object->anariType(),
+                        &object->handle);
   }
     
   void Object::set_float(const char *name,

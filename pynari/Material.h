@@ -32,4 +32,12 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Material::Material(Device::SP device,
+                     const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Material>(device->handle,type.c_str());
+  }
+
 }
