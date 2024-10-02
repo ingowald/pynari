@@ -99,6 +99,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_uint_vec);
   
   object.def("commitParameters", &pynari::Object::commit);
+  object.def("release", &pynari::Object::release);
   // -------------------------------------------------------
   auto camera
     = py::class_<pynari::Camera,pynari::Object,

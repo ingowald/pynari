@@ -49,9 +49,9 @@ endif()
 
 
 
-find_package(PythonLibs 3)
-
-find_package(Python 3 COMPONENTS Interpreter Development)
+#find_package(PythonLibs 3)
+#find_package(Python 3 COMPONENTS Interpreter Development)
+find_package(Python3 COMPONENTS Interpreter Development)
 
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
 add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)

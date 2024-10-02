@@ -44,14 +44,13 @@ pybind11_add_module(pynari
   Volume.cpp
   Array.h
   Array.cpp
-  FrameBuffer.h
-  FrameBuffer.cpp
   bindings.cpp
   )
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 target_link_libraries(pynari
   PRIVATE
-  Python::Python
+  #Python::Python
+  Python3::Python
   anari::helium
   #barney
   stb_image

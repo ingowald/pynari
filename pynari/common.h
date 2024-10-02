@@ -28,6 +28,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <string>
 
 namespace pynari {
   using uint = uint32_t;
