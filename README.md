@@ -161,3 +161,62 @@ Frame buffers do not get mapped and thus do not require unmapping,
 either.  Different channels are read using
 `frame.get('channel.color')` and `frame.get('channel.depth')`.
 
+
+
+# Building, Installing, and Running
+
+Eventually pynari should be installable through pip, but it's not yet
+in a state to do so. Until then:
+
+- To *build*: first download, build, and install the official ANARI
+  SDK. Once the SDK is installed this project should build out of the
+  box with `cmake`, without additional dependencies. Once built, you
+  should have a library of name 
+  `pynari.cpython-312-x86_64-linux-gnu.so` (or similar for other
+  OS'es)
+
+- To *install*: once built with cmake, do a `make install`. If you
+  can't install system-wise, make sure yo have a `PYTHONPATH` variable
+  point to where the just built library resides.
+  
+- TO *run*: Well, python ... `python3 whatEverFile.py`, python will
+  load the library as needed. If running into trouble about python not
+  finding pynari, check your PYTHONPATH.
+
+# Samples
+
+`pynari` currently comes with a few simple samples to test and
+demonstrate capabilities. Note that what actual images get rendered
+will depend very much on what actual ANARI implementation you're going
+to use - the ANARI API only describes *how* a world is specified, it
+doesn't guarantee that all backends will render that in exactly the
+same way. For the below screenshots I have used `barney/(B)ANARI`;
+other backends may result in different results.
+
+## Sample 1: A simple (bent) quad made of two triangles
+
+Mainly tests that 'triangles' geometry exists, and that backend can
+create/set Camera, World, and render a Frame.
+
+![](sample01.jpg)
+
+## Sample 2: A python version of Pete Shirley's "Ray Tracing in One Weekend" Scene
+
+Mainly added for fun (and as tribute to Pete's work!), but also very
+useful in testing different material configurations for the ANARI
+`pysicallyBased` material (Glass, Metal, Lambertian), and whether the
+renderer can actually handle such effects. Also useful to test ANARI
+`sphere` geometry.
+
+![](sample02.jpg)
+
+# Sample 3: A tiny structured volume
+
+Mainly added to test structured volume data based volume rendering.
+In order to avoid any dependencies on external data files the created
+volume is tiny (just a 5x5x5 brick of 0/1 voxels), but it does set up
+both `transferFunction1D` volume and `structuredRegular` spatial
+field. If the renderer can handle those, it can probably also handle
+larger data.
+
+![](sample03.jpg)
