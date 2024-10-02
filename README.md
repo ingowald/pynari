@@ -1,4 +1,4 @@
-# `pyNari` - a Python Interface for ANARI
+# `pyNARI` - a Python Interface for ANARI
 
 PyNari is a thin python wrapper over the Khronos `ANARI` API
 (https://registry.khronos.org/ANARI/) that allows to use ANARI
@@ -10,7 +10,7 @@ functionality, with just minor changes to make the API more "pythonic"
 those objects), as well as a bit more consice and readable.
 
 For a more complete example see, e.g.,
-https://github.com/ingowald/pynari/blob/master/test01.py , but in
+https://github.com/ingowald/pynari/blob/master/sample01.py , but in
 short, the syntax is about like this:
 
 ```
@@ -212,6 +212,8 @@ renderer can actually handle such effects. Also useful to test ANARI
 
 # Sample 3: A tiny structured volume
 
+https://github.com/ingowald/pynari/blob/master/sample01.py
+
 Mainly added to test structured volume data based volume rendering.
 In order to avoid any dependencies on external data files the created
 volume is tiny (just a 5x5x5 brick of 0/1 voxels), but it does set up
@@ -219,4 +221,4 @@ both `transferFunction1D` volume and `structuredRegular` spatial
 field. If the renderer can handle those, it can probably also handle
 larger data.
 
-![](sample03.jpg)
+![https://github.com/ingowald/pynari/blob/master/sample03.py](sample03.jpg)
