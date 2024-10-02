@@ -95,8 +95,26 @@ def get_volume_5():
     volume_dims = (5,5,5)
     return cell_values, volume_dims
 
-
 cell_values, volume_dims = get_volume_4()
+
+out_file_name = ''
+args = sys.argv[1:]
+opts, args = getopt.getopt(args,"hmo:",["magnetic","help","output="])
+for opt,arg in opts:
+    if opt == '-h':
+        printf('sample03.py [-o outfile.jpg]')
+        sys.exit(0)
+    elif opt == "-m":
+        volume_dims = (512,512,512)
+        cell_values = np.fromfile('magnetic-512-volume.raw', dtype=np.float32)
+        cell_values = np.array(cell_values).reshape(volume_dims)
+        look_from = (-.5,2.,1.)
+        look_at = (0., 0., 0.)
+        look_up = (0.,0.,1.)
+        fovy = 60
+    elif opt == '-o':
+        out_file_name = arg
+
 
 
 cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
@@ -127,12 +145,18 @@ xf_array = device.newArray(anari.float4,xf)
 volume = device.newVolume('transferFunction1D')
 volume.setParameter('color',anari.ARRAY,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-volume.setParameter('unitDistance',anari.FLOAT32,10.)
+volume.setParameter('unitDistance',anari.FLOAT32,100.)
 volume.commitParameters()
                                                     
 world = device.newWorld()
 #world.setParameterArray('surface', anari.SURFACE, spheres )
 world.setParameterArray('volume', anari.VOLUME, [ volume ] )
+light = device.newLight('directional')
+light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
+light.commitParameters()
+
+array = device.newArray(anari.LIGHT, [light])
+world.setParameter('light', anari.ARRAY1D, array)
 world.commitParameters()
 
 
@@ -168,18 +192,9 @@ frame.render()
 fb_color = frame.get('channel.color')
 pixels = np.array(fb_color)#.reshape([height, width, 4])
 
-out_file_name = ''
-args = sys.argv[1:]
-opts, args = getopt.getopt(args,"ho:",["help","output="])
-for opt,arg in opts:
-    if opt == '-h':
-        printf('sample03.py [-o outfile.jpg]')
-        sys.exit(0)
-    elif opt == '-o':
-        out_file_name = arg
-
 if out_file_name == '':
     plt.imshow(pixels)
+    plt.gca().invert_yaxis()
     plt.show()
 else:
     im = PIL.Image.fromarray(pixels)

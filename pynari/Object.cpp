@@ -80,7 +80,6 @@ namespace pynari {
 
     device->listOfAllObjectsCreatedOnThisDevice.erase(this);
     
-    std::cout << "pynari object " << (int*)this << " is releasing..." << std::endl;
     anari::release(device->handle,handle);
     handle = {};
     device = nullptr;

@@ -25,8 +25,8 @@ namespace pynari {
     
     Material(Device::SP device,
              const std::string &type);
-    virtual ~Material();
-    std::string toString() const override { return "py_barn::Material"; }
+    virtual ~Material() = default;
+    std::string toString() const override { return "pynari::Material"; }
     ANARIDataType anariType() const override { return ANARI_MATERIAL; }
     
     const std::string type;
@@ -38,11 +38,5 @@ namespace pynari {
       type(type)
   {
     handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-    std::cout << "created mython material " << (int*)handle << std::endl;
-  }
-
-  inline Material::~Material()
-  {
-    std::cout << "pynari material " << toString() << " is dying" << std::endl;
   }
 }

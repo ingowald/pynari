@@ -226,3 +226,9 @@ field. If the renderer can handle those, it can probably also handle
 larger data.
 
 ![](sample03.jpg)
+
+If you do happen to have a copy of the "magnetic" volume data set
+lying around in your current working dir, you can also run
+`sample03.py -m` to get this:
+
+![](sample03-magnetic.jpg)
