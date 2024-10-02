@@ -26,19 +26,11 @@ namespace pynari {
     Camera(Device::SP device,
            const std::string &type);
     virtual ~Camera() = default;
-    anari::Object getHandle() const override { return handle; }
-    std::string toString() const override { return "pynari::Camera<"+type+">"; }
 
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_CAMERA,&this->handle);
-    }
+    std::string toString() const override { return "pynari::Camera<"+type+">"; }
+    ANARIDataType anariType() const override { return ANARI_CAMERA; }
     
     const std::string type;
-    anari::Camera handle = 0;
   };
 
 }

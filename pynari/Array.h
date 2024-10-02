@@ -29,15 +29,23 @@ namespace pynari {
           const std::vector<Object::SP> &list);
     virtual ~Array() = default;
     std::string toString() const override { return "pynari::Array"; }
-    anari::Object getHandle() const override { return handle; }
 
     void assignTo(Object::SP object,
                   anari::DataType intendedType,
                   const std::string &name) override;
 
+    ANARIDataType anariType() const override
+    {
+      switch (nDims) {
+      case 1: return ANARI_ARRAY1D;
+      case 2: return ANARI_ARRAY2D;
+      case 3: return ANARI_ARRAY3D;
+      default: throw std::runtime_error("array type not implemented");
+      }
+    };
+    
     /*! number of DIMENSIONS of this array, NOT the 'size' */
     int          nDims  = -1;
-    anari::Array handle =  0;
   };
 
 }

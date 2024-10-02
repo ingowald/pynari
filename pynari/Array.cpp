@@ -55,25 +55,6 @@ namespace pynari {
     return handle;
   }
 
-  void Array::assignTo(Object::SP object,
-                       anari::DataType intendedType,
-                       const std::string &name) 
-  {
-    switch(nDims) {
-    case 1:
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_ARRAY1D,&this->handle);
-      return;
-    case 3:
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_ARRAY3D,&this->handle);
-      return;
-    default:
-      throw std::runtime_error("Array::assignTo not implemented for nDims="
-                               +std::to_string(nDims)); 
-    }
-  }
-  
   anari::Array importArray1D(anari::Device device,
                              anari::DataType type,
                              const py::buffer_info &info,
@@ -169,8 +150,7 @@ namespace pynari {
     ANARIObject *mapped
       = (ANARIObject*)anariMapArray(device->handle,array);
     for (int i=0;i<objects.size();i++)
-      mapped[i] = objects[i]->getHandle();
-    // std::copy(objects.begin(),objects.end(),mapped);
+      mapped[i] = objects[i]->handle;
     anariUnmapArray(device->handle,array);
     this->handle = array;
     nDims = 1;

@@ -25,10 +25,9 @@ namespace pynari {
     
     Surface(Device::SP device);
     virtual ~Surface() = default;
-    anari::Object getHandle() const override { return handle; }
-    std::string toString() const override { return "pynari::Surface"; }
 
-    anari::Surface handle = 0;
+    std::string toString() const override { return "pynari::Surface"; }
+    ANARIDataType anariType() const override { return ANARI_SURFACE; }
   };
 
 }

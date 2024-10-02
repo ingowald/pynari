@@ -17,15 +17,7 @@
 #pragma once
 
 #include "pynari/common.h"
-// #include "pynari/Module.h"
-// #include "pynari/GeomType.h"
-// #include "pynari/Buffer.h"
-// #include "pynari/Geom.h"
-// #include "pynari/Group.h"
-// #include "pynari/MissProg.h"
-// #include "pynari/RayGen.h"
-#include "pynari/FrameBuffer.h"
-#include "pynari/World.h"
+#include "pynari/Object.h"
 
 namespace pynari {
 
@@ -50,7 +42,6 @@ namespace pynari {
 
     static SP create(const std::string &libName);
 
-    std::shared_ptr<FrameBuffer> fbCreate(int sx, int sy);
     std::shared_ptr<World> newWorld();
     std::shared_ptr<Frame> newFrame();
     std::shared_ptr<Geometry> newGeometry(const std::string &type);

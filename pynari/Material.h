@@ -27,18 +27,9 @@ namespace pynari {
              const std::string &type);
     virtual ~Material() = default;
     std::string toString() const override { return "py_barn::Material"; }
-    anari::Object getHandle() const override { return handle; }
-
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_MATERIAL,&this->handle);
-    }
+    ANARIDataType anariType() const override { return ANARI_MATERIAL; }
     
     const std::string type;
-    anari::Material handle = 0;
   };
 
 }

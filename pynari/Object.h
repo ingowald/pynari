@@ -32,15 +32,11 @@ namespace pynari {
     virtual ~Object() = default;
     virtual std::string toString() const;
 
-    /*! returns the anari handle for this (pynari-)object; the object
-        itself my store this in a somewhat more specific type (eg, a
-        renderer will store it as a anari::Renderer type, not a
-        anari::Object */
-    virtual anari::Object getHandle() const = 0;
-
     virtual void assignTo(Object::SP object,
                           anari::DataType intendedType,
                           const std::string &name);
+    
+    virtual ANARIDataType anariType() const = 0;
     
     void commit();
 
@@ -68,8 +64,10 @@ namespace pynari {
                    const std::tuple<uint,uint,uint,uint> &v);
     void set_uint_vec(const char *name, int type, 
                       const std::vector<uint> &v);
+    void release() { handle = {}; }
 
-    const Device::SP device;
+    const Device::SP       device;
+    anari::Object handle = {};
   };
   
 }

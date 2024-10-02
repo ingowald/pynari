@@ -26,19 +26,11 @@ namespace pynari {
     Light(Device::SP device,
              const std::string type);
     virtual ~Light() = default;
+    
     std::string toString() const override { return "py_barn::Light"; }
-    anari::Object getHandle() const override { return handle; }
-
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_LIGHT,&this->handle);
-    }
+    ANARIDataType anariType() const override { return ANARI_LIGHT; }
     
     const std::string type;
-    anari::Light handle = 0;
   };
 
 }

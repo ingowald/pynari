@@ -29,10 +29,9 @@ namespace pynari {
     Group(Device::SP device,
           const py::list &list);
     virtual ~Group() = default;
-    std::string toString() const override { return "py_barn::Group"; }
-    anari::Object getHandle() const override { return handle; }
     
-    anari::Group handle = 0;
+    std::string toString() const override { return "py_barn::Group"; }
+    ANARIDataType anariType() const override { return ANARI_GROUP; }
   };
 
 }

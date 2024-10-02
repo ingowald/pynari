@@ -20,14 +20,6 @@
 #include "pynari/Data.h"
 #include "pynari/Group.h"
 #include "pynari/Camera.h"
-#include "pynari/FrameBuffer.h"
 
 namespace pynari {
-
-  World::World(Device::SP device)
-    : Object(device)
-  {
-    handle = anari::newObject<anari::World>(device->handle);
-  }
-
 }

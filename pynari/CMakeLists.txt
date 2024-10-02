@@ -26,7 +26,6 @@ pybind11_add_module(pynari
   Light.h
   Light.cpp
   World.h
-  World.cpp
   Frame.h
   Frame.cpp
   Group.h

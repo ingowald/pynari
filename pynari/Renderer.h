@@ -26,20 +26,11 @@ namespace pynari {
     Renderer(Device::SP device,
            const std::string &type);
     virtual ~Renderer() = default;
-    anari::Object getHandle() const override { return handle; }
-    std::string toString() const override { return "pynari::Renderer<"+type+">"; }
 
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_RENDERER,&this->handle);
-    }
-    
+    std::string toString() const override { return "pynari::Renderer<"+type+">"; }
+    ANARIDataType anariType() const override { return ANARI_RENDERER; }
     
     const std::string type;
-    anari::Renderer handle = 0;
   };
 
 }

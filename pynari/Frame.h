@@ -32,13 +32,17 @@ namespace pynari {
     
     Frame(Device::SP device);
     virtual ~Frame() = default;
+    
     std::string toString() const override { return "pynari::Frame"; }
-    anari::Object getHandle() const override { return handle; }
+    ANARIDataType anariType() const override { return ANARI_FRAME; }
 
+    /*! trigger rendering a frame; unlike native anari that not only
+        starts the frame, it also waits for it to finish */
     void render();
+    
+    /*! read a given frame buffer channel, and return it in a
+        np::array of proper dimensions */
     py::object get(const std::string &channelName);
-
-    anari::Frame handle = 0;
   };
 
 }

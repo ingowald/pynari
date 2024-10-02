@@ -53,14 +53,9 @@ namespace pynari {
     : device(device)
   {}
   
-  void Object::assignTo(Object::SP object,
-                        anari::DataType intendedType,
-                        const std::string &name)
-  { throw std::runtime_error("Object::assignTo not implemented for object "
-                             +object->toString()); };
   std::string Object::toString() const { return "<Object>"; }
 
-  void Object::commit() { anariCommitParameters(device->handle,getHandle()); }
+  void Object::commit() { anariCommitParameters(device->handle,this->handle); }
 
   void Object::setArray_list(const char *name,
                              int type, 
@@ -70,7 +65,7 @@ namespace pynari {
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
       assert(object);
-      ANARIObject handle = object->getHandle();
+      ANARIObject handle = object->handle;
       objects.push_back(handle);
     }
     anari::Array array
@@ -81,12 +76,14 @@ namespace pynari {
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
       
-    anari::setParameter(device->handle,getHandle(),name,array);
+    anari::setParameter(device->handle,this->handle,name,array);
   }
   
   void Object::set(const char *name, int type, const Object::SP &object)
   {
-    object->assignTo(shared_from_this(),type,name);
+    /* TODO: do some checking if 'type' matches anariType() */
+    anari::setParameter(device->handle,this->handle,
+                        name,anariType(),object->handle);
   }
     
   void Object::set_float(const char *name,
@@ -95,7 +92,7 @@ namespace pynari {
   {
     switch(type) {
     case ANARI_FLOAT32:
-      return anari::setParameter(device->handle,getHandle(),name,(float)v);
+      return anari::setParameter(device->handle,handle,name,(float)v);
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)
@@ -114,7 +111,7 @@ namespace pynari {
   {
     switch(type) {
     case ANARI_FLOAT32_VEC3:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::float3(std::get<0>(v),
                                               std::get<1>(v),
                                               std::get<2>(v)));
@@ -130,7 +127,7 @@ namespace pynari {
                           const std::tuple<float,float,float,float> &v)
   { switch(type) {
     case ANARI_FLOAT32_VEC4:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::float4(std::get<0>(v),
                                               std::get<1>(v),
                                               std::get<2>(v),
@@ -152,13 +149,13 @@ namespace pynari {
   {
     switch(type) {
     case ANARI_DATA_TYPE:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  (anari::DataType)v);
     case ANARI_UINT32:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  (uint)v);
     case ANARI_FLOAT32:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  (float)v);
     default:
       throw std::runtime_error
@@ -173,7 +170,7 @@ namespace pynari {
   {
     switch(type) {
     case ANARI_UINT32_VEC2:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::uint2(std::get<0>(v),
                                              std::get<1>(v)));
     default:
@@ -189,12 +186,12 @@ namespace pynari {
   { 
     switch(type) {
     case ANARI_FLOAT32_VEC3:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::float3(std::get<0>(v),
                                               std::get<1>(v),
                                               std::get<2>(v)));
     case ANARI_UINT32_VEC3:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::uint3(std::get<0>(v),
                                              std::get<1>(v),
                                              std::get<2>(v)));
@@ -210,13 +207,13 @@ namespace pynari {
                          const std::tuple<uint,uint,uint,uint> &v)
   { switch(type) {
     case ANARI_UINT32_VEC4:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::uint4(std::get<0>(v),
                                              std::get<1>(v),
                                              std::get<2>(v),
                                              std::get<3>(v)));
     case ANARI_FLOAT32_VEC4:
-      return anari::setParameter(device->handle,getHandle(),name,
+      return anari::setParameter(device->handle,this->handle,name,
                                  math::float4(std::get<0>(v),
                                               std::get<1>(v),
                                               std::get<2>(v),

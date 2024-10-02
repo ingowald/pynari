@@ -29,9 +29,8 @@ namespace pynari {
     std::string toString() const override
     { return "pynari::Volume<"+type+">"; }
     
-    anari::Object getHandle() const override { return handle; }
+    ANARIDataType anariType() const override { return ANARI_VOLUME; }
 
-    anari::Volume handle = 0;
     const std::string type;
   };
 

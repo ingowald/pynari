@@ -32,18 +32,15 @@ namespace pynari {
     
     World(Device::SP device);
     virtual ~World() = default;
-    std::string toString() const override { return "pynari::World"; }
-    anari::Object getHandle() const override { return handle; }
-
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_WORLD,&this->handle);
-    }
     
-    anari::World handle = 0;
+    std::string toString() const override { return "pynari::World"; }
+    ANARIDataType anariType() const override { return ANARI_WORLD; }
   };
 
+
+  inline World::World(Device::SP device)
+    : Object(device)
+  {
+    handle = anari::newObject<anari::World>(device->handle);
+  }
 }

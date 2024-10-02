@@ -28,19 +28,11 @@ namespace pynari {
     Geometry(Device::SP device,
              const std::string &type);
     virtual ~Geometry() = default;
-    anari::Object getHandle() const override { return handle; }
-    std::string toString() const override { return "pynari::Geometry<"+type+">"; }
 
-    void assignTo(Object::SP object,
-                  anari::DataType intendedType,
-                  const std::string &name) override
-    {
-      anariSetParameter(device->handle,object->getHandle(),
-                        name.c_str(),ANARI_GEOMETRY,&this->handle);
-    }
-    
+    std::string toString() const override { return "pynari::Geometry<"+type+">"; }
+    ANARIDataType anariType() const override { return ANARI_GEOMETRY; }
+
     const std::string type;
-    anari::Geometry     handle = 0;
   };
 
 }

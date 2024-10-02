@@ -15,7 +15,6 @@
 // ======================================================================== //
 
 #include "pynari/Context.h"
-#include "pynari/FrameBuffer.h"
 #include "pynari/Camera.h"
 #include "pynari/Renderer.h"
 #include "pynari/Surface.h"
@@ -61,14 +60,6 @@ namespace pynari {
     destroy();
   }
 
-  std::shared_ptr<FrameBuffer>
-  Context::fbCreate(int sx, int sy)
-  {
-    FrameBuffer::SP fb = std::make_shared<FrameBuffer>(device);
-    fb->resize(math::int2(sx,sy));
-    return fb;
-  }
-  
   std::shared_ptr<World>
   Context::newWorld()
   {
@@ -132,14 +123,11 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
-    // std::vector<Object::SP> objects;
     std::vector<Object::SP> objects;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
       assert(object);
       objects.push_back(object);
-      // ANARIObject handle = object->getHandle();
-      // objects.push_back(handle);
     }
     return std::make_shared<Array>(device,(anari::DataType)type,objects);
   }
@@ -160,36 +148,6 @@ namespace pynari {
     return std::make_shared<Context>(libName);
   }
   
-  // Buffer::SP Context::createDeviceBuffer(int type, const py::buffer &buffer)
-  // {
-  //   return DeviceBuffer::create(this,(OWLDataType)type,buffer);
-  // }
-  
-  // Buffer::SP Context::createHostPinnedBuffer(int type, int size)
-  // {
-  //   return HostPinnedBuffer::create(this,(OWLDataType)type,size);
-  //   // return Buffer::create(this,(OWLDataType)type,buffer);
-  // }
-
-  // Geom::SP Context::createGeom(const std::shared_ptr<GeomType> type)
-  // {
-  //   return Geom::create(this,type);
-  // }
-
-  // MissProg::SP Context::createMissProg(const std::shared_ptr<Module> &module,
-  //                                      const std::string &typeName,
-  //                                      const std::string &funcName)
-  // {
-  //   return MissProg::create(this,module,typeName,funcName);
-  // }
-
-  // RayGen::SP Context::createRayGen(const std::shared_ptr<Module> &module,
-  //                                  const std::string &typeName,
-  //                                  const std::string &funcName)
-  // {
-  //   return RayGen::create(this,module,typeName,funcName);
-  // }
-
   /*! allows to query whether the user has already explicitly called
     contextDestroy. if so, any releases of handles are no longer
     valid because whatever they may have pointed to inside the
