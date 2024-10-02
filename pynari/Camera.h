@@ -33,4 +33,12 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Camera::Camera(Device::SP device,
+                 const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Camera>(device->handle,type.c_str());
+  }
+
 }

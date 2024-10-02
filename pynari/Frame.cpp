@@ -52,9 +52,27 @@ namespace pynari {
                                 sizeof(float)},
                                (float*)mapped);
       }
+      else if (pixelType == ANARI_UFIXED8_VEC4) {
+        frame
+          // = py::array_t<uint32_t>(
+                                  // /* numpy shape */
+                                  // {(int)height,(int)width},
+                                  // /*! C strides */
+                                  // {width*sizeof(uint32_t),
+                                  //  sizeof(uint32_t)},
+                                  // (uint32_t*)mapped);
+          = py::array_t<uint8_t>(
+                                  /* numpy shape */
+                                  {(int)height,(int)width,4},
+                                  /*! C strides */
+                                  {width*4*sizeof(uint8_t),
+                                   4*sizeof(uint8_t),
+                                   sizeof(uint8_t)},
+                                  (uint8_t*)mapped);
+      }
       else
         throw std::runtime_error("currently only supporting frame buffers "
-                                 "of format 'ANARI_FLOAT32_VEC4");
+                                 "of format 'ANARI_FLOAT32_VEC4' or 'ANARI_UFIXED8_VEC4");
                                
       anariUnmapFrame(device->handle,(ANARIFrame)handle,"color");
       return frame;

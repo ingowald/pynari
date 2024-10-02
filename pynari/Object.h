@@ -29,7 +29,7 @@ namespace pynari {
     
     Object(Device::SP device);
     
-    virtual ~Object() = default;
+    virtual ~Object() { release(); }
     virtual std::string toString() const;
 
     virtual ANARIDataType anariType() const = 0;
@@ -62,9 +62,11 @@ namespace pynari {
                    const std::tuple<uint,uint,uint,uint> &v);
     void set_uint_vec(const char *name, int type, 
                       const std::vector<uint> &v);
-    void release() { handle = {}; }
+    void release();
 
-    const Device::SP       device;
+    void assertThisObjectIsValid();
+
+    Device::SP    device;
     anari::Object handle = {};
   };
   

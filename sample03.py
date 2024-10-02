@@ -3,6 +3,7 @@ import numpy as np
 #from pynari import *
 import pynari as anari
 import random
+import sys, getopt,PIL
 
 fb_size = (1600,800)
 look_from = (-3.,2.,-2.)
@@ -157,7 +158,7 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, fb_size)
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
+frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
@@ -165,12 +166,27 @@ frame.commitParameters()
 
 frame.render()
 fb_color = frame.get('channel.color')
+pixels = np.array(fb_color)#.reshape([height, width, 4])
 
-pixels = fb_color
-np.array(fb_color).reshape([fb_size[0], fb_size[1], 4])
-plt.imshow(pixels)
-plt.gca().invert_yaxis()
-plt.show()
+out_file_name = ''
+args = sys.argv[1:]
+opts, args = getopt.getopt(args,"ho:",["help","output="])
+for opt,arg in opts:
+    if opt == '-h':
+        printf('sample03.py [-o outfile.jpg]')
+        sys.exit(0)
+    elif opt == '-o':
+        out_file_name = arg
+
+if out_file_name == '':
+    plt.imshow(pixels)
+    plt.show()
+else:
+    im = PIL.Image.fromarray(pixels)
+    im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
+    im = im.convert('RGB')
+    im.save(out_file_name)
+
 
 
 

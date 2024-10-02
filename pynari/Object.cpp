@@ -53,14 +53,41 @@ namespace pynari {
     : device(device)
   {}
   
-  std::string Object::toString() const { return "<Object>"; }
+  std::string Object::toString() const
+  {
+    return "<Object>";
+  }
+  
+  void Object::assertThisObjectIsValid()
+  {
+    assert(this->handle);
+    assert(this->device);
+  }
+  
+  void Object::commit()
+  {
+    assertThisObjectIsValid();
+    anariCommitParameters(device->handle,this->handle);
+  }
 
-  void Object::commit() { anariCommitParameters(device->handle,this->handle); }
+  void Object::release()
+  {
+    // seems we have some problems with properly releasing objects, so
+    // let's not do that right now
+    return;
+    
+    if (!handle) return;
+    
+    anari::release(device->handle,handle);
+    handle = {};
+    device = nullptr;
+  }
 
   void Object::setArray_list(const char *name,
                              int type, 
                              const py::list &list)
   { 
+    assertThisObjectIsValid();
     std::vector<ANARIObject> objects;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
@@ -81,6 +108,7 @@ namespace pynari {
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
   {
+    assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
     anari::setParameter(device->handle,this->handle,
                         name,
@@ -92,6 +120,7 @@ namespace pynari {
                          int type,
                          float v)
   {
+    assertThisObjectIsValid();
     switch(type) {
     case ANARI_FLOAT32:
       return anari::setParameter(device->handle,handle,name,(float)v);
@@ -105,12 +134,25 @@ namespace pynari {
   void Object::set_float2(const char *name,
                           int type, 
                           const std::tuple<float,float> &v)
-  { PING; }
+  { 
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,handle,name,
+                                 math::float2(std::get<0>(v),
+                                              std::get<1>(v)));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
     
   void Object::set_float3(const char *name,
                           int type, 
                           const std::tuple<float,float,float> &v)
   {
+    assertThisObjectIsValid();
     switch(type) {
     case ANARI_FLOAT32_VEC3:
       return anari::setParameter(device->handle,this->handle,name,
@@ -127,7 +169,9 @@ namespace pynari {
   void Object::set_float4(const char *name,
                           int type, 
                           const std::tuple<float,float,float,float> &v)
-  { switch(type) {
+  {
+    assertThisObjectIsValid();
+    switch(type) {
     case ANARI_FLOAT32_VEC4:
       return anari::setParameter(device->handle,this->handle,name,
                                  math::float4(std::get<0>(v),
@@ -136,19 +180,48 @@ namespace pynari {
                                               std::get<3>(v)));
     default:
       throw std::runtime_error
-        (std::string(__PRETTY_FUNCTION__)+" unsupported type "+to_string((anari::DataType)type));
+        (std::string(__PRETTY_FUNCTION__)+" unsupported type "
+         +to_string((anari::DataType)type));
     }
   }
     
+  void Object::set_uint_vec(const char *name,
+                            int type, 
+                            const std::vector<uint> &v)
+  {
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_UINT32_VEC3:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 math::uint3(v[0],v[1],v[2]));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+
   void Object::set_float_vec(const char *name,
                              int type, 
                              const std::vector<float> &v)
-  { PING; }
+  {
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_FLOAT32_VEC3:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 math::float3(v[0],v[1],v[2]));
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
 
   void Object::set_uint(const char *name,
                         int type,
                         uint v)
   {
+    assertThisObjectIsValid();
     switch(type) {
     case ANARI_DATA_TYPE:
       return anari::setParameter(device->handle,this->handle,name,
@@ -170,6 +243,7 @@ namespace pynari {
                          int type, 
                          const std::tuple<uint,uint> &v)
   {
+    assertThisObjectIsValid();
     switch(type) {
     case ANARI_UINT32_VEC2:
       return anari::setParameter(device->handle,this->handle,name,
@@ -186,6 +260,7 @@ namespace pynari {
                          int type, 
                          const std::tuple<uint,uint,uint> &v)
   { 
+    assertThisObjectIsValid();
     switch(type) {
     case ANARI_FLOAT32_VEC3:
       return anari::setParameter(device->handle,this->handle,name,
@@ -207,7 +282,9 @@ namespace pynari {
   void Object::set_uint4(const char *name,
                          int type, 
                          const std::tuple<uint,uint,uint,uint> &v)
-  { switch(type) {
+  {
+    assertThisObjectIsValid();
+    switch(type) {
     case ANARI_UINT32_VEC4:
       return anari::setParameter(device->handle,this->handle,name,
                                  math::uint4(std::get<0>(v),
@@ -226,11 +303,6 @@ namespace pynari {
     }
   }
     
-  void Object::set_uint_vec(const char *name,
-                            int type, 
-                            const std::vector<uint> &v)
-  { PING; }
-
   
 }
 

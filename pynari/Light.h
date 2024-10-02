@@ -33,4 +33,11 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Light::Light(Device::SP device,
+                     const std::string type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Light>(device->handle,type.c_str());
+  }
 }

@@ -30,4 +30,10 @@ namespace pynari {
     ANARIDataType anariType() const override { return ANARI_SURFACE; }
   };
 
+  inline Surface::Surface(Device::SP device)
+    : Object(device)
+  {
+    handle = anari::newObject<anari::Surface>(device->handle);
+  }
+
 }

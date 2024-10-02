@@ -18,30 +18,30 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
 find_package(anari 0.1.0 COMPONENTS code_gen)
 pybind11_add_module(pynari
-  Context.cpp
-  Object.h
-  Object.cpp
-  
+  # 'thin' objects that only handle the reference without any other
+  # operations on it:
   Material.h
   Light.h
-  Light.cpp
   World.h
-  Frame.h
-  Frame.cpp
+  Volume.h
   Group.h
   Geometry.h
   Camera.h
-  Camera.cpp
   Renderer.h
-  Renderer.cpp
   Surface.h
-  Surface.cpp
   SpatialField.h
-  SpatialField.cpp
-  Volume.h
-  Volume.cpp
+
+  # more complicted objects that require additional functions
+  Context.h
+  Context.cpp
+  Object.h
+  Object.cpp
   Array.h
   Array.cpp
+  Frame.h
+  Frame.cpp
+
+  # the actual pybind11 bindings file
   bindings.cpp
   )
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})

@@ -33,4 +33,12 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Renderer::Renderer(Device::SP device,
+                 const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Renderer>(device->handle,type.c_str());
+  }
+
 }

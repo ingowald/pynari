@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys, getopt
+import PIL
+
 #from pynari import *
 import pynari as anari
 
@@ -89,7 +92,8 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, [width, height])
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
+frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
+#frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
@@ -98,9 +102,25 @@ frame.commitParameters()
 frame.render()
 fb_color = frame.get('channel.color')
 
-pixels = np.array(fb_color).reshape([height, width, 4])
-plt.imshow(pixels)
-plt.show()
+pixels = np.array(fb_color)#.reshape([height, width, 4])
+
+out_file_name = ''
+args = sys.argv[1:]
+opts, args = getopt.getopt(args,"ho:",["help","output="])
+for opt,arg in opts:
+    if opt == '-h':
+        printf('sample01.py [-o outfile.jpg]')
+        sys.exit(0)
+    elif opt == '-o':
+        out_file_name = arg
+
+if out_file_name == '':
+    plt.imshow(pixels)
+    plt.show()
+else:
+    im = PIL.Image.fromarray(pixels)
+    im.convert('RGB').save(out_file_name)
+
 
 
 

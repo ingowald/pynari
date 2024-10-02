@@ -57,6 +57,8 @@ namespace pynari {
     
   Context::~Context()
   {
+    std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
+              << std::endl;
     destroy();
   }
 
@@ -160,7 +162,8 @@ namespace pynari {
   void Context::destroy()
   {
     if (!device)
-      // already destroyed, probably becasue the user called an explicit context::destroy()
+      // already destroyed, probably becasue the user called an
+      // explicit context::destroy()
       return;
     
     std::cout << OWL_TERMINAL_GREEN

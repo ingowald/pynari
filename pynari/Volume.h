@@ -34,4 +34,12 @@ namespace pynari {
     const std::string type;
   };
 
+  inline Volume::Volume(Device::SP device,
+                 const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Volume>(device->handle,type.c_str());
+  }
+
 }
