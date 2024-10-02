@@ -170,8 +170,12 @@ namespace pynari {
               << "#pynari: context shutting down."
               << OWL_TERMINAL_DEFAULT
               << std::endl;
-    anari::release(device->handle,device->handle);
-    device = 0;
+    device->release();
+    device = nullptr;
+    std::cout << OWL_TERMINAL_GREEN
+              << "#pynari: context shut down."
+              << OWL_TERMINAL_DEFAULT
+              << std::endl;
   }
   
 }

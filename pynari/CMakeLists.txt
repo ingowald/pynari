@@ -36,6 +36,8 @@ pybind11_add_module(pynari
   Context.cpp
   Object.h
   Object.cpp
+  Device.h
+  Device.cpp
   Array.h
   Array.cpp
   Frame.h

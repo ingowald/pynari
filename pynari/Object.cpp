@@ -51,13 +51,16 @@ namespace pynari {
   
   Object::Object(Device::SP device)
     : device(device)
-  {}
-  
-  std::string Object::toString() const
   {
-    return "<Object>";
+    device->listOfAllObjectsCreatedOnThisDevice.insert(this);
   }
-  
+
+  Object::~Object()
+  {
+    assert(this);
+    release();
+  }
+
   void Object::assertThisObjectIsValid()
   {
     assert(this->handle);
@@ -72,12 +75,12 @@ namespace pynari {
 
   void Object::release()
   {
-    // seems we have some problems with properly releasing objects, so
-    // let's not do that right now
-    return;
-    
     if (!handle) return;
+    if (!device->handle) return;
+
+    device->listOfAllObjectsCreatedOnThisDevice.erase(this);
     
+    std::cout << "pynari object " << (int*)this << " is releasing..." << std::endl;
     anari::release(device->handle,handle);
     handle = {};
     device = nullptr;

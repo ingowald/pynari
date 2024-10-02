@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2024 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -14,35 +14,28 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
+#include "pynari/Device.h"
 #include "pynari/Object.h"
 
 namespace pynari {
 
-  struct Material : public Object {
-    typedef std::shared_ptr<Material> SP;
-    
-    Material(Device::SP device,
-             const std::string &type);
-    virtual ~Material();
-    std::string toString() const override { return "py_barn::Material"; }
-    ANARIDataType anariType() const override { return ANARI_MATERIAL; }
-    
-    const std::string type;
-  };
-
-  inline Material::Material(Device::SP device,
-                     const std::string &type)
-    : Object(device),
-      type(type)
+  void Device::release()
   {
-    handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-    std::cout << "created mython material " << (int*)handle << std::endl;
-  }
+    if (!handle)
+      /* was already force-relased before, it's only the python object
+         that's till live -> don't do anything */
+      return;
 
-  inline Material::~Material()
-  {
-    std::cout << "pynari material " << toString() << " is dying" << std::endl;
+    // make sure to release all objects _before_ the device itself
+    // gets released
+    std::set<Object *> copyOfCurrentObjects
+      = listOfAllObjectsCreatedOnThisDevice;
+    for (Object *obj : copyOfCurrentObjects)
+      obj->release();
+
+    // and finally, release the device itself
+    anari::release(this->handle,this->handle);
+    handle = nullptr;
   }
+  
 }
