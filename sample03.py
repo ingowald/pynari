@@ -175,6 +175,7 @@ camera.commitParameters()
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+renderer.setParameter('pixelSamples', anari.INT32, 1024)
 renderer.commitParameters()
 
 

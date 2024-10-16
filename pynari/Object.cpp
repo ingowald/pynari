@@ -41,6 +41,10 @@ namespace pynari {
     case ANARI_UINT32_VEC2:    return "ANARI_UINT32_VEC2";
     case ANARI_UINT32_VEC3:    return "ANARI_UINT32_VEC3";
     case ANARI_UINT32_VEC4:    return "ANARI_UINT32_VEC4";
+    case ANARI_INT32:          return "ANARI_INT32";
+    case ANARI_INT32_VEC2:     return "ANARI_INT32_VEC2";
+    case ANARI_INT32_VEC3:     return "ANARI_INT32_VEC3";
+    case ANARI_INT32_VEC4:     return "ANARI_INT32_VEC4";
     default:
       throw std::runtime_error
         ("unsupported type "
@@ -228,6 +232,9 @@ namespace pynari {
     case ANARI_DATA_TYPE:
       return anari::setParameter(device->handle,this->handle,name,
                                  (anari::DataType)v);
+    case ANARI_INT32:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (int)v);
     case ANARI_UINT32:
       return anari::setParameter(device->handle,this->handle,name,
                                  (uint)v);

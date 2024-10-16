@@ -105,6 +105,7 @@ camera.commitParameters()
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
+renderer.setParameter('pixelSamples', anari.INT32, 1024)
 renderer.commitParameters()
 
 
@@ -134,6 +135,7 @@ for opt,arg in opts:
         out_file_name = arg
 
 if out_file_name == '':
+    plt.gca().invert_yaxis()
     plt.imshow(pixels)
     plt.show()
 else:

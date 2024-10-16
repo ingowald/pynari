@@ -27,6 +27,9 @@
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
 
+//#define DEFAULT_DEVICE "barney"
+#define DEFAULT_DEVICE "helide"
+
 namespace pynari {
   
   Context::Context(const std::string &explicitLibName)
@@ -40,6 +43,7 @@ namespace pynari {
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
       libName = envLib ? envLib : "barney";
+      libName = envLib ? envLib : DEFAULT_DEVICE;
     }
     anari::Library library
       = anari::loadLibrary(libName.c_str(), nullptr);

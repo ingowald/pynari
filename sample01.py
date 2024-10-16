@@ -83,6 +83,7 @@ world.commitParameters()
 
 
 renderer = device.newRenderer('default')
+renderer.setParameter('pixelSamples', anari.INT32, 1024)
 renderer.setParameter('background', anari.FLOAT32_VEC4, bg_color)
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.commitParameters()
