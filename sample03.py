@@ -145,7 +145,7 @@ xf_array = device.newArray(anari.float4,xf)
 volume = device.newVolume('transferFunction1D')
 volume.setParameter('color',anari.ARRAY,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-volume.setParameter('unitDistance',anari.FLOAT32,100.)
+volume.setParameter('unitDistance',anari.FLOAT32,10.)
 volume.commitParameters()
                                                     
 world = device.newWorld()
@@ -174,8 +174,8 @@ camera.commitParameters()
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
-renderer.setParameter('pixelSamples', anari.INT32, 1024)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
+renderer.setParameter('pixelSamples', anari.INT32, 1)
 renderer.commitParameters()
 
 
