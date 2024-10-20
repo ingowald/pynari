@@ -39,7 +39,7 @@ namespace pynari {
     void set_object(const char *name, int type,
                     const Object::SP &object);
     void set_string(const char *name, int type,
-                    const std::string &stringValue) { PING; };
+                    const std::string &stringValue);
     void setArray_list(const char *name, int type, 
                        const py::list &list);
     void set_float(const char *name, int type,

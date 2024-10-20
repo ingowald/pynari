@@ -223,6 +223,13 @@ namespace pynari {
     }
   }
 
+  void Object::set_string(const char *name, int type,
+                          const std::string &stringValue)
+  {
+    assert(type == ANARI_STRING);
+    anari::setParameter(device->handle,this->handle,name,stringValue.c_str());
+  }
+
   void Object::set_uint(const char *name,
                         int type,
                         uint v)

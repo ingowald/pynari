@@ -232,3 +232,15 @@ lying around in your current working dir, you can also run
 `sample03.py -m` to get this:
 
 ![](sample03-magnetic.jpg)
+
+
+# Sample 4: ANARI 'curves' geometry
+
+https://github.com/ingowald/pynari/blob/master/sample03.py
+
+Added to test 'curves' with per-vertex radius. Creates a set of
+different cubic curves, approximates them with linear (per-vertex)
+curve segments, and creates appropriate ANARI 'curve' geometry.
+
+![](sample04.jpg)
+
