@@ -174,8 +174,8 @@ camera.commitParameters()
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
-renderer.setParameter('pixelSamples', anari.INT32, 1)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+renderer.setParameter('pixelSamples', anari.INT32, 1024)
 renderer.commitParameters()
 
 
@@ -191,7 +191,7 @@ frame.commitParameters()
 
 frame.render()
 fb_color = frame.get('channel.color')
-pixels = np.array(fb_color)#.reshape([height, width, 4])
+pixels = np.array(fb_color)
 
 if out_file_name == '':
     plt.imshow(pixels)

@@ -11,6 +11,8 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 20.
 
+random.seed(80577)
+
 def add_sphere(pos, radius, material):
     geom = device.newGeometry('sphere')
     array = device.newArray(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
@@ -25,7 +27,8 @@ def add_sphere(pos, radius, material):
     
     spheres.append(surf)
 
-    
+# create a "Lambertian" (ie, diffuse) anari matterial, using ANARI's
+# 'matte' material
 def make_lambertian(r,g,b):
     mat = device.newMaterial('matte')
     mat.setParameter('color',anari.float3,(r,g,b))
@@ -42,14 +45,13 @@ def make_dielectric(ior):
     mat.commitParameters()
     return mat
 
-
 def make_metal(albedo,fuzz):
     mat = device.newMaterial('physicallyBased')
     mat.setParameter('baseColor',anari.float3,(albedo[0],albedo[1],albedo[2]))
     mat.setParameter('ior',anari.FLOAT32,1.45)
     mat.setParameter('metallic',anari.FLOAT32,1.)
     mat.setParameter('specular',anari.FLOAT32,0.)
-    mat.setParameter('roughness',anari.float,0.)
+    mat.setParameter('roughness',anari.float,0.2)
     mat.commitParameters()
     return mat
     
@@ -104,7 +106,7 @@ camera.commitParameters()
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 10.)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('pixelSamples', anari.INT32, 128)
 renderer.commitParameters()
 

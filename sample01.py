@@ -74,6 +74,7 @@ surface.commitParameters()
 world.setParameterArray('surface', anari.SURFACE, [ surface ])
 
 light = device.newLight('directional')
+light.setParameter('direction', anari.float3, (0,0,1))
 light.commitParameters()
 
 array = device.newArray(anari.LIGHT, [light])
