@@ -236,11 +236,22 @@ lying around in your current working dir, you can also run
 
 # Sample 4: ANARI 'curves' geometry
 
-https://github.com/ingowald/pynari/blob/master/sample03.py
+https://github.com/ingowald/pynari/blob/master/sample04.py
 
 Added to test 'curves' with per-vertex radius. Creates a set of
 different cubic curves, approximates them with linear (per-vertex)
 curve segments, and creates appropriate ANARI 'curve' geometry.
 
 ![](sample04.jpg)
+
+
+
+# Sample 5: ANARI 'curves' geometry
+
+https://github.com/ingowald/pynari/blob/master/sample05.py
+
+Simple "materials-test" setup with grid of spheres that use a PBR material,
+with roughness and metallicness varying across those spheres.
+
+![](sample05.jpg)
 
