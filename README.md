@@ -246,7 +246,7 @@ curve segments, and creates appropriate ANARI 'curve' geometry.
 
 
 
-# Sample 5: ANARI 'curves' geometry
+# Sample 5: ANARI PBR material test grid
 
 https://github.com/ingowald/pynari/blob/master/sample05.py
 
