@@ -9,7 +9,7 @@ import random
 import sys, getopt,PIL
 import math
 
-fb_size = (1600,800)
+fb_size = (1024,1024)
 look_from = (-3,1.5,-2)
 look_at = (.5,.5,.5)
 look_up = (0.,1.,0.)
@@ -73,7 +73,7 @@ def eval_cubic(t,p00,p01,p02,p03):
 def add_curve(cp0, cp1, cp2, cp3, color0, color1):
     global vertex_position
     global primitive_index
-    n_segs = 10
+    n_segs = 16
     for i in range(n_segs):
         t0 = i/n_segs
         t1 = (i+1)/n_segs
@@ -151,7 +151,7 @@ def create_curves():
     global vertex_color
     global primitive_index
     surfaces = []
-    for a in range(10):
+    for a in range(100):
         vertex_position = []
         vertex_radius = []
         vertex_color = []
@@ -172,16 +172,19 @@ def create_curves():
             p1 = p0 + d0
             p2 = p1 + d0+d1
             p3 = p2 + d0+d1+d2
-            r0 = .01 + .05*random.random()
-            r1 = .01 + .05*random.random()
-            r2 = .01 + .05*random.random()
-            r3 = .01 + .05*random.random()
+            r0 = .005 + .02*random.random()
+            r1 = .005 + .02*random.random()
+            r2 = .005 + .02*random.random()
+            r3 = .005 + .02*random.random()
             add_curve(make_cp(p0,r0),
                       make_cp(p1,r1),
                       make_cp(p2,r2),
                       make_cp(p3,r3),c0,c1)
         surfaces.append(make_anari_surface(material))
     return surfaces
+
+
+
 
 device = anari.newDevice('default')
 
@@ -232,7 +235,7 @@ frame.commitParameters()
 frame.render()
 fb_color = frame.get('channel.color')
 
-pixels = np.array(fb_color)#.reshape([height, width, 4])
+pixels = np.array(fb_color)
 
 out_file_name = ''
 args = sys.argv[1:]
