@@ -255,3 +255,19 @@ with roughness and metallicness varying across those spheres.
 
 ![](sample05.jpg)
 
+
+# Sample 6: ANARI PBR material test grid
+
+https://github.com/ingowald/pynari/blob/master/sample06.py
+
+MPI-Data Parallel Rendering test. Requires to be started with MPI, and
+to use a "Data Parallel ANARI" capable ANARI device (such as 
+`barney` or `ptc`). Here an example of running with 6 ranks
+using barney
+
+```
+mpirun -x ANARI_LIBRARY=barney -n 6 python3 ../sample06.py  -o sample06.png
+```
+
+![](sample06.jpg)
+
