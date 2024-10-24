@@ -38,10 +38,10 @@ def make_lambertian(r,g,b):
 def make_dielectric(ior):
     mat = device.newMaterial('physicallyBased')
     mat.setParameter('baseColor',anari.float3,(1.,1.,1.))
-    mat.setParameter('transmission',anari.float,1.)
-    mat.setParameter('specular',anari.float,0.)
-    mat.setParameter('metallic',anari.float,0.)
-    mat.setParameter('ior',anari.float,ior)
+    mat.setParameter('transmission',anari.FLOAT32,1.)
+    mat.setParameter('specular',anari.FLOAT32,0.)
+    mat.setParameter('metallic',anari.FLOAT32,0.)
+    mat.setParameter('ior',anari.FLOAT32,ior)
     mat.commitParameters()
     return mat
 
@@ -51,7 +51,7 @@ def make_metal(albedo,fuzz):
     mat.setParameter('ior',anari.FLOAT32,1.45)
     mat.setParameter('metallic',anari.FLOAT32,1.)
     mat.setParameter('specular',anari.FLOAT32,0.)
-    mat.setParameter('roughness',anari.float,0.2)
+    mat.setParameter('roughness',anari.FLOAT32,0.2)
     mat.commitParameters()
     return mat
     
@@ -100,7 +100,7 @@ direction = [ look_at[0] - look_from[0],
               look_at[2] - look_from[2] ] 
 camera.setParameter('direction',anari.float3, direction)
 camera.setParameter('up',anari.float3,look_up)
-camera.setParameter('fovy',anari.float,fovy*3.14/180)
+camera.setParameter('fovy',anari.FLOAT32,fovy*3.14/180)
 camera.commitParameters()
 
 
