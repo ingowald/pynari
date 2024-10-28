@@ -29,13 +29,13 @@ namespace pynari {
     anariRenderFrame(device->handle, (ANARIFrame)handle);
     anariFrameReady(device->handle, (ANARIFrame)handle, ANARI_WAIT);
   }
- 
+
   py::object Frame::get(const std::string &channelName)
   {
     if (channelName == "channel.color") {
       uint32_t width, height;
       ANARIDataType pixelType;
-      
+
       const void *mapped
         = anariMapFrame(device->handle,(ANARIFrame)this->handle,
                         "channel.color",
@@ -52,7 +52,8 @@ namespace pynari {
                                 sizeof(float)},
                                (float*)mapped);
       }
-      else if (pixelType == ANARI_UFIXED8_VEC4) {
+      else if (pixelType == ANARI_UFIXED8_VEC4
+               || pixelType == ANARI_UFIXED8_RGBA_SRGB) {
         frame
           // = py::array_t<uint32_t>(
                                   // /* numpy shape */
@@ -70,10 +71,13 @@ namespace pynari {
                                    sizeof(uint8_t)},
                                   (uint8_t*)mapped);
       }
-      else
+      else {
         throw std::runtime_error("currently only supporting frame buffers "
-                                 "of format 'ANARI_FLOAT32_VEC4' or 'ANARI_UFIXED8_VEC4");
-                               
+                                 "of format 'ANARI_FLOAT32_VEC4', "
+                                 "'ANARI_UFIXED8_VEC4', or "
+                                 "'ANARI_UFIXED8_RGBA_SRGB'");
+      }
+
       anariUnmapFrame(device->handle,(ANARIFrame)handle,"color");
       return frame;
     }
