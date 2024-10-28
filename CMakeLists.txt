@@ -33,7 +33,7 @@ if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
 endif()
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.1.5 LANGUAGES C CXX CUDA)
+project(pynari VERSION 1.1.6 LANGUAGES C CXX)
 
 if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
   set(PYNARI_IS_SUBPROJECT ON)

@@ -2,7 +2,7 @@
 
 import os
 
-backends=('helide', 'barney', 'visrtx', 'ospray')
+backends=('helide', 'barney', 'visrtx', 'visionaray', 'ospray')
 
 os.system('mkdir backends')
 with open('backends/index.html','w') as f:
