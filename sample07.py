@@ -19,6 +19,7 @@ random.seed(80577)
 
 # radius to use for emitted curves:
 curve_radius = .02
+curve_radius = .04
 
 
 # the linear line segments representing the curves, in python arrays
@@ -76,7 +77,7 @@ def random_sphere(r):
 # four 4D control points (with x,y,z, and radius each)
 # two colors (for start and end)
 def emit_tubes(cp0, cp1, cp2, cp3):
-    n_segs = 4
+    n_segs = 8
     global curves_primitive_index
     global curves_vertex_position
     for i in range(n_segs):
@@ -139,8 +140,8 @@ def make_spheres_material():
 
 def make_curves_material():
     mat = device.newMaterial('physicallyBased')
-    #mat.setParameter('baseColor',anari.float3,(.5,.5,.5))
-    mat.setParameter('baseColor',anari.float4,(.5,.5,.5,.1))
+    #mat.setParameter('baseColor',anari.float4,(.5,.5,.5,.2))
+    mat.setParameter('baseColor',anari.float3,(.5,.5,.5))
     mat.setParameter('ior',anari.FLOAT32,1.)
     mat.setParameter('metallic',anari.FLOAT32,0.)
     mat.setParameter('opacity',anari.FLOAT32,0.1)
