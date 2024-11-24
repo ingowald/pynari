@@ -105,9 +105,14 @@ camera.commitParameters()
 
 
 
+# background gradient: use an image of 1 pixel wide and 2 pixels high
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_gradient = device.newArray(anari.float4, bg_values)
+
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('pixelSamples', anari.INT32, 128)
+renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.commitParameters()
 
 

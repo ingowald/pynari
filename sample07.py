@@ -211,7 +211,7 @@ world.setParameter('surface', anari.ARRAY, surfaces )
 
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (1,-1,1))
-light.setParameter('radiance', anari.float, 4)
+light.setParameter('irradiance', anari.float, 10)
 light.setParameter('color', anari.float3, (1,1,1))
 light.commitParameters()
 
