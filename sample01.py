@@ -13,8 +13,6 @@ cam_pos = [0.0, 0.0, 0.0]
 cam_up = [0.0, 1.0, 0.0]
 cam_view = [0.1, 0.0, 1.0]
 
-bg_color = [1,1,1,1]
-
 vertex = np.array([
   -1.0, -1.0, 3.0,
   -1.0,  1.0, 3.0,
@@ -75,6 +73,7 @@ world.setParameterArray('surface', anari.SURFACE, [ surface ])
 
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (0,0,1))
+light.setParameter('irradiance', anari.float, 1)
 light.commitParameters()
 
 array = device.newArray(anari.LIGHT, [light])
@@ -83,10 +82,15 @@ world.setParameter('light', anari.ARRAY1D, array)
 world.commitParameters()
 
 
+# background gradient: use an image of 1 pixel wide and 2 pixels high
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_gradient = device.newArray(anari.float4, bg_values)
+
+
 renderer = device.newRenderer('default')
 renderer.setParameter('pixelSamples', anari.INT32, 128)
-renderer.setParameter('background', anari.FLOAT32_VEC4, bg_color)
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .3)
 renderer.commitParameters()
 
 
