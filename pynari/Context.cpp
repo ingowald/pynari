@@ -30,6 +30,8 @@
 //#define DEFAULT_DEVICE "barney"
 #define DEFAULT_DEVICE "helide"
 
+extern "C" ANARIDevice createAnariDeviceBarney();
+
 namespace pynari {
   
   Context::Context(const std::string &explicitLibName)
@@ -39,6 +41,12 @@ namespace pynari {
               << OWL_TERMINAL_DEFAULT
               << std::endl;
 
+#if 1
+    std::cout << "forcing static lib" << std::endl;
+    anari::Device device
+      = createAnariDeviceBarney();
+    std::cout << "created lib" << std::endl;
+#else
     std::string libName = explicitLibName;
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
@@ -52,6 +60,7 @@ namespace pynari {
                                +libName+"'");
     anari::Device device
       = anari::newDevice(library, "default");
+#endif
     this->device = std::make_shared<Device>(device);//anari::bnContextCreate());
     std::cout << OWL_TERMINAL_GREEN
               << "#pynari: context created."
