@@ -53,10 +53,22 @@ target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 set_target_properties(pynari PROPERTIES
   PYTHON_MODULE_NAME "pynari"
   )
-set_target_properties(pynari PROPERTIES
-  CUDA_ARCHITECTURES all-major
-  )
+if (CMAKE_CUDA_ARCHITECTURES)
+  set_target_properties(pynari PROPERTIES
+    CUDA_ARCHITECTURES ${CMAKE_CUDA_ARCHITECTURES}
+    )
+else()
+  set_target_properties(pynari PROPERTIES
+    CUDA_ARCHITECTURES all-major
+    )
+endif()
 
+set_target_properties(pynari PROPERTIES
+  CUDA_SEPARABLE_COMPILATION ON
+  POSITION_INDEPENDENT_CODE ON
+  CUDA_RESOLVE_DEVICE_SYMBOLS ON
+  CUDA_USE_STATIC_CUDA_RUNTIME ON
+  )
 
 
 if (PYNARI_BAKED_BACKENDS)

@@ -44,12 +44,13 @@ namespace pynari {
 #if PYNARI_BAKED_BACKENDS
     std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
     anari::Device device = {};
-# if PYNARI_HAVE_barney
+# if PYNARI_HAVE_barney 
     std::cout << "#pynari: selecting 'barney' backend on compile time"
               << std::endl;
     device = createAnariDeviceBarney();
 # endif
-    throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
+    if (!device)
+      throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
 #else
     std::string libName = explicitLibName;
     if (libName == "default" || libName == "<default>") {
