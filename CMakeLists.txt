@@ -23,17 +23,14 @@ endif()
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-#set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release")
 if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
-#  message(STATUS "Setting build type to 'Release' as none was specified.")
-#  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-    "MinSizeRel" "RelWithDebInfo")
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.1.6 LANGUAGES C CXX)
+project(pynari VERSION 1.1.7 LANGUAGES C CXX)
 
 if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
   set(PYNARI_IS_SUBPROJECT ON)
@@ -47,15 +44,12 @@ if (NOT PYNARI_IS_SUBPROJECT)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
-
-
-#find_package(PythonLibs 3)
-#find_package(Python 3 COMPONENTS Interpreter Development)
 find_package(Python3 COMPONENTS Interpreter Development)
 
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
-add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)
-#add_subdirectory(../barney build_barney EXCLUDE_FROM_ALL)
+if (NOT (TARGET stb_image))
+  add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)
+endif()
 
 add_subdirectory(pynari)
 
