@@ -36,16 +36,18 @@ namespace pynari {
   
   Context::Context(const std::string &explicitLibName)
   {
-    std::cout << OWL_TERMINAL_LIGHT_GREEN
-              << "#pynari: creating context..."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+    // std::cout << OWL_TERMINAL_LIGHT_GREEN
+    //           << "#pynari: creating context..."
+    //           << OWL_TERMINAL_DEFAULT
+    //           << std::endl;
 
 #if PYNARI_BAKED_BACKENDS
-    std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
+    // std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
     anari::Device device = {};
 # if PYNARI_HAVE_barney 
-    std::cout << "#pynari: selecting 'barney' backend on compile time"
+    std::cout << OWL_TERMINAL_LIGHT_GREEN
+              << "#pynari: selecting 'barney' backend"
+              << OWL_TERMINAL_DEFAULT
               << std::endl;
     device = createAnariDeviceBarney();
 # endif
@@ -67,16 +69,16 @@ namespace pynari {
       = anari::newDevice(library, "default");
 #endif
     this->device = std::make_shared<Device>(device);
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context created."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+    // std::cout << OWL_TERMINAL_GREEN
+    //           << "#pynari: context created."
+    //           << OWL_TERMINAL_DEFAULT
+    //           << std::endl;
   }
     
   Context::~Context()
   {
-    std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
-              << std::endl;
+    // std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
+    //           << std::endl;
     destroy();
   }
 
@@ -184,16 +186,16 @@ namespace pynari {
       // explicit context::destroy()
       return;
     
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shutting down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+    // std::cout << OWL_TERMINAL_GREEN
+    //           << "#pynari: context shutting down."
+    //           << OWL_TERMINAL_DEFAULT
+    //           << std::endl;
     device->release();
     device = nullptr;
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shut down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+    // std::cout << OWL_TERMINAL_GREEN
+    //           << "#pynari: context shut down."
+    //           << OWL_TERMINAL_DEFAULT
+    //           << std::endl;
   }
   
 }
