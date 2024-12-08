@@ -16,7 +16,7 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-if (NOT (TARGET anari::helium_static))
+if (NOT (TARGET anari))
   find_package(anari 0.12.0 COMPONENTS code_gen)
 endif()
 
@@ -81,6 +81,10 @@ if (PYNARI_BAKED_BACKENDS)
     PRIVATE
     -DPYNARI_BAKED_BACKENDS=1
     )
+  target_link_libraries(pynari
+    PRIVATE
+    anari_static
+    )
   foreach (backend ${PYNARI_BAKED_BACKENDS})
     target_link_libraries(pynari
       PRIVATE 
@@ -105,4 +109,6 @@ if (NOT PYNARI_IS_SUBPROJECT)
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 endif()
+#endif()
+
 
