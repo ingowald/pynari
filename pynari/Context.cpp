@@ -49,7 +49,9 @@ namespace pynari {
               << "#pynari: selecting 'barney' backend"
               << OWL_TERMINAL_DEFAULT
               << std::endl;
+    PING;
     device = createAnariDeviceBarney();
+    PING;
 # endif
     if (!device)
       throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
@@ -68,7 +70,12 @@ namespace pynari {
     anari::Device device
       = anari::newDevice(library, "default");
 #endif
+    PING;
+    PRINT(device);
     this->device = std::make_shared<Device>(device);
+
+    PING;
+    PRINT(this->device.get());
     // std::cout << OWL_TERMINAL_GREEN
     //           << "#pynari: context created."
     //           << OWL_TERMINAL_DEFAULT
@@ -77,9 +84,11 @@ namespace pynari {
     
   Context::~Context()
   {
+    PING;
     // std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
     //           << std::endl;
     destroy();
+    PING;
   }
 
   std::shared_ptr<World>
@@ -109,6 +118,7 @@ namespace pynari {
   std::shared_ptr<Camera>
   Context::newCamera(const std::string &type)
   {
+    PING;
     return std::make_shared<Camera>(device,type);
   }
   
@@ -181,17 +191,22 @@ namespace pynari {
   
   void Context::destroy()
   {
+    PING;
     if (!device)
       // already destroyed, probably becasue the user called an
       // explicit context::destroy()
       return;
     
+    PING;
     // std::cout << OWL_TERMINAL_GREEN
     //           << "#pynari: context shutting down."
     //           << OWL_TERMINAL_DEFAULT
     //           << std::endl;
+    PING;
     device->release();
+    PING;
     device = nullptr;
+    PING;
     // std::cout << OWL_TERMINAL_GREEN
     //           << "#pynari: context shut down."
     //           << OWL_TERMINAL_DEFAULT

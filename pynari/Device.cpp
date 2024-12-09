@@ -21,6 +21,7 @@ namespace pynari {
 
   void Device::release()
   {
+    PING; PRINT(handle);
     if (!handle)
       /* was already force-relased before, it's only the python object
          that's till live -> don't do anything */
@@ -30,6 +31,7 @@ namespace pynari {
     // gets released
     std::set<Object *> copyOfCurrentObjects
       = listOfAllObjectsCreatedOnThisDevice;
+    PING;
     for (Object *obj : copyOfCurrentObjects)
       obj->release();
 
