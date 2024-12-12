@@ -41,16 +41,24 @@ namespace pynari {
     //           << OWL_TERMINAL_DEFAULT
     //           << std::endl;
 
+    {
+      PING;
+      PRINT(&mutex);
+      std::lock_guard<std::mutex> lock(mutex);
+      PING;
+      PRINT(&mutex);
+    }
+    
 #if PYNARI_BAKED_BACKENDS
     // std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
-    anari::Device device = {};
+    anari::Device _device = {};
 # if PYNARI_HAVE_barney 
     std::cout << OWL_TERMINAL_LIGHT_GREEN
               << "#pynari: selecting 'barney' backend"
               << OWL_TERMINAL_DEFAULT
               << std::endl;
     PING;
-    device = createAnariDeviceBarney();
+    _device = createAnariDeviceBarney();
     PING;
 # endif
     if (!device)
@@ -67,12 +75,22 @@ namespace pynari {
     if (!library)
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
-    anari::Device device
+    anari::Device _device
       = anari::newDevice(library, "default");
 #endif
     PING;
-    PRINT(device);
-    this->device = std::make_shared<Device>(device);
+    PRINT(_device);
+    this->device = std::make_shared<Device>(_device);
+
+
+    {
+      PING;
+      PRINT(&mutex);
+      std::lock_guard<std::mutex> lock(mutex);
+      PING;
+      PRINT(&mutex);
+    }
+    
 
     PING;
     PRINT(this->device.get());

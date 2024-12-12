@@ -65,6 +65,7 @@ namespace pynari {
     void destroy();
 
     Device::SP device;
+    std::mutex mutex;
   };
 
   std::shared_ptr<Context> createContext(const std::string &libName);
