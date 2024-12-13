@@ -29,10 +29,9 @@ namespace pynari {
       sure the device doesn't die before the obejcts */
   struct Device {
     typedef std::shared_ptr<Device> SP;
-    Device(anari::Device handle) : handle(handle) {
-      PING; PRINT(handle);
-    }
-    virtual ~Device() { PING; }
+    Device(anari::Device handle) : handle(handle)
+    {}
+    virtual ~Device() {}
 
     /*! force-releases this device, and all objects created from
         it. This will force-release all respective objects on the
