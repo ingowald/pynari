@@ -61,7 +61,7 @@ namespace pynari {
     _device = createAnariDeviceBarney();
     PING;
 # endif
-    if (!device)
+    if (!_device)
       throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
 #else
     std::string libName = explicitLibName;
