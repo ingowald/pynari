@@ -36,22 +36,17 @@ namespace pynari {
   
   Context::Context(const std::string &explicitLibName)
   {
-    // std::cout << OWL_TERMINAL_LIGHT_GREEN
-    //           << "#pynari: creating context..."
-    //           << OWL_TERMINAL_DEFAULT
-    //           << std::endl;
-
 #if PYNARI_BAKED_BACKENDS
     // std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
-    anari::Device device = {};
+    anari::Device _device = {};
 # if PYNARI_HAVE_barney 
     std::cout << OWL_TERMINAL_LIGHT_GREEN
               << "#pynari: selecting 'barney' backend"
               << OWL_TERMINAL_DEFAULT
               << std::endl;
-    device = createAnariDeviceBarney();
+    _device = createAnariDeviceBarney();
 # endif
-    if (!device)
+    if (!_device)
       throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
 #else
     std::string libName = explicitLibName;
@@ -65,20 +60,14 @@ namespace pynari {
     if (!library)
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
-    anari::Device device
+    anari::Device _device
       = anari::newDevice(library, "default");
 #endif
-    this->device = std::make_shared<Device>(device);
-    // std::cout << OWL_TERMINAL_GREEN
-    //           << "#pynari: context created."
-    //           << OWL_TERMINAL_DEFAULT
-    //           << std::endl;
+    this->device = std::make_shared<Device>(_device);
   }
     
   Context::~Context()
   {
-    // std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
-    //           << std::endl;
     destroy();
   }
 
@@ -186,16 +175,8 @@ namespace pynari {
       // explicit context::destroy()
       return;
     
-    // std::cout << OWL_TERMINAL_GREEN
-    //           << "#pynari: context shutting down."
-    //           << OWL_TERMINAL_DEFAULT
-    //           << std::endl;
     device->release();
     device = nullptr;
-    // std::cout << OWL_TERMINAL_GREEN
-    //           << "#pynari: context shut down."
-    //           << OWL_TERMINAL_DEFAULT
-    //           << std::endl;
   }
   
 }
