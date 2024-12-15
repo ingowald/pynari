@@ -51,6 +51,9 @@ if (NOT (TARGET stb_image))
   add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)
 endif()
 
+if (NOT PYNARI_MODULE_NAME)
+  set(PYNARI_MODULE_NAME pynari)
+endif()
 add_subdirectory(pynari)
 
 

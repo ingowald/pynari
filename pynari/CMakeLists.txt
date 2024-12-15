@@ -20,7 +20,8 @@ if (NOT (TARGET anari))
   find_package(anari 0.12.0 COMPONENTS code_gen)
 endif()
 
-pybind11_add_module(pynari
+
+pybind11_add_module(${PYNARI_MODULE_NAME}
   # 'thin' objects that only handle the reference without any other
   # operations on it:
   Material.h
@@ -49,21 +50,21 @@ pybind11_add_module(pynari
   # the actual pybind11 bindings file
   bindings.cpp
   )
-target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
-set_target_properties(pynari PROPERTIES
-  PYTHON_MODULE_NAME "pynari"
+target_include_directories(${PYNARI_MODULE_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
+set_target_properties(${PYNARI_MODULE_NAME} PROPERTIES
+  PYTHON_MODULE_NAME "${PYNARI_MODULE_NAME}"
   )
 if (CMAKE_CUDA_ARCHITECTURES)
-  set_target_properties(pynari PROPERTIES
+  set_target_properties(${PYNARI_MODULE_NAME} PROPERTIES
     CUDA_ARCHITECTURES ${CMAKE_CUDA_ARCHITECTURES}
     )
 else()
-  set_target_properties(pynari PROPERTIES
+  set_target_properties(${PYNARI_MODULE_NAME} PROPERTIES
     CUDA_ARCHITECTURES all-major
     )
 endif()
 
-set_target_properties(pynari PROPERTIES
+set_target_properties(${PYNARI_MODULE_NAME} PROPERTIES
   CUDA_SEPARABLE_COMPILATION ON
   POSITION_INDEPENDENT_CODE ON
   CUDA_RESOLVE_DEVICE_SYMBOLS ON
@@ -77,33 +78,36 @@ if (PYNARI_BAKED_BACKENDS)
   # other libraries) staticlally hard-linked into it, so as not to
   # depend on any dynamically linked libraries that pip/auditwheel do
   # not exactly like.
-  target_compile_definitions(pynari
+  message("creating module ${PYNARI_MODULE_NAME}")
+  target_compile_definitions(${PYNARI_MODULE_NAME}
     PRIVATE
     -DPYNARI_BAKED_BACKENDS=1
+    -DPYNARI_MODULE_NAME=${PYNARI_MODULE_NAME}
     )
-  target_link_libraries(pynari
+  target_link_libraries(${PYNARI_MODULE_NAME}
     PRIVATE
     anari_static
     )
   foreach (backend ${PYNARI_BAKED_BACKENDS})
-    target_link_libraries(pynari
+    target_link_libraries(${PYNARI_MODULE_NAME}
       PRIVATE 
       anari_library_${backend}_static
       )
-    target_compile_definitions(pynari
+    target_compile_definitions(${PYNARI_MODULE_NAME}
       PRIVATE
       -DPYNARI_HAVE_${backend}=1
       )
   endforeach()
 else()
-  target_link_libraries(pynari
+  target_link_libraries(${PYNARI_MODULE_NAME}
     PRIVATE
     anari::anari
     )
 endif()
 
 if (NOT PYNARI_IS_SUBPROJECT)
-  install(TARGETS ${PROJECT_NAME}
+  install(TARGETS #${PROJECT_NAME}
+    ${PYNARI_MODULE_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
