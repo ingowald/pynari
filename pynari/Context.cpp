@@ -27,8 +27,8 @@
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
 
-//#define DEFAULT_DEVICE "barney"
-#define DEFAULT_DEVICE "helide"
+#define DEFAULT_DEVICE "barney"
+//#define DEFAULT_DEVICE "helide"
 
 extern "C" ANARIDevice createAnariDeviceBarney();
 
