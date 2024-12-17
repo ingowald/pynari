@@ -23,11 +23,11 @@ endif()
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
+#if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
   # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+#  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+#    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+#endif()
 
 # project command is required to come after cmake_minimum_required command.
 project(pynari VERSION 1.1.7 LANGUAGES C CXX)
