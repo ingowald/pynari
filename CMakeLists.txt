@@ -44,16 +44,14 @@ if (NOT PYNARI_IS_SUBPROJECT)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
-find_package(Python3 COMPONENTS Interpreter Development)
+#find_package(Python3 COMPONENTS Interpreter Development)
 
+set(PYBIND11_FINDPYTHON ON)
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
 if (NOT (TARGET stb_image))
   add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)
 endif()
 
-if (NOT PYNARI_MODULE_NAME)
-  set(PYNARI_MODULE_NAME pynari)
-endif()
 add_subdirectory(pynari)
 
 
