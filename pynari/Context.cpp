@@ -43,15 +43,21 @@ namespace pynari {
   {
     static std::vector<std::string> listOfBakedBackends;
     if (listOfBakedBackends.empty()) {
-      std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
-      while (allBaked != "") {
-        int pos = allBaked.find(";");
-        const std::string baked = allBaked.substr(0,pos);
-        listOfBakedBackends.push_back(baked);
-        if (pos == allBaked.npos)
-          allBaked = "";
-        else
-          allBaked = allBaked.substr(pos+1);
+      static char *fromEnv = getenv("PYNARI_BAKED");
+      if (fromEnv) {
+        listOfBakedBackends.push_back(fromEnv);
+      } else {
+        std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
+        // PING; PRINT(allBaked);
+        while (allBaked != "") {
+          int pos = allBaked.find("@");
+          const std::string baked = allBaked.substr(0,pos);
+          listOfBakedBackends.push_back(baked);
+          if (pos == allBaked.npos)
+            allBaked = "";
+          else
+            allBaked = allBaked.substr(pos+1);
+        }
       }
     }
     return listOfBakedBackends;
@@ -69,7 +75,8 @@ namespace pynari {
       
       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
 # else
-      void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+      // void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+      if (!lib) PRINT(dlerror());
       void *sym = dlsym(lib,fctName.c_str());
 # endif
       alreadyLoaded[key] = sym;
@@ -81,14 +88,22 @@ namespace pynari {
     
   anari::Device tryLoadBaked(const std::string &bakedDevName)
   {
-    const std::string libName = "pynari_baked_"+bakedDevName;
+    const std::string libName = "libpynari_baked_"+bakedDevName
+# ifdef _WIN32
+      +".dll"
+#else
+      +".so"
+#endif
+      ;
     const std::string symName = "pynari_createDevice_"+bakedDevName;
+    // PING(libName);
+    // PRINT(symName);
     CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
-    if (!fct)
-      throw std::runtime_error("could not get symbol '"+symName+"'");
+    if (!fct) 
+      throw std::runtime_error("could not get symbol '"+symName+"' : "+dlerror());
     anari::Device dev = fct();
     if (!dev)
-      throw std::runtime_error("could not create baked device");
+      throw std::runtime_error(std::string("could not create baked device : ")+dlerror());
     return dev;
   }
 #endif
@@ -105,6 +120,7 @@ namespace pynari {
         try {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
+          // PING; PRINT(e.what());
         }
       }
     }

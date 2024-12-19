@@ -73,21 +73,25 @@ set_target_properties(pynari PROPERTIES
 
 
 if (PYNARI_BAKED_BACKENDS)
+  string(REPLACE ";" "@" PYNARI_BAKED_BACKENDS_LIST "${PYNARI_BAKED_BACKENDS}")
   target_compile_definitions(pynari
     PRIVATE
 #    -DPYNARI_BAKED_BACKENDS=1
     -DPYNARI_BAKED_BACKENDS=1
-    -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS}"
+    -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS_LIST}"
     )
   set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
   foreach (backend ${PYNARI_BAKED_BACKENDS})
-    find_library(baked_lib
-      NAMES pynari_baked_${backend}
-      PATHS ${CMAKE_INSTALL_PREFIX}/pynari
+    set(baked_lib "")
+    message("finding pynari_baked_${backend}")
+    find_library(BAKED_LIB
+      NAMES "pynari_baked_${backend}"
+      PATHS ${CMAKE_INSTALL_PREFIX}/pynari ${CMAKE_INSTALL_PREFIX}
       )
+    message("pynari: linking pynari to baked ${backend} lib ${BAKED_LIB}")
     target_link_libraries(pynari
       PUBLIC
-      ${baked_lib}
+      ${BAKED_LIB}
       )
   endforeach()
 endif()
