@@ -92,10 +92,17 @@ if (PYNARI_BAKED_BACKENDS)
   endforeach()
 endif()
 
-target_link_libraries(pynari
-  PRIVATE
-  anari_static#::anari
-  )
+if (TARGET anari::anari)
+  target_link_libraries(pynari
+    PRIVATE
+    anari::anari_static#::anari
+    )
+else()
+  target_link_libraries(pynari
+    PRIVATE
+    anari_static#::anari
+    )
+endif()
 
 if (NOT PYNARI_IS_SUBPROJECT)
   install(

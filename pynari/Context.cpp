@@ -33,7 +33,6 @@
 #endif
 
 #define DEFAULT_DEVICE "barney"
-// #define DEFAULT_DEVICE "helide"
 
 extern "C" ANARIDevice createAnariDeviceBarney();
 
@@ -45,18 +44,14 @@ namespace pynari {
     static std::vector<std::string> listOfBakedBackends;
     if (listOfBakedBackends.empty()) {
       std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
-      PRINT(allBaked);
       while (allBaked != "") {
         int pos = allBaked.find(";");
-        PRINT(pos);
         const std::string baked = allBaked.substr(0,pos);
-        PRINT(baked);
         listOfBakedBackends.push_back(baked);
         if (pos == allBaked.npos)
           allBaked = "";
         else
           allBaked = allBaked.substr(pos+1);
-        PRINT(allBaked);
       }
     }
     return listOfBakedBackends;
@@ -74,12 +69,8 @@ namespace pynari {
       
       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
 # else
-      PRINT(libName);
       void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
-      PRINT(lib);
-      PRINT(fctName);
       void *sym = dlsym(lib,fctName.c_str());
-      PRINT(sym);
 # endif
       alreadyLoaded[key] = sym;
     }
@@ -115,18 +106,6 @@ namespace pynari {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
         };
-      //     anari::Device _device = {};
-      // // # if PYNARI_HAVE_barney 
-      // //     std::cout << OWL_TERMINAL_LIGHT_GREEN
-      // //               << "#pynari: selecting 'barney' backend"
-      // //               << OWL_TERMINAL_DEFAULT
-      // //               << std::endl;
-      // //     _device = createAnariDeviceBarney();
-      // // # endif
-      // //     if (!_device)
-      // //       throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
-      // // #else
-      //     // std::string libName = explicitLibName;
     }
 #endif
     // this is the "regular" path, relying on (system-installed) anari
@@ -137,9 +116,9 @@ namespace pynari {
     }
     std::cout << OWL_TERMINAL_LIGHT_GREEN
               << "#pynari: looking for _system_ installed ANARI device '"
-              << baked
+              << libName
               << "'"
-              << OWL_TERMINAL_DEFAULT std::endl;
+              << OWL_TERMINAL_DEFAULT << std::endl;
     anari::Library library
       = anari::loadLibrary(libName.c_str(), nullptr);
     if (!library)
