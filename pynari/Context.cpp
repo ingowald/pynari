@@ -97,7 +97,7 @@ namespace pynari {
 #if PYNARI_BAKED_BACKENDS
     if (libName == "default") {
       auto backends = getListOfBakedBackends();
-      for (auto baked : backends)
+      for (auto baked : backends) {
         std::cout << OWL_TERMINAL_LIGHT_GREEN
                   << "#pynari: trying to load backend '" << baked
                   << "' baked into python wheel"
@@ -105,7 +105,8 @@ namespace pynari {
         try {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
-        };
+        }
+      }
     }
 #endif
     // this is the "regular" path, relying on (system-installed) anari
