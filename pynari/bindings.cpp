@@ -34,7 +34,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
 
-PYBIND11_MODULE(PYNARI_MODULE_NAME, m) {
+PYBIND11_MODULE(pynari, m) {
   // optional module docstring
   m.doc() = "barney python wrappers";
 

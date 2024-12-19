@@ -26,35 +26,120 @@
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
+#ifdef _WIN32
+# include <windows.h>
+#else
+# include <dlfcn.h>
+#endif
 
-//#define DEFAULT_DEVICE "barney"
-#define DEFAULT_DEVICE "helide"
+#define DEFAULT_DEVICE "barney"
+// #define DEFAULT_DEVICE "helide"
 
 extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
-  
-  Context::Context(const std::string &explicitLibName)
+
+#if PYNARI_BAKED_BACKENDS
+  std::vector<std::string> getListOfBakedBackends()
+  {
+    static std::vector<std::string> listOfBakedBackends;
+    if (listOfBakedBackends.empty()) {
+      std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
+      PRINT(allBaked);
+      while (allBaked != "") {
+        int pos = allBaked.find(";");
+        PRINT(pos);
+        const std::string baked = allBaked.substr(0,pos);
+        PRINT(baked);
+        listOfBakedBackends.push_back(baked);
+        if (pos == allBaked.npos)
+          allBaked = "";
+        else
+          allBaked = allBaked.substr(pos+1);
+        PRINT(allBaked);
+      }
+    }
+    return listOfBakedBackends;
+  }
+
+  void *getLoadedLibraryFunction(const std::string &libName,
+                                 const std::string &fctName)
+  {
+    static std::map<std::pair<std::string,std::string>,void *> alreadyLoaded;
+    std::pair<std::string,std::string> key(libName,fctName);
+    if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
+# ifdef _WIN32
+      HMODULE lib = LoadLibraryW(libName.c_str());//L"nvcuda.dll");
+      if (!lib) throw std::runtime_error("could not load "+libName);
+      
+      void* sym = (void*)GetProcAddress(lib, fctName.c_str());
+# else
+      PRINT(libName);
+      void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+      PRINT(lib);
+      PRINT(fctName);
+      void *sym = dlsym(lib,fctName.c_str());
+      PRINT(sym);
+# endif
+      alreadyLoaded[key] = sym;
+    }
+    return alreadyLoaded[key];
+  }
+
+  typedef anari::Device (*CreateDeviceFct)();
+    
+  anari::Device tryLoadBaked(const std::string &bakedDevName)
+  {
+    const std::string libName = "pynari_baked_"+bakedDevName;
+    const std::string symName = "pynari_createDevice_"+bakedDevName;
+    CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
+    if (!fct)
+      throw std::runtime_error("could not get symbol '"+symName+"'");
+    anari::Device dev = fct();
+    if (!dev)
+      throw std::runtime_error("could not create baked device");
+    return dev;
+  }
+#endif
+  anari::Device createDevice(std::string libName)
   {
 #if PYNARI_BAKED_BACKENDS
-    // std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
-    anari::Device _device = {};
-# if PYNARI_HAVE_barney 
-    std::cout << OWL_TERMINAL_LIGHT_GREEN
-              << "#pynari: selecting 'barney' backend"
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
-    _device = createAnariDeviceBarney();
-# endif
-    if (!_device)
-      throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
-#else
-    std::string libName = explicitLibName;
+    if (libName == "default") {
+      auto backends = getListOfBakedBackends();
+      for (auto baked : backends)
+        std::cout << OWL_TERMINAL_LIGHT_GREEN
+                  << "#pynari: trying to load backend '" << baked
+                  << "' baked into python wheel"
+                  << OWL_TERMINAL_DEFAULT std::endl;
+        try {
+          return tryLoadBaked(baked);
+        } catch (const std::exception &e) {
+        };
+      //     anari::Device _device = {};
+      // // # if PYNARI_HAVE_barney 
+      // //     std::cout << OWL_TERMINAL_LIGHT_GREEN
+      // //               << "#pynari: selecting 'barney' backend"
+      // //               << OWL_TERMINAL_DEFAULT
+      // //               << std::endl;
+      // //     _device = createAnariDeviceBarney();
+      // // # endif
+      // //     if (!_device)
+      // //       throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
+      // // #else
+      //     // std::string libName = explicitLibName;
+    }
+#endif
+    // this is the "regular" path, relying on (system-installed) anari
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
       libName = envLib ? envLib : "barney";
       libName = envLib ? envLib : DEFAULT_DEVICE;
     }
+    std::cout << OWL_TERMINAL_LIGHT_GREEN
+              << "#pynari: looking for _system_ installed ANARI device '"
+              << baked
+              << "'"
+              << OWL_TERMINAL_DEFAULT std::endl;
     anari::Library library
       = anari::loadLibrary(libName.c_str(), nullptr);
     if (!library)
@@ -62,8 +147,12 @@ namespace pynari {
                                +libName+"'");
     anari::Device _device
       = anari::newDevice(library, "default");
-#endif
-    this->device = std::make_shared<Device>(_device);
+    return _device;
+  }
+
+  Context::Context(const std::string &explicitLibName)
+  {
+    this->device = std::make_shared<Device>(createDevice(explicitLibName));
   }
     
   Context::~Context()
