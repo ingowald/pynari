@@ -101,7 +101,7 @@ namespace pynari {
         std::cout << OWL_TERMINAL_LIGHT_GREEN
                   << "#pynari: trying to load backend '" << baked
                   << "' baked into python wheel"
-                  << OWL_TERMINAL_DEFAULT std::endl;
+                  << OWL_TERMINAL_DEFAULT << std::endl;
         try {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
