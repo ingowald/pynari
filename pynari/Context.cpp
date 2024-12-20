@@ -38,6 +38,21 @@ extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
 
+  bool readDebugEnvVar()
+  {
+    char *flag = getenv("PYNARI_DBG");
+    if (!flag)
+      flag = getenv("PYNARI_LOG_LEVEL");
+    if (!flag) return false;
+    return std::stoi(flag);
+  }
+
+  bool logging_enabled()
+  {
+    static bool cachedValue = readDebugEnvVar();
+    return cachedValue;
+  }
+  
 #if PYNARI_BAKED_BACKENDS
   std::vector<std::string> getListOfBakedBackends()
   {
@@ -113,7 +128,7 @@ namespace pynari {
     if (libName == "default") {
       auto backends = getListOfBakedBackends();
       for (auto baked : backends) {
-        if (getenv(PYNARI_DEBUG))
+        if (logging_enabled())
           std::cout << OWL_TERMINAL_LIGHT_GREEN
                     << "#pynari: loading (baked) backend '" << baked
                     << "'"
@@ -121,7 +136,10 @@ namespace pynari {
         try {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
-          // PING; PRINT(e.what());
+          if (logging_enabled())
+            std::cout << OWL_TERMINAL_RED
+                      << "error loading baked backend: " << e.what()
+                      << OWL_TERMINAL_DEFAULT << std::endl;
         }
       }
     }
@@ -132,6 +150,7 @@ namespace pynari {
       libName = envLib ? envLib : "barney";
       libName = envLib ? envLib : DEFAULT_DEVICE;
     }
+    if (logging_enabled())
     std::cout << OWL_TERMINAL_LIGHT_GREEN
               << "#pynari: looking for _system_ installed ANARI device '"
               << libName
