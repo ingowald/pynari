@@ -75,7 +75,7 @@ namespace pynari {
       
       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
 # else
-      // void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+      void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
       if (!lib) PRINT(dlerror());
       void *sym = dlsym(lib,fctName.c_str());
 # endif
@@ -103,7 +103,7 @@ namespace pynari {
       throw std::runtime_error("could not get symbol '"+symName+"' : "+dlerror());
     anari::Device dev = fct();
     if (!dev)
-      throw std::runtime_error(std::string("could not create baked device : ")+dlerror());
+      throw std::runtime_error(std::string("could not create baked device"));
     return dev;
   }
 #endif
@@ -113,10 +113,11 @@ namespace pynari {
     if (libName == "default") {
       auto backends = getListOfBakedBackends();
       for (auto baked : backends) {
-        std::cout << OWL_TERMINAL_LIGHT_GREEN
-                  << "#pynari: trying to load backend '" << baked
-                  << "' baked into python wheel"
-                  << OWL_TERMINAL_DEFAULT << std::endl;
+        if (getenv(PYNARI_DEBUG))
+          std::cout << OWL_TERMINAL_LIGHT_GREEN
+                    << "#pynari: loading (baked) backend '" << baked
+                    << "'"
+                    << OWL_TERMINAL_DEFAULT << std::endl;
         try {
           return tryLoadBaked(baked);
         } catch (const std::exception &e) {
