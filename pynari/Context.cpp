@@ -85,7 +85,7 @@ namespace pynari {
     std::pair<std::string,std::string> key(libName,fctName);
     if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
 # ifdef _WIN32
-      HMODULE lib = LoadLibraryW(libName.c_str());//L"nvcuda.dll");
+      HMODULE lib = LoadLibrary(libName.c_str());//L"nvcuda.dll");
       if (!lib) throw std::runtime_error("could not load "+libName);
       
       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
@@ -115,7 +115,13 @@ namespace pynari {
     // PRINT(symName);
     CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
     if (!fct) 
-      throw std::runtime_error("could not get symbol '"+symName+"' : "+dlerror());
+      throw std::runtime_error("could not get symbol '"+symName
+#ifdef _WIN32
+          +"'"
+#else
+          +"' : "+dlerror()
+#endif
+      );
     anari::Device dev = fct();
     if (!dev)
       throw std::runtime_error(std::string("could not create baked device"));
