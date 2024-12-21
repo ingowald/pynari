@@ -131,8 +131,19 @@ namespace pynari {
   anari::Device createDevice(std::string libName)
   {
 #if PYNARI_BAKED_BACKENDS
+    if (libName == "cpu") libName = "barney_cpu";
+    if (libName == "gpu") libName = "barney_cuda";
+    if (libName == "cuda") libName = "barney_cuda";
+    auto backends = getListOfBakedBackends();
+    if (backends.find(libName) != backends.end()) {
+      if (logging_enabled())
+        std::cout << OWL_TERMINAL_LIGHT_GREEN
+                  << "#pynari: loading (baked) backend '" << baked
+                  << "'"
+                  << OWL_TERMINAL_DEFAULT << std::endl;
+      return tryLoadBaked(baked);
+    }
     if (libName == "default") {
-      auto backends = getListOfBakedBackends();
       for (auto baked : backends) {
         if (logging_enabled())
           std::cout << OWL_TERMINAL_LIGHT_GREEN
