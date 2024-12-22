@@ -31,6 +31,7 @@
 #else
 # include <dlfcn.h>
 #endif
+#include <algorithm>
 
 #define DEFAULT_DEVICE "barney"
 
@@ -134,14 +135,14 @@ namespace pynari {
     if (libName == "cpu") libName = "barney_cpu";
     if (libName == "gpu") libName = "barney_cuda";
     if (libName == "cuda") libName = "barney_cuda";
-    auto backends = getListOfBakedBackends();
-    if (backends.find(libName) != backends.end()) {
+    std::vector<std::string> backends = getListOfBakedBackends();
+    if (std::find(backends.begin(),backends.end(),libName) != backends.end()) {
       if (logging_enabled())
         std::cout << OWL_TERMINAL_LIGHT_GREEN
-                  << "#pynari: loading (baked) backend '" << baked
+                  << "#pynari: loading (baked) backend '" << libName
                   << "'"
                   << OWL_TERMINAL_DEFAULT << std::endl;
-      return tryLoadBaked(baked);
+      return tryLoadBaked(libName);
     }
     if (libName == "default") {
       for (auto baked : backends) {
