@@ -80,7 +80,11 @@ if (PYNARI_BAKED_BACKENDS)
     -DPYNARI_BAKED_BACKENDS=1
     -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS_LIST}"
     )
-  set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
+  if (APPLE)
+    set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
+  else()
+    set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
+  endif()
   foreach (backend ${PYNARI_BAKED_BACKENDS})
     set(baked_lib "")
     message("finding pynari_baked_${backend}")

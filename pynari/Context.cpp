@@ -92,7 +92,6 @@ namespace pynari {
       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
 # else
       void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
-      if (!lib) PRINT(dlerror());
       void *sym = dlsym(lib,fctName.c_str());
 # endif
       alreadyLoaded[key] = sym;
@@ -107,10 +106,13 @@ namespace pynari {
     const std::string libName = "libpynari_baked_"+bakedDevName
 # ifdef _WIN32
       +".dll"
+# elif defined(__APPLE__)
+      +".dylib"
 #else
       +".so"
 #endif
       ;
+    // std::cout << "@pynari: trying >>> " << libName << " <<< " << std::endl;
     const std::string symName = "pynari_createDevice_"+bakedDevName;
     // PING(libName);
     // PRINT(symName);
