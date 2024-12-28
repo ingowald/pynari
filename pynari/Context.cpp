@@ -32,12 +32,24 @@
 # include <dlfcn.h>
 #endif
 #include <algorithm>
+#ifdef __PYNARI_HAVE_CUDA__
+# include <cuda_runtime.h>
+#endif
 
 #define DEFAULT_DEVICE "barney"
 
 extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
+
+  bool has_cuda_capable_gpu() {
+#ifdef __PYNARI_HAVE_CUDA__
+    int numGPUs = 0;
+    cudaGetDeviceCount(&numGPUs);
+    return numGPUs;
+#endif
+    return false;
+  }
 
   bool readDebugEnvVar()
   {

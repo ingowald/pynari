@@ -29,23 +29,13 @@
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
-#ifdef __PYNARI_HAVE_CUDA__
-# include <cuda_runtime.h>
-#endif
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
 
 namespace pynari {
-  bool has_cuda_capable_gpu() {
-#ifdef __PYNARI_HAVE_CUDA__
-    int numGPUs = 0;
-    cudaGetDeviceCount(&numGPUs);
-    return numGPUs;
-#endif
-    return false;
-  }
+  bool has_cuda_capable_gpu();
 }
 
 PYBIND11_MODULE(pynari, m) {
