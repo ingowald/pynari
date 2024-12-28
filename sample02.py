@@ -8,7 +8,7 @@ import sys, getopt,PIL
 if anari.has_cuda_capable_gpu():
    print('@pynari: detected cuda-capable GPU; using higher res and sample count')
    fb_size = (1600,800)
-   num_paths_per_pixel = 128
+   num_paths_per_pixel = 1024
 else:   
    print('@pynari: no CUDA-capable GPU detected, reducing sample count')
    fb_size = (800,400)

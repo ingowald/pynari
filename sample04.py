@@ -226,10 +226,10 @@ renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 if anari.has_cuda_capable_gpu():
-    # actually we have denoising on the gpu, so probably need way less...
-    renderer.setParameter('pixelSamples', anari.INT32, 128)
+   print('@pynari: detected cuda-capable GPU; using higher res and sample count')
+   renderer.setParameter('pixelSamples', anari.INT32, 1024)
 else:
-    renderer.setParameter('pixelSamples', anari.INT32, 8)
+   renderer.setParameter('pixelSamples', anari.INT32, 8)
 renderer.commitParameters()
 
 

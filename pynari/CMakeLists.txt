@@ -20,7 +20,6 @@ if (NOT (TARGET anari))
   find_package(anari 0.12.0 COMPONENTS code_gen)
 endif()
 
-
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
   # operations on it:
@@ -64,13 +63,23 @@ else()
     )
 endif()
 
-set_target_properties(pynari PROPERTIES
-  CUDA_SEPARABLE_COMPILATION ON
-  POSITION_INDEPENDENT_CODE ON
-  CUDA_RESOLVE_DEVICE_SYMBOLS ON
-  CUDA_USE_STATIC_CUDA_RUNTIME ON
-  )
-
+include(CheckLanguage)
+check_language(CUDA)
+if (CMAKE_CUDA_COMPILER)
+  enable_language(CUDA)
+  set_source_files_properties(
+    Context.cpp 
+    PROPERTIES 
+    LANGUAGE CUDA
+    )
+  target_compile_definitions(pynari PRIVATE __PYNARI_HAVE_CUDA__=1)
+  set_target_properties(pynari PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+    POSITION_INDEPENDENT_CODE ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+    CUDA_USE_STATIC_CUDA_RUNTIME ON
+    )
+endif()
 
 if (PYNARI_BAKED_BACKENDS)
   string(REPLACE ";" "@" PYNARI_BAKED_BACKENDS_LIST "${PYNARI_BAKED_BACKENDS}")
