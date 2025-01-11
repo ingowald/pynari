@@ -62,120 +62,173 @@ namespace pynari {
 
   bool logging_enabled()
   {
+      return true;
     static bool cachedValue = readDebugEnvVar();
     return cachedValue;
   }
   
-#if PYNARI_BAKED_BACKENDS
-  std::vector<std::string> getListOfBakedBackends()
-  {
-    static std::vector<std::string> listOfBakedBackends;
-    if (listOfBakedBackends.empty()) {
-      static char *fromEnv = getenv("PYNARI_BAKED");
-      if (fromEnv) {
-        listOfBakedBackends.push_back(fromEnv);
-      } else {
-        std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
-        // PING; PRINT(allBaked);
-        while (allBaked != "") {
-          int pos = allBaked.find("@");
-          const std::string baked = allBaked.substr(0,pos);
-          listOfBakedBackends.push_back(baked);
-          if (pos == allBaked.npos)
-            allBaked = "";
-          else
-            allBaked = allBaked.substr(pos+1);
-        }
-      }
-    }
-    return listOfBakedBackends;
-  }
+// #if PYNARI_BAKED_BACKENDS
+//   std::vector<std::string> getListOfBakedBackends()
+//   {
+//     static std::vector<std::string> listOfBakedBackends;
+//     if (listOfBakedBackends.empty()) {
+//       static char *fromEnv = getenv("PYNARI_BAKED");
+//       if (fromEnv) {
+//         listOfBakedBackends.push_back(fromEnv);
+//       } else {
+//         std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
+//         PING; PRINT(allBaked);
+//         while (allBaked != "") {
+//           int pos = allBaked.find("@");
+//           const std::string baked = allBaked.substr(0,pos);
+//           listOfBakedBackends.push_back(baked);
+//           if (pos == allBaked.npos)
+//             allBaked = "";
+//           else
+//             allBaked = allBaked.substr(pos+1);
+//         }
+//       }
+//     }
+//     return listOfBakedBackends;
+//   }
 
-  void *getLoadedLibraryFunction(const std::string &libName,
-                                 const std::string &fctName)
-  {
-    static std::map<std::pair<std::string,std::string>,void *> alreadyLoaded;
-    std::pair<std::string,std::string> key(libName,fctName);
-    if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
-# ifdef _WIN32
-      HMODULE lib = LoadLibrary(libName.c_str());//L"nvcuda.dll");
-      if (!lib) throw std::runtime_error("could not load "+libName);
+
+
+//   void *getLoadedLibraryFunction(const std::string &libName,
+//                                  const std::string &fctName)
+//   {
+//     static std::map<std::pair<std::string,std::string>,void *> alreadyLoaded;
+//     std::pair<std::string,std::string> key(libName,fctName);
+//     if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
+// # ifdef _WIN32
+//         std::cout << "trying to LoadLibary " << libName << std::endl;
+// 	//      HMODULE lib = GetModuleHandle(NULL);
+//        HMODULE lib = LoadLibrary(libName.c_str());//L"nvcuda.dll");
+//       PRINT(lib);
+//       if (!lib) {
+//           DWORD rc = GetLastError();
+//           LPSTR messageBuffer = nullptr;
+//           size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+//               NULL, rc, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), 
+//               (LPSTR)&messageBuffer, 0, NULL);
+
+//           std::string message(messageBuffer, size);
+
+//           LocalFree(messageBuffer);
+
+//           throw std::runtime_error("could not load " 
+//               + libName 
+//               + " rc = "
+//               + std::to_string((int)rc)
+//               + " error = "
+//               + message);
+//       }
       
-      void* sym = (void*)GetProcAddress(lib, fctName.c_str());
-# else
-      void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
-      void *sym = dlsym(lib,fctName.c_str());
-# endif
-      alreadyLoaded[key] = sym;
-    }
-    return alreadyLoaded[key];
-  }
+//       std::cout << "loaded LIBRARY, now looking for symbol " << fctName << std::endl;
+//       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
+// # else
+//       void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+//       void *sym = dlsym(lib,fctName.c_str());
+// # endif
+//       alreadyLoaded[key] = sym;
+//     }
+//     return alreadyLoaded[key];
+//   }
 
-  typedef anari::Device (*CreateDeviceFct)();
+//   typedef anari::Device (*CreateDeviceFct)();
     
-  anari::Device tryLoadBaked(const std::string &bakedDevName)
-  {
-    const std::string libName = "libpynari_baked_"+bakedDevName
-# ifdef _WIN32
-      +".dll"
-# elif defined(__APPLE__)
-      +".dylib"
-#else
-      +".so"
+// // extern "C"
+// // anari::Device pynari_createDevice_barney_cuda();
+
+
+//   anari::Device tryLoadBaked(const std::string &bakedDevName)
+//   {
+//     PING; PRINT(bakedDevName);
+// //     if (bakedDevName == "barney_cuda") {
+// //       return pynari_createDevice_barney_cuda();
+// //     }
+// //   PING; PRINT(bakedDevName);
+// # ifdef _WIN32
+//       const std::string libName = "pynari_baked_" + bakedDevName + ".dll";
+// # else
+// #  if defined(__APPLE__)
+//       const std::string libName = "libpynari_baked_" + bakedDevName + ".dylib";
+// #  else
+//       const std::string libName = "libpynari_baked_" + bakedDevName + ".so";
+// #  endif
+//     std::cout << "@pynari: trying >>> " << libName << " <<< " << std::endl;
+// # endif
+//     const std::string symName = "pynari_createDevice_"+bakedDevName;
+//     // PING(libName);
+//     // PRINT(symName);
+//     CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
+//     if (!fct) 
+//       throw std::runtime_error("could not get symbol '"+symName
+// #ifdef _WIN32
+//           +"'"
+// #else
+//           +"' : "+dlerror()
+// #endif
+//       );
+//     anari::Device dev = fct();
+//     if (!dev)
+//       throw std::runtime_error(std::string("could not create baked device"));
+//     return dev;
+//   }
+// #endif
+
+
+
+#if PYNARI_BAKED_BACKENDS
+  anari::Device createBakedDevice(std::string libName);
 #endif
-      ;
-    // std::cout << "@pynari: trying >>> " << libName << " <<< " << std::endl;
-    const std::string symName = "pynari_createDevice_"+bakedDevName;
-    // PING(libName);
-    // PRINT(symName);
-    CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
-    if (!fct) 
-      throw std::runtime_error("could not get symbol '"+symName
-#ifdef _WIN32
-          +"'"
-#else
-          +"' : "+dlerror()
-#endif
-      );
-    anari::Device dev = fct();
-    if (!dev)
-      throw std::runtime_error(std::string("could not create baked device"));
-    return dev;
-  }
-#endif
+
   anari::Device createDevice(std::string libName)
   {
+    PING; PRINT(libName);
 #if PYNARI_BAKED_BACKENDS
-    if (libName == "cpu") libName = "barney_cpu";
-    if (libName == "gpu") libName = "barney_cuda";
-    if (libName == "cuda") libName = "barney_cuda";
-    std::vector<std::string> backends = getListOfBakedBackends();
-    if (std::find(backends.begin(),backends.end(),libName) != backends.end()) {
-      if (logging_enabled())
-        std::cout << OWL_TERMINAL_LIGHT_GREEN
-                  << "#pynari: loading (baked) backend '" << libName
-                  << "'"
-                  << OWL_TERMINAL_DEFAULT << std::endl;
-      return tryLoadBaked(libName);
-    }
-    if (libName == "default") {
-      for (auto baked : backends) {
-        if (logging_enabled())
-          std::cout << OWL_TERMINAL_LIGHT_GREEN
-                    << "#pynari: loading (baked) backend '" << baked
-                    << "'"
-                    << OWL_TERMINAL_DEFAULT << std::endl;
-        try {
-          return tryLoadBaked(baked);
-        } catch (const std::exception &e) {
-          if (logging_enabled())
-            std::cout << OWL_TERMINAL_RED
-                      << "error loading baked backend: " << e.what()
-                      << OWL_TERMINAL_DEFAULT << std::endl;
-        }
-      }
-    }
+    anari::Library bakedLibrary
+      = anari::createBakedDevice(libName);
+    if (bakedLibrary) return bakedLibrary
 #endif
+      
+
+// #if PYNARI_BAKED_BACKENDS
+//       PING;
+//     if (libName == "cpu") libName = "barney_cpu";
+//     if (libName == "gpu") libName = "barney_cuda";
+//     if (libName == "cuda") libName = "barney_cuda";
+//     PRINT(libName);
+//     std::vector<std::string> backends = getListOfBakedBackends();
+//     if (std::find(backends.begin(),backends.end(),libName) != backends.end()) {
+//       if (logging_enabled())
+//         std::cout << OWL_TERMINAL_LIGHT_GREEN
+//                   << "#pynari: loading (baked) backend '" << libName
+//                   << "'"
+//                   << OWL_TERMINAL_DEFAULT << std::endl;
+//       return tryLoadBaked(libName);
+//     }
+//     PING;  PRINT(libName);
+//     if (libName == "default") {
+//         PING; PRINT(backends.size());
+//       for (auto baked : backends) {
+//           PING; PRINT(baked);
+//         if (logging_enabled())
+//           std::cout << OWL_TERMINAL_LIGHT_GREEN
+//                     << "#pynari: loading (baked) backend '" << baked
+//                     << "'"
+//                     << OWL_TERMINAL_DEFAULT << std::endl;
+//         try {
+//           return tryLoadBaked(baked);
+//         } catch (const std::exception &e) {
+//           if (logging_enabled())
+//             std::cout << OWL_TERMINAL_RED
+//                       << "error loading baked backend: " << e.what()
+//                       << OWL_TERMINAL_DEFAULT << std::endl;
+//         }
+//       }
+//     }
+// #endif
     // this is the "regular" path, relying on (system-installed) anari
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
