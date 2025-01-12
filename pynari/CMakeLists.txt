@@ -82,40 +82,44 @@ if (CMAKE_CUDA_COMPILER)
 endif()
 
 if (PYNARI_BAKED_BACKENDS)
-  string(REPLACE ";" "@" PYNARI_BAKED_BACKENDS_LIST "${PYNARI_BAKED_BACKENDS}")
-  target_compile_definitions(pynari
-    PRIVATE
-    -DPYNARI_BAKED_BACKENDS=1
-    -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS_LIST}"
-    )
-#  if (APPLE)
-#    set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
-#  else()
-#    set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN/pynari")
-#    #set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
-#  endif()
-  message("*************************************************************************************************")
-  message("*************************************************************************************************")
-  message("*************************************************************************************************")
-  message("*************************************************************************************************")
-  foreach (backend ${PYNARI_BAKED_BACKENDS})
-    message("finding pynari_baked_${backend}")
-    find_library(BAKED_LIB
-      "pynari_baked_${backend}"
-      PATHS ${CMAKE_INSTALL_PREFIX}/pynari
-      REQUIRED
-      )
-    message("pynari: linking pynari to baked ${backend} lib ${BAKED_LIB}")
-    target_link_libraries(pynari
-      PUBLIC
-      ${BAKED_LIB}
-      )
-  endforeach()
+  target_link_libraries(pynari PRIVATE ${PYNARI_BAKED_BACKENDS})
 endif()
-message("*************************************************************************************************")
-  message("*************************************************************************************************")
-  message("*************************************************************************************************")
-  message("*************************************************************************************************")
+
+# if (PYNARI_BAKED_BACKENDS)
+#   string(REPLACE ";" "@" PYNARI_BAKED_BACKENDS_LIST "${PYNARI_BAKED_BACKENDS}")
+#   target_compile_definitions(pynari
+#     PRIVATE
+#     -DPYNARI_BAKED_BACKENDS=1
+#     -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS_LIST}"
+#     )
+# #  if (APPLE)
+# #    set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
+# #  else()
+# #    set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN/pynari")
+# #    #set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
+# #  endif()
+#   message("*************************************************************************************************")
+#   message("*************************************************************************************************")
+#   message("*************************************************************************************************")
+#   message("*************************************************************************************************")
+#   foreach (backend ${PYNARI_BAKED_BACKENDS})
+#     message("finding pynari_baked_${backend}")
+#     find_library(BAKED_LIB
+#       "pynari_baked_${backend}"
+#       PATHS ${CMAKE_INSTALL_PREFIX}/pynari
+#       REQUIRED
+#       )
+#     message("pynari: linking pynari to baked ${backend} lib ${BAKED_LIB}")
+#     target_link_libraries(pynari
+#       PUBLIC
+#       ${BAKED_LIB}
+#       )
+#   endforeach()
+# endif()
+# message("*************************************************************************************************")
+#   message("*************************************************************************************************")
+#   message("*************************************************************************************************")
+#   message("*************************************************************************************************")
   
 if (TARGET anari::anari)
   target_link_libraries(pynari
