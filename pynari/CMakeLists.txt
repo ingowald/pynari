@@ -56,35 +56,9 @@ set_target_properties(pynari PROPERTIES
 set_target_properties(pynari PROPERTIES
   CUDA_ARCHITECTURES all-major
   )
-
-
-
-if (PYNARI_BAKED_BACKENDS)
-  # this path should only ever get used by a dedicated wheel-building
-  # reposity that builds a version of pynari with barney (and all
-  # other libraries) staticlally hard-linked into it, so as not to
-  # depend on any dynamically linked libraries that pip/auditwheel do
-  # not exactly like.
-  target_compile_definitions(pynari
-    PRIVATE
-    -DPYNARI_BAKED_BACKENDS=1
-    )
-  foreach (backend ${PYNARI_BAKED_BACKENDS})
-    target_link_libraries(pynari
-      PRIVATE 
-      anari_library_${backend}_static
-      )
-    target_compile_definitions(pynari
-      PRIVATE
-      -DPYNARI_HAVE_${backend}=1
-      )
-  endforeach()
-else()
-  target_link_libraries(pynari
-    PRIVATE
-    anari::anari
-    )
-endif()
+target_link_libraries(pynari PUBLIC
+  anari::anari
+  )
 
 if (NOT PYNARI_IS_SUBPROJECT)
   install(TARGETS ${PROJECT_NAME}
@@ -93,4 +67,3 @@ if (NOT PYNARI_IS_SUBPROJECT)
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 endif()
-

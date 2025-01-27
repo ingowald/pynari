@@ -56,8 +56,8 @@ def make_metal(albedo,fuzz):
     return mat
     
 def create_spheres():
-    add_sphere((0., 1., 0.), 1., make_dielectric(1.5))
     add_sphere((0.,-1000.,-1),1000.,make_lambertian(.5,.5,.5))
+    add_sphere((0., 1., 0.), 1., make_dielectric(1.5))
     add_sphere((-4.,1.,0.),1.,make_lambertian(.4,.2,.1))
     add_sphere((4.,1.,0.),1.,make_metal((.7,.6,.5),0.))
     for a in range(-11,12):
@@ -111,6 +111,7 @@ bg_gradient = device.newArray(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+#renderer.setParameter('pixelSamples', anari.INT32, 1)
 renderer.setParameter('pixelSamples', anari.INT32, 128)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.commitParameters()
