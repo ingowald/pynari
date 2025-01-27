@@ -225,7 +225,11 @@ bg_gradient = device.newArray(anari.float4, bg_values)
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
-renderer.setParameter('pixelSamples', anari.INT32, 128)
+if anari.has_cuda_capable_gpu():
+   print('@pynari: detected cuda-capable GPU; using higher res and sample count')
+   renderer.setParameter('pixelSamples', anari.INT32, 16)
+else:
+   renderer.setParameter('pixelSamples', anari.INT32, 4)
 renderer.commitParameters()
 
 

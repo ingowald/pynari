@@ -26,46 +26,153 @@
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
+#ifdef _WIN32
+# include <windows.h>
+#else
+# include <dlfcn.h>
+#endif
+#include <algorithm>
+#ifdef __PYNARI_HAVE_CUDA__
+# include <cuda_runtime.h>
+#endif
 
 #define DEFAULT_DEVICE "barney"
-//#define DEFAULT_DEVICE "helide"
 
 extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
-  
-  Context::Context(const std::string &explicitLibName)
-  {
-    std::cout << OWL_TERMINAL_LIGHT_GREEN
-              << "#pynari: creating context..."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
 
-    std::string libName = explicitLibName;
+  bool has_cuda_capable_gpu() {
+#ifdef __PYNARI_HAVE_CUDA__
+    int numGPUs = 0;
+    cudaGetDeviceCount(&numGPUs);
+    return numGPUs;
+#endif
+    return false;
+  }
+
+  bool readDebugEnvVar()
+  {
+    char *flag = getenv("PYNARI_DBG");
+    if (!flag)
+      flag = getenv("PYNARI_LOG_LEVEL");
+    if (!flag) return false;
+    return std::stoi(flag);
+  }
+
+  bool logging_enabled()
+  {
+    static bool cachedValue = readDebugEnvVar();
+    return cachedValue;
+  }
+  
+#if PYNARI_BAKED_BACKENDS
+  std::vector<std::string> getListOfBakedBackends()
+  {
+    static std::vector<std::string> listOfBakedBackends;
+    if (listOfBakedBackends.empty()) {
+      static char *fromEnv = getenv("PYNARI_BAKED");
+      if (fromEnv) {
+        listOfBakedBackends.push_back(fromEnv);
+      } else {
+        std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
+        // PING; PRINT(allBaked);
+        while (allBaked != "") {
+          int pos = allBaked.find("@");
+          const std::string baked = allBaked.substr(0,pos);
+          listOfBakedBackends.push_back(baked);
+          if (pos == allBaked.npos)
+            allBaked = "";
+          else
+            allBaked = allBaked.substr(pos+1);
+        }
+      }
+    }
+    return listOfBakedBackends;
+  }
+
+  void *getLoadedLibraryFunction(const std::string &libName,
+                                 const std::string &fctName)
+  {
+    static std::map<std::pair<std::string,std::string>,void *> alreadyLoaded;
+    std::pair<std::string,std::string> key(libName,fctName);
+    if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
+# ifdef _WIN32
+      HMODULE lib = LoadLibrary(libName.c_str());//L"nvcuda.dll");
+      if (!lib) throw std::runtime_error("could not load "+libName);
+      
+      void* sym = (void*)GetProcAddress(lib, fctName.c_str());
+# else
+      void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
+      void *sym = dlsym(lib,fctName.c_str());
+# endif
+      alreadyLoaded[key] = sym;
+    }
+    return alreadyLoaded[key];
+  }
+
+  typedef anari::Device (*CreateDeviceFct)();
+    
+  anari::Device tryLoadBaked(const std::string &bakedDevName)
+  {
+    const std::string libName = "libpynari_baked_"+bakedDevName
+# ifdef _WIN32
+      +".dll"
+# elif defined(__APPLE__)
+      +".dylib"
+#else
+      +".so"
+#endif
+      ;
+    // std::cout << "@pynari: trying >>> " << libName << " <<< " << std::endl;
+    const std::string symName = "pynari_createDevice_"+bakedDevName;
+    // PING(libName);
+    // PRINT(symName);
+    CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
+    if (!fct) 
+      throw std::runtime_error("could not get symbol '"+symName
+#ifdef _WIN32
+          +"'"
+#else
+          +"' : "+dlerror()
+#endif
+      );
+    anari::Device dev = fct();
+    if (!dev)
+      throw std::runtime_error(std::string("could not create baked device"));
+    return dev;
+  }
+#endif
+  anari::Device createDevice(std::string libName)
+  {
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
       libName = envLib ? envLib : "barney";
       libName = envLib ? envLib : DEFAULT_DEVICE;
     }
+    if (logging_enabled())
+    std::cout << OWL_TERMINAL_LIGHT_GREEN
+              << "#pynari: looking for _system_ installed ANARI device '"
+              << libName
+              << "'"
+              << OWL_TERMINAL_DEFAULT << std::endl;
     anari::Library library
       = anari::loadLibrary(libName.c_str(), nullptr);
     if (!library)
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
-    anari::Device device
+    anari::Device _device
       = anari::newDevice(library, "default");
+    return _device;
+  }
 
-    this->device = std::make_shared<Device>(device);
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context created."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+  Context::Context(const std::string &explicitLibName)
+  {
+    this->device = std::make_shared<Device>(createDevice(explicitLibName));
   }
     
   Context::~Context()
   {
-    std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
-              << std::endl;
     destroy();
   }
 
@@ -173,16 +280,8 @@ namespace pynari {
       // explicit context::destroy()
       return;
     
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shutting down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
     device->release();
     device = nullptr;
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shut down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
   }
   
 }

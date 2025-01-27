@@ -53,15 +53,9 @@ namespace pynari {
                                (float*)mapped);
       }
       else if (pixelType == ANARI_UFIXED8_VEC4
-               || pixelType == ANARI_UFIXED8_RGBA_SRGB) {
+               ||
+               pixelType == ANARI_UFIXED8_RGBA_SRGB) {
         frame
-          // = py::array_t<uint32_t>(
-                                  // /* numpy shape */
-                                  // {(int)height,(int)width},
-                                  // /*! C strides */
-                                  // {width*sizeof(uint32_t),
-                                  //  sizeof(uint32_t)},
-                                  // (uint32_t*)mapped);
           = py::array_t<uint8_t>(
                                   /* numpy shape */
                                   {(int)height,(int)width,4},

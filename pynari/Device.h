@@ -29,7 +29,8 @@ namespace pynari {
       sure the device doesn't die before the obejcts */
   struct Device {
     typedef std::shared_ptr<Device> SP;
-    Device(anari::Device handle) : handle(handle) {}
+    Device(anari::Device handle) : handle(handle)
+    {}
     virtual ~Device() {}
 
     /*! force-releases this device, and all objects created from

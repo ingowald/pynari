@@ -34,6 +34,10 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
 
+namespace pynari {
+  bool has_cuda_capable_gpu();
+}
+
 PYBIND11_MODULE(pynari, m) {
   // optional module docstring
   m.doc() = "barney python wrappers";
@@ -169,7 +173,9 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Context,
                  std::shared_ptr<Context>>(m, "anari::Device");
   // // -------------------------------------------------------
-  
+
+  m.def("has_cuda_capable_gpu", &pynari::has_cuda_capable_gpu);
+
   context.def("newCamera", &pynari::Context::newCamera);
   context.def("newRenderer", &pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);

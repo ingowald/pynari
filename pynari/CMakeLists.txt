@@ -16,7 +16,7 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-if (NOT (TARGET anari::helium_static))
+if (NOT (TARGET anari))
   find_package(anari 0.12.0 COMPONENTS code_gen)
 endif()
 
@@ -53,15 +53,41 @@ target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 set_target_properties(pynari PROPERTIES
   PYTHON_MODULE_NAME "pynari"
   )
-set_target_properties(pynari PROPERTIES
-  CUDA_ARCHITECTURES all-major
-  )
 target_link_libraries(pynari PUBLIC
   anari::anari
   )
+if (CMAKE_CUDA_ARCHITECTURES)
+  set_target_properties(pynari PROPERTIES
+    CUDA_ARCHITECTURES ${CMAKE_CUDA_ARCHITECTURES}
+    )
+else()
+  set_target_properties(pynari PROPERTIES
+    CUDA_ARCHITECTURES all-major
+    )
+endif()
+
+include(CheckLanguage)
+check_language(CUDA)
+if (CMAKE_CUDA_COMPILER)
+  enable_language(CUDA)
+  set_source_files_properties(
+    Context.cpp 
+    PROPERTIES 
+    LANGUAGE CUDA
+    )
+  target_compile_definitions(pynari PRIVATE __PYNARI_HAVE_CUDA__=1)
+  set_target_properties(pynari PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+    POSITION_INDEPENDENT_CODE ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
+    CUDA_USE_STATIC_CUDA_RUNTIME ON
+    )
+endif()
+
 
 if (NOT PYNARI_IS_SUBPROJECT)
-  install(TARGETS ${PROJECT_NAME}
+  install(
+    TARGETS pynari
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -188,7 +188,7 @@ namespace pynari {
     default:
     // if (info.format == "f")
     //   return importArray<float>(info,buffer);
-      throw std::runtime_error("un-implemented array type of "+type);
+      throw std::runtime_error("un-implemented array type of "+std::to_string(type));
     }
   }
   

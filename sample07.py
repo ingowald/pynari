@@ -236,7 +236,11 @@ camera.commitParameters()
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
-renderer.setParameter('pixelSamples', anari.INT32, 128)
+if anari.has_cuda_capable_gpu():
+    # actually we have denoising on the gpu, so probably need way less...
+    renderer.setParameter('pixelSamples', anari.INT32, 128)
+else:
+    renderer.setParameter('pixelSamples', anari.INT32, 8)
 renderer.commitParameters()
 
 
