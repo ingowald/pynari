@@ -120,7 +120,7 @@ for opt,arg in opts:
 cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
 structured_data = device.newArray(anari.float,cell_array)
 
-cellSize = (2/volume_dims[0],2/volume_dims[1],2/volume_dims[2])
+cellSize = (2/(volume_dims[0]-1),2/(volume_dims[1]-1),2/(volume_dims[2]-1))
 spatial_field = device.newSpatialField('structuredRegular')
 spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
 spatial_field.setParameter('spacing',anari.float3,cellSize)
