@@ -16,9 +16,8 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-if (NOT (TARGET anari))
-  find_package(anari 0.12.0 COMPONENTS code_gen)
-endif()
+#if (NOT (TARGET anari))
+#endif()
 
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other

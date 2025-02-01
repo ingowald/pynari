@@ -46,6 +46,8 @@ endif()
 
 #find_package(Python3 COMPONENTS Interpreter Development)
 
+find_package(anari 0.13.0 COMPONENTS code_gen)
+
 set(PYBIND11_FINDPYTHON ON)
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
 if (NOT (TARGET stb_image))
