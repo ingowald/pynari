@@ -16,13 +16,7 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-<<<<<<< HEAD
-#if (NOT (TARGET anari))
-#endif()
-=======
-#  find_package(anari 0.12.0 COMPONENTS code_gen)
 find_package(anari)
->>>>>>> 99b3d9b
 
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
@@ -123,7 +117,7 @@ if (PYNARI_BUILD_FOR_PIP)
     FILES __init__.py
     # where to put it - we want this in <install>/pynari
     # $(install_dir)/<packagename(=pynari)>/__init__.py
-    DESTINATION pynari
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
 else()
   install(
