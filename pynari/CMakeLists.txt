@@ -16,9 +16,8 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-if (NOT (TARGET anari))
-  find_package(anari 0.12.0 COMPONENTS code_gen)
-endif()
+#  find_package(anari 0.12.0 COMPONENTS code_gen)
+find_package(anari)
 
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
@@ -81,47 +80,44 @@ if (CMAKE_CUDA_COMPILER)
     )
 endif()
 
-if (PYNARI_BAKED_BACKENDS)
-  string(REPLACE ";" "@" PYNARI_BAKED_BACKENDS_LIST "${PYNARI_BAKED_BACKENDS}")
-  target_compile_definitions(pynari
-    PRIVATE
-#    -DPYNARI_BAKED_BACKENDS=1
-    -DPYNARI_BAKED_BACKENDS=1
-    -DPYNARI_BAKED_BACKENDS_LIST="${PYNARI_BAKED_BACKENDS_LIST}"
-    )
+message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
+if (PYNARI_BUILD_FOR_PIP)
+  message("building for pip...")
   if (APPLE)
     set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
   else()
     set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
   endif()
-  foreach (backend ${PYNARI_BAKED_BACKENDS})
-    set(baked_lib "")
-    message("finding pynari_baked_${backend}")
-    find_library(BAKED_LIB
-      NAMES "pynari_baked_${backend}"
-      PATHS ${CMAKE_INSTALL_PREFIX}/pynari ${CMAKE_INSTALL_PREFIX}
-      )
-    message("pynari: linking pynari to baked ${backend} lib ${BAKED_LIB}")
-    target_link_libraries(pynari
-      PUBLIC
-      ${BAKED_LIB}
-      )
-  endforeach()
-endif()
-
-if (TARGET anari::anari)
+  find_package(barney)
   target_link_libraries(pynari
-    PRIVATE
-    anari::anari_static#::anari
+    PUBLIC
+    barney::barney
+    anari::helium
+    anari::anari
+    )
+  install(
+    IMPORTED_RUNTIME_ARTIFACTS
+    pynari
+    barney::barney
+    anari::anari
+    
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+#    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    )
+  install(
+    TARGETS pynari
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    )
+  install(
+    FILES __init__.py
+    # where to put it - we want this in <install>/pynari
+    # $(install_dir)/<packagename(=pynari)>/__init__.py
+    DESTINATION pynari
     )
 else()
-  target_link_libraries(pynari
-    PRIVATE
-    anari_static#::anari
-    )
-endif()
-
-if (NOT PYNARI_IS_SUBPROJECT)
   install(
     TARGETS pynari
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
