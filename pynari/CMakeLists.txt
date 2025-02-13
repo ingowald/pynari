@@ -117,7 +117,7 @@ if (PYNARI_BUILD_FOR_PIP)
     FILES __init__.py
     # where to put it - we want this in <install>/pynari
     # $(install_dir)/<packagename(=pynari)>/__init__.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
     )
 else()
   install(
