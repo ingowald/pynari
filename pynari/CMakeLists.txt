@@ -16,7 +16,7 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
-find_package(anari)
+#find_package(anari)
 
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
@@ -47,6 +47,7 @@ pybind11_add_module(pynari
   # the actual pybind11 bindings file
   bindings.cpp
   )
+set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 set_target_properties(pynari PROPERTIES
   PYTHON_MODULE_NAME "pynari"
@@ -79,6 +80,7 @@ if (CMAKE_CUDA_COMPILER)
     POSITION_INDEPENDENT_CODE ON
     CUDA_RESOLVE_DEVICE_SYMBOLS ON
     CUDA_USE_STATIC_CUDA_RUNTIME ON
+    BUILD_WITH_INSTALL_RPATH ON
     )
 endif()
 
@@ -93,7 +95,7 @@ if (PYNARI_BUILD_FOR_PIP)
   find_package(barney)
   target_link_libraries(pynari
     PUBLIC
-    barney::barney
+    barney::anari_library_barney
     anari::helium
     anari::anari
     )
@@ -101,6 +103,7 @@ if (PYNARI_BUILD_FOR_PIP)
     IMPORTED_RUNTIME_ARTIFACTS
     pynari
     barney::barney
+    barney::anari_library_barney
     anari::anari
     
     LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}

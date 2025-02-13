@@ -23,7 +23,6 @@ endif()
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
 #if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
   # Set the possible values of build type for cmake-gui
@@ -32,19 +31,19 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 #endif()
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.1.7 LANGUAGES C CXX)
+project(pynari VERSION 1.2.0 LANGUAGES C CXX)
 
-if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
-  set(PYNARI_IS_SUBPROJECT ON)
-else()
-  set(PYNARI_IS_SUBPROJECT OFF)
-endif()
+#if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
+#  set(PYNARI_IS_SUBPROJECT ON)
+#else()
+#  set(PYNARI_IS_SUBPROJECT OFF)
+#endif()
 
-if (NOT PYNARI_IS_SUBPROJECT)
+#if (NOT PYNARI_IS_SUBPROJECT)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-endif()
+#endif()
 
 #find_package(Python3 COMPONENTS Interpreter Development)
 
