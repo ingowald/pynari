@@ -106,21 +106,21 @@ if (PYNARI_BUILD_FOR_PIP)
     barney::anari_library_barney
     anari::anari
     
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
 #    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
   install(
     TARGETS pynari
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
   install(
     FILES __init__.py
     # where to put it - we want this in <install>/pynari
     # $(install_dir)/<packagename(=pynari)>/__init__.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
 else()
   install(
