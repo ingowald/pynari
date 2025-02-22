@@ -18,6 +18,8 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
 #find_package(anari)
 
+set(CMAKE_CXX_STANDARD 20)
+
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
   # operations on it:
@@ -46,6 +48,7 @@ pybind11_add_module(pynari
   
   # the actual pybind11 bindings file
   bindings.cpp
+  dummy.cu
   )
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
@@ -65,16 +68,11 @@ else()
     )
 endif()
 
-include(CheckLanguage)
-check_language(CUDA)
-if (CMAKE_CUDA_COMPILER)
-  enable_language(CUDA)
-  set_source_files_properties(
-    Context.cpp 
-    PROPERTIES 
-    LANGUAGE CUDA
-    )
-  target_compile_definitions(pynari PRIVATE __PYNARI_HAVE_CUDA__=1)
+#include(CheckLanguage)
+#check_language(CUDA)
+#if (CMAKE_CUDA_COMPILER)
+#  enable_language(CUDA)
+  target_compile_definitions(pynari PRIVATE -DPYNARI_HAVE_CUDA=1)
   set_target_properties(pynari PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
     POSITION_INDEPENDENT_CODE ON
@@ -82,7 +80,7 @@ if (CMAKE_CUDA_COMPILER)
     CUDA_USE_STATIC_CUDA_RUNTIME ON
     BUILD_WITH_INSTALL_RPATH ON
     )
-endif()
+#endif()
 
 message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
 if (PYNARI_BUILD_FOR_PIP)
@@ -117,7 +115,7 @@ if (PYNARI_BUILD_FOR_PIP)
     ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
   install(
-    FILES __init__.py
+    FILES becomes.__init__.py
     # where to put it - we want this in <install>/pynari
     # $(install_dir)/<packagename(=pynari)>/__init__.py
     DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
