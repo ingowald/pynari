@@ -23,6 +23,7 @@ endif()
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+
 #if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
   # Set the possible values of build type for cmake-gui
 #  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
@@ -30,21 +31,31 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #endif()
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.1.7 LANGUAGES C CXX)
+    include(CheckLanguage)
+    check_language(CUDA)
+    if (ON) #CMAKE_CUDA_COMPILER)
+    project(pynari VERSION 1.2.0 LANGUAGES C CXX CUDA)
+    set(DUMMY_CU "dummy.cu")
+    else()
+    project(pynari VERSION 1.2.0 LANGUAGES C CXX)
+    set(DUMMY_CU)
+    endif()
 
-if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
-  set(PYNARI_IS_SUBPROJECT ON)
-else()
-  set(PYNARI_IS_SUBPROJECT OFF)
-endif()
+#if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
+#  set(PYNARI_IS_SUBPROJECT ON)
+#else()
+#  set(PYNARI_IS_SUBPROJECT OFF)
+#endif()
 
-if (NOT PYNARI_IS_SUBPROJECT)
+#if (NOT PYNARI_IS_SUBPROJECT)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-endif()
+#endif()
 
 #find_package(Python3 COMPONENTS Interpreter Development)
+
+find_package(anari 0.13.0 COMPONENTS code_gen)
 
 set(PYBIND11_FINDPYTHON ON)
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
