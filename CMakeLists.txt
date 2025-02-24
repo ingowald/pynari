@@ -25,21 +25,21 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
 #if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
-  # Set the possible values of build type for cmake-gui
+# Set the possible values of build type for cmake-gui
 #  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
 #    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 #endif()
 
 # project command is required to come after cmake_minimum_required command.
-    include(CheckLanguage)
-    check_language(CUDA)
-    if (ON) #CMAKE_CUDA_COMPILER)
-    project(pynari VERSION 1.2.0 LANGUAGES C CXX CUDA)
-    set(DUMMY_CU "dummy.cu")
-    else()
-    project(pynari VERSION 1.2.0 LANGUAGES C CXX)
-    set(DUMMY_CU)
-    endif()
+include(CheckLanguage)
+check_language(CUDA)
+if (CMAKE_CUDA_COMPILER)
+  project(pynari VERSION 1.2.0 LANGUAGES C CXX CUDA)
+  set(PYNARI_HAVE_CUDA ON)
+else()
+  project(pynari VERSION 1.2.0 LANGUAGES C CXX)
+  set(PYNARI_HAVE_CUDA OFF)
+endif()
 
 #if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
 #  set(PYNARI_IS_SUBPROJECT ON)

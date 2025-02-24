@@ -68,10 +68,11 @@ else()
     )
 endif()
 
-#include(CheckLanguage)
-#check_language(CUDA)
-#if (CMAKE_CUDA_COMPILER)
-#  enable_language(CUDA)
+if (PYNARI_HAVE_CUDA)
+  set_source_files_properties(Context.cpp
+    PROPERTIES
+    LANGUAGE CUDA
+    )
   target_compile_definitions(pynari PRIVATE -DPYNARI_HAVE_CUDA=1)
   set_target_properties(pynari PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
@@ -80,7 +81,15 @@ endif()
     CUDA_USE_STATIC_CUDA_RUNTIME ON
     BUILD_WITH_INSTALL_RPATH ON
     )
-#endif()
+endif()
+
+find_package(barney)
+target_link_libraries(pynari
+  PUBLIC
+  barney::anari_library_barney
+  anari::helium
+  anari::anari
+  )
 
 message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
 if (PYNARI_BUILD_FOR_PIP)
@@ -90,13 +99,6 @@ if (PYNARI_BUILD_FOR_PIP)
   else()
     set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
   endif()
-  find_package(barney)
-  target_link_libraries(pynari
-    PUBLIC
-    barney::anari_library_barney
-    anari::helium
-    anari::anari
-    )
   install(
     IMPORTED_RUNTIME_ARTIFACTS
     pynari
