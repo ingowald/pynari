@@ -43,8 +43,10 @@ PYBIND11_MODULE(pynari, m) {
   m.doc() = "barney python wrappers";
 
   // create one context; almost all functions are then per context
-  m.def("newDevice", &createContext, py.arg("devName")="default",
-        "Creates an barney Context object");
+  m.def("newDevice", &createContext,
+        "Creates an barney Context object",
+        py::arg("libName"),
+        py::arg("devName")="default");
  
   m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
   m.attr("STRING")       = py::int_((int)ANARI_STRING);
