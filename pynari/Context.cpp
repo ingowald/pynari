@@ -38,7 +38,7 @@
 
 #define DEFAULT_DEVICE "barney"
 
-extern "C" ANARIDevice createAnariDeviceBarney();
+// extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
 
@@ -143,7 +143,7 @@ namespace pynari {
 //     return dev;
 //   }
 // #endif
-  anari::Device createDevice(std::string libName)
+  anari::Device createDevice(std::string libName, const std::string devName)
   {
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
@@ -162,13 +162,13 @@ namespace pynari {
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
     anari::Device _device
-      = anari::newDevice(library, "default");
+      = anari::newDevice(library, devName.c_str());
     return _device;
   }
 
-  Context::Context(const std::string &explicitLibName)
+  Context::Context(const std::string &explicitLibName, const std::string &subName)
   {
-    this->device = std::make_shared<Device>(createDevice(explicitLibName));
+    this->device = std::make_shared<Device>(createDevice(explicitLibName,subName));
   }
     
   Context::~Context()
@@ -254,15 +254,15 @@ namespace pynari {
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
-  std::shared_ptr<Context> createContext(const std::string &libName)
+  std::shared_ptr<Context> createContext(const std::string &libName, const std::string &subName)
   {
-    return std::make_shared<Context>(libName);
+    return std::make_shared<Context>(libName,subName);
   }
 
-  std::shared_ptr<Context> Context::create(const std::string &libName)
-  {
-    return std::make_shared<Context>(libName);
-  }
+  // std::shared_ptr<Context> Context::create(const std::string &libName)
+  // {
+  //   return std::make_shared<Context>(libName);
+  // }
   
   /*! allows to query whether the user has already explicitly called
     contextDestroy. if so, any releases of handles are no longer
