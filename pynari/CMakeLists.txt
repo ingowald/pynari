@@ -1,5 +1,5 @@
 # ======================================================================== #
-# Copyright 2024-2024 Ingo Wald                                            #
+# Copyright 2024-2025 Ingo Wald                                            #
 #                                                                          #
 # Licensed under the Apache License, Version 2.0 (the "License");          #
 # you may not use this file except in compliance with the License.         #
@@ -48,8 +48,16 @@ pybind11_add_module(pynari
   
   # the actual pybind11 bindings file
   bindings.cpp
-  dummy.cu
-  )
+#  dummy.cu
+)
+if (PYNARI_HAVE_CUDA)
+  message("setting language to CUDA")
+  set_source_files_properties(Context.cpp
+    PROPERTIES 
+    LANGUAGE CUDA
+    )
+endif()
+
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 set_target_properties(pynari PROPERTIES

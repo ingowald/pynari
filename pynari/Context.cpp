@@ -43,7 +43,7 @@
 namespace pynari {
 
   bool has_cuda_capable_gpu() {
-#ifdef PYNARI_HAVE_CUDA
+#if PYNARI_HAVE_CUDA
     int numGPUs = 0;
     cudaGetDeviceCount(&numGPUs);
     return numGPUs;
