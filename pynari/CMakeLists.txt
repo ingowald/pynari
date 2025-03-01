@@ -16,6 +16,16 @@
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
+if (PYNARI_BUILD_FOR_PIP)
+  # from https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+#  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+#  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  # iw - this gets overwritten below
+#  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
 #find_package(anari)
 
 pybind11_add_module(pynari
@@ -47,14 +57,18 @@ pybind11_add_module(pynari
   # the actual pybind11 bindings file
   bindings.cpp
   )
-set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 target_include_directories(pynari PUBLIC ${PROJECT_SOURCE_DIR})
 set_target_properties(pynari PROPERTIES
   PYTHON_MODULE_NAME "pynari"
   )
-target_link_libraries(pynari PUBLIC
-  anari::anari
-  )
+if (APPLE)
+  set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
+else()
+  set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
+endif()
+#target_link_libraries(pynari PUBLIC
+#  anari::anari
+#  )
 if (CMAKE_CUDA_ARCHITECTURES)
   set_target_properties(pynari PROPERTIES
     CUDA_ARCHITECTURES ${CMAKE_CUDA_ARCHITECTURES}
@@ -80,35 +94,36 @@ if (CMAKE_CUDA_COMPILER)
     POSITION_INDEPENDENT_CODE ON
     CUDA_RESOLVE_DEVICE_SYMBOLS ON
     CUDA_USE_STATIC_CUDA_RUNTIME ON
-    BUILD_WITH_INSTALL_RPATH ON
     )
 endif()
 
 message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
 if (PYNARI_BUILD_FOR_PIP)
+
+  set_target_properties(pynari
+    PROPERTIES
+    CXX_VISIBILITY_PRESET  default
+    CUDA_VISIBILITY_PRESET default
+    )
+  
+  
   message("building for pip...")
-  if (APPLE)
-    set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
-  else()
-    set_target_properties(pynari PROPERTIES INSTALL_RPATH "$ORIGIN")
-  endif()
   find_package(barney)
   target_link_libraries(pynari
     PUBLIC
     barney::anari_library_barney
+    anari::anari_static
     anari::helium
-    anari::anari
     )
   install(
     IMPORTED_RUNTIME_ARTIFACTS
-    pynari
-    barney::barney
+    #    pynari
+    #    barney::barney
     barney::anari_library_barney
-    anari::anari
     
     LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
-#    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
+    #    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
   install(
     TARGETS pynari
