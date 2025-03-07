@@ -251,6 +251,7 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
   {
+    PING;
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   

@@ -92,7 +92,7 @@ namespace pynari {
   void Object::setArray_list(const char *name,
                              int type, 
                              const py::list &list)
-  { 
+  {
     assertThisObjectIsValid();
     std::vector<ANARIObject> objects;
     for (auto item : list) {
