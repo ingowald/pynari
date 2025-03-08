@@ -66,83 +66,6 @@ namespace pynari {
     return cachedValue;
   }
   
-// #if PYNARI_BAKED_BACKENDS
-//   std::vector<std::string> getListOfBakedBackends()
-//   {
-//     static std::vector<std::string> listOfBakedBackends;
-//     if (listOfBakedBackends.empty()) {
-//       static char *fromEnv = getenv("PYNARI_BAKED");
-//       if (fromEnv) {
-//         listOfBakedBackends.push_back(fromEnv);
-//       } else {
-//         std::string allBaked = PYNARI_BAKED_BACKENDS_LIST;
-//         // PING; PRINT(allBaked);
-//         while (allBaked != "") {
-//           int pos = allBaked.find("@");
-//           const std::string baked = allBaked.substr(0,pos);
-//           listOfBakedBackends.push_back(baked);
-//           if (pos == allBaked.npos)
-//             allBaked = "";
-//           else
-//             allBaked = allBaked.substr(pos+1);
-//         }
-//       }
-//     }
-//     return listOfBakedBackends;
-//   }
-
-//   void *getLoadedLibraryFunction(const std::string &libName,
-//                                  const std::string &fctName)
-//   {
-//     static std::map<std::pair<std::string,std::string>,void *> alreadyLoaded;
-//     std::pair<std::string,std::string> key(libName,fctName);
-//     if (alreadyLoaded.find(key) == alreadyLoaded.end()) {
-// # ifdef _WIN32
-//       HMODULE lib = LoadLibrary(libName.c_str());//L"nvcuda.dll");
-//       if (!lib) throw std::runtime_error("could not load "+libName);
-      
-//       void* sym = (void*)GetProcAddress(lib, fctName.c_str());
-// # else
-//       void *lib = dlopen(libName.c_str(),RTLD_LOCAL|RTLD_NOW);
-//       void *sym = dlsym(lib,fctName.c_str());
-// # endif
-//       alreadyLoaded[key] = sym;
-//     }
-//     return alreadyLoaded[key];
-//   }
-
-//   typedef anari::Device (*CreateDeviceFct)();
-    
-//   anari::Device tryLoadBaked(const std::string &bakedDevName)
-//   {
-//     const std::string libName = "libpynari_baked_"+bakedDevName
-// # ifdef _WIN32
-//       +".dll"
-// # elif defined(__APPLE__)
-//       +".dylib"
-// #else
-//       +".so"
-// #endif
-//       ;
-//     // std::cout << "@pynari: trying >>> " << libName << " <<< " << std::endl;
-//     const std::string symName = "pynari_createDevice_"+bakedDevName;
-//     // PING(libName);
-//     // PRINT(symName);
-//     CreateDeviceFct fct = (CreateDeviceFct)getLoadedLibraryFunction(libName,symName);
-//     if (!fct) 
-//       throw std::runtime_error("could not get symbol '"+symName
-// #ifdef _WIN32
-//           +"'"
-// #else
-//           +"' : "+dlerror()
-// #endif
-//       );
-//     anari::Device dev = fct();
-//     if (!dev)
-//       throw std::runtime_error(std::string("could not create baked device"));
-//     return dev;
-//   }
-// #endif
   anari::Device createDevice(std::string libName, const std::string devName)
   {
     if (libName == "default" || libName == "<default>") {
@@ -251,7 +174,6 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
   {
-    PING;
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
@@ -260,11 +182,6 @@ namespace pynari {
     return std::make_shared<Context>(libName,subName);
   }
 
-  // std::shared_ptr<Context> Context::create(const std::string &libName)
-  // {
-  //   return std::make_shared<Context>(libName);
-  // }
-  
   /*! allows to query whether the user has already explicitly called
     contextDestroy. if so, any releases of handles are no longer
     valid because whatever they may have pointed to inside the

@@ -11,8 +11,10 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 40.
 
-#volume_dims = (512,512,512)
-#volume_fileName = 'magnetic_512_volume.raw'
+print('@pynari: -------------------------------------------------------')
+print('@pynari: running sample03 - volume rendering')
+print('@pynari: of a simple 3D structured volume')
+print('@pynari: -------------------------------------------------------')
 
 device = anari.newDevice('default')
 
@@ -211,6 +213,7 @@ else:
     im = PIL.Image.fromarray(pixels)
     im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     im = im.convert('RGB')
+    print(f'@pynari: done. saving to {out_file_name}')
     im.save(out_file_name)
 
 

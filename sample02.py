@@ -18,6 +18,11 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 20.
 
+print('@pynari: -------------------------------------------------------')
+print('@pynari: running sample02 - the first real barney-based sample ')
+print('@pynari: that renders a pynari-version of Pete Shirley\'s famous ')
+print('@pynari: RTOW (ray tracing in one week-end) scene.')
+print('@pynari: -------------------------------------------------------')
 random.seed(80577)
 
 def add_sphere(pos, radius, material):
@@ -156,6 +161,7 @@ else:
     im = PIL.Image.fromarray(pixels)
     im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     im = im.convert('RGB')
+    print(f'@pynari: done. saving to {out_file_name}')
     im.save(out_file_name)
 
 
