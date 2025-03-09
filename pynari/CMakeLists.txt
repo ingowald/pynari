@@ -91,16 +91,16 @@ if (PYNARI_HAVE_CUDA)
     )
 endif()
 
-find_package(barney)
 target_link_libraries(pynari
   PUBLIC
-  barney::anari_library_barney
+#  barney::anari_library_barney
   anari::helium
   anari::anari
   )
 
 message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
 if (PYNARI_BUILD_FOR_PIP)
+find_package(barney)
   message("building for pip...")
   if (APPLE)
     set_target_properties(pynari PROPERTIES INSTALL_RPATH "@loader_path")
