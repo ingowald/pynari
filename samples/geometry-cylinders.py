@@ -57,6 +57,9 @@ cylinders.setParameter('primitive.index',anari.ARRAY,
 cylinders.setParameter('vertex.position',anari.ARRAY,
                        device.newArray(anari.float3,np_vertex_position))
     
+mat.setParameter("baseColor",anari.float3,(.3,.3,.5))
+mat.setParameter("metallic",anari.float,.5)
+mat.setParameter("roughness",anari.float,.2)
 mat.commitParameters();
 cylinders.commitParameters()
 

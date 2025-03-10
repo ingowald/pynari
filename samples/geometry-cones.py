@@ -104,7 +104,6 @@ np_vertex_color     = np.array(vertex_color,dtype=np.float32)
 device = anari.newDevice('default')
 mat    = device.newMaterial('physicallyBased')
 
-print("calling dev newgeom")
 cones  = device.newGeometry('cone')
 cones.setParameter('vertex.radius',anari.ARRAY,
                        device.newArray(anari.float,np_vertex_radius))
@@ -119,7 +118,7 @@ else:
     cones.setParameter('primitive.color',anari.ARRAY,
                         device.newArray(anari.float3,np_primitive_color))
     
-mat.setParameter("baseColor",anari.float3,(.5,.5,.5))
+mat.setParameter("baseColor",anari.float3,(.3,.3,.5))
 mat.setParameter("metallic",anari.float,.5)
 mat.setParameter("roughness",anari.float,.2)
 mat.commitParameters();
@@ -144,7 +143,7 @@ camera = device.newCamera('perspective')
 camera.setParameter('up',anari.float3,(0,1,0))
 camera.setParameter('position',anari.float3,(5,8,-30))
 camera.setParameter('direction',anari.float3,(-5,-8,+30))
-camera.setParameter('fovy',anari.float,40*math.pi/180)
+camera.setParameter('fovy',anari.float,35*math.pi/180)
 camera.commitParameters()
 
 renderer = device.newRenderer('default')

@@ -149,7 +149,7 @@ fb_color = frame.get('channel.color')
 
 pixels = np.array(fb_color)#.reshape([height, width, 4])
 
-out_file_name = ''
+out_file_name = 'camera-dof.png'
 args = sys.argv[1:]
 opts, args = getopt.getopt(args,"ho:",["help","output="])
 for opt,arg in opts:
@@ -158,7 +158,7 @@ for opt,arg in opts:
         sys.exit(0)
     elif opt == '-o':
         out_file_name = arg
-
+        
 if out_file_name == '':
     plt.imshow(pixels)
     plt.gca().invert_yaxis()
