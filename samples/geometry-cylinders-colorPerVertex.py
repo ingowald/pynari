@@ -137,7 +137,7 @@ pixels = np.array(fb_color)#.reshape([height, width, 4])
 im = PIL.Image.fromarray(pixels)
 im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
 im = im.convert('RGB')
-out_file_name = 'cylinders.png'
+out_file_name = 'cylinders-colorPerVertex.png'
 print(f'@pynari: done. saving to {out_file_name}')
 im.save(out_file_name)
 
