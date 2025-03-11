@@ -107,6 +107,7 @@ PYBIND11_MODULE(pynari, m) {
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameterArray",  &pynari::Object::setArray_list);
+  object.def("setParameterArray",  &pynari::Object::setArray_np);
   /*! set FROM a python float value */
   object.def("setParameter",  &pynari::Object::set_float);
   /*! set FROM a python float tuple */

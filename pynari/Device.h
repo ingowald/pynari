@@ -21,7 +21,8 @@
 
 namespace pynari {
   struct Object;
-
+  struct Context;
+  
   /*! python-wrapper object for an ANARIDevice - not that in pynari
       all functionality of a device lives in the pynari::Context
       object; this only handles the lifetime (so all objects created
@@ -29,7 +30,8 @@ namespace pynari {
       sure the device doesn't die before the obejcts */
   struct Device {
     typedef std::shared_ptr<Device> SP;
-    Device(anari::Device handle) : handle(handle)
+    Device(anari::Device handle, Context *context)
+      : handle(handle), context(context)
     {}
     virtual ~Device() {}
 
@@ -47,6 +49,7 @@ namespace pynari {
     std::set<Object*> listOfAllObjectsCreatedOnThisDevice;
     
     anari::Device handle = 0;
+    Context *const context;
   };
 
 }

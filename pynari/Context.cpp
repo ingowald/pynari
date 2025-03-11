@@ -66,7 +66,8 @@ namespace pynari {
     return cachedValue;
   }
   
-  anari::Device createDevice(std::string libName, const std::string devName)
+  anari::Device createDevice(std::string libName,
+                             const std::string devName)
   {
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
@@ -91,7 +92,8 @@ namespace pynari {
 
   Context::Context(const std::string &explicitLibName, const std::string &subName)
   {
-    this->device = std::make_shared<Device>(createDevice(explicitLibName,subName));
+    this->device
+      = std::make_shared<Device>(createDevice(explicitLibName,subName),this);
   }
     
   Context::~Context()

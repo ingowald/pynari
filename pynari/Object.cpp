@@ -15,6 +15,8 @@
 // ======================================================================== //
 
 #include "pynari/Object.h"
+#include "pynari/Context.h"
+#include "pynari/Array.h"
 
 namespace pynari {
 
@@ -110,6 +112,15 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
       
     anari::setParameter(device->handle,this->handle,name,array);
+  }
+  
+  void Object::setArray_np(const char *name,
+                           int type, 
+                           const py::buffer &buffer)
+  {
+    std::shared_ptr<pynari::Array> array
+      = device->context->newArray(type,buffer);
+    anari::setParameter(device->handle,this->handle,name,array->handle);
   }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)

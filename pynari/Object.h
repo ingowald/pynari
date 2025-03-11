@@ -42,6 +42,8 @@ namespace pynari {
                     const std::string &stringValue);
     void setArray_list(const char *name, int type, 
                        const py::list &list);
+    void setArray_np(const char *name, int type, 
+                     const py::buffer &buffer);
     void set_float(const char *name, int type,
                    float v);
     void set_float2(const char *name, int type, 
