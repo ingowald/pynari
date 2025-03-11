@@ -83,6 +83,7 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("INT32_VEC4")  = py::int_((int)ANARI_INT32_VEC4);
 
   m.attr("UFIXED8_VEC4")  = py::int_((int)ANARI_UFIXED8_VEC4);
+  m.attr("UFIXED8_RGBA_SRGB")  = py::int_((int)ANARI_UFIXED8_RGBA_SRGB);
 
   // iw - not anari spelling, but ...
   m.attr("FLOAT")        = py::int_((int)ANARI_FLOAT32);

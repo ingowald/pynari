@@ -1,5 +1,7 @@
 # `pyNARI` - a Python Interface for ANARI
 
+![Collage of Samples](collage-pynari.jpg)
+
 PyNari is a thin python wrapper over the Khronos `ANARI` API
 (https://registry.khronos.org/ANARI/) that allows to use ANARI
 functionality directly from python program.

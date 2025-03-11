@@ -22,6 +22,8 @@ namespace pynari {
     : Object(device)
   {
     handle = anari::newObject<anari::Frame>(device->handle);
+    anari::setParameter(device->handle, handle, "channel.color",
+                        (anari::DataType)ANARI_UFIXED8_RGBA_SRGB);
   }
 
   void Frame::render()
