@@ -171,6 +171,11 @@ im = PIL.Image.fromarray(pixels)
 im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
 im = im.convert('RGB')
 out_file_name = 'cones-colorPerPrim.png'
+args = sys.argv[1:]
+opts, args = getopt.getopt(args,"o:",["output="])
+for opt,arg in opts:
+    if  opt == '-o':
+        out_file_name = arg
 print(f'@pynari: done. saving to {out_file_name}')
 im.save(out_file_name)
 

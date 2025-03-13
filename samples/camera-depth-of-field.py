@@ -154,7 +154,7 @@ args = sys.argv[1:]
 opts, args = getopt.getopt(args,"ho:",["help","output="])
 for opt,arg in opts:
     if opt == '-h':
-        printf('sample02.py [-o outfile.jpg]')
+        printf('camera-depth-of-field.py [-o outfile.jpg]')
         sys.exit(0)
     elif opt == '-o':
         out_file_name = arg
