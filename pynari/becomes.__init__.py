@@ -37,6 +37,7 @@ from .pynari import INT32_VEC3
 from .pynari import INT32_VEC4
 
 from .pynari import UFIXED8_VEC4
+from .pynari import UFIXED8_RGBA
 from .pynari import UFIXED8_RGBA_SRGB
 
 from .pynari import FLOAT

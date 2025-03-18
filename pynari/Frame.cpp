@@ -32,6 +32,20 @@ namespace pynari {
     anariFrameReady(device->handle, (ANARIFrame)handle, ANARI_WAIT);
   }
 
+  uint64_t Frame::map(const std::string &channel)
+  {
+    ANARIDataType pixelType;
+    uint32_t width, height;
+    const void *ptr = anariMapFrame(device->handle, (ANARIFrame)handle,
+                                    channel.c_str(), &width, &height, &pixelType);
+    return (uint64_t)ptr;
+  }
+  
+  void Frame::unmap(const std::string &channel)
+  {
+    anariUnmapFrame(device->handle, (ANARIFrame)handle, channel.c_str());
+  }
+  
   py::object Frame::get(const std::string &channelName)
   {
     if (channelName == "channel.color") {
@@ -74,7 +88,7 @@ namespace pynari {
                                  "'ANARI_UFIXED8_RGBA_SRGB'");
       }
 
-      anariUnmapFrame(device->handle,(ANARIFrame)handle,"color");
+      anariUnmapFrame(device->handle,(ANARIFrame)handle,"channel.color");
       return frame;
     }
 

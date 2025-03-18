@@ -60,6 +60,7 @@ create_spheres()
 world = device.newWorld()
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (-.6,-1,+.5))
+light.setParameter('irradiance', anari.float3, (1,1,1))
 light.commitParameters()
 
 array = device.newArray(anari.LIGHT, [light])
@@ -88,7 +89,7 @@ bg_gradient = device.newArray(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, .1)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.setParameter('pixelSamples', anari.INT32, 16)
 renderer.commitParameters()
