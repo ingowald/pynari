@@ -31,23 +31,16 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #endif()
 
 # project command is required to come after cmake_minimum_required command.
+project(pynari VERSION 1.2.0 LANGUAGES C CXX)
+
+set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)
 check_language(CUDA)
 if (CMAKE_CUDA_COMPILER)
-  project(pynari VERSION 1.2.0 LANGUAGES C CXX CUDA)
+  enable_language(CUDA)
   set(PYNARI_HAVE_CUDA ON)
-  message("found cuda compiler")
-else()
-  project(pynari VERSION 1.2.0 LANGUAGES C CXX)
-  set(PYNARI_HAVE_CUDA OFF)
-  message("cuda compiler not found")
+  message("found CUDA: ${CMAKE_CUDA_COMPILER}")
 endif()
-
-#if (NOT (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
-#  set(PYNARI_IS_SUBPROJECT ON)
-#else()
-#  set(PYNARI_IS_SUBPROJECT OFF)
-#endif()
 
 #if (NOT PYNARI_IS_SUBPROJECT)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
