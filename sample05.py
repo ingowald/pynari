@@ -38,29 +38,30 @@ def make_pbr(roughness, metallic):
     return mat
     
 def create_spheres():
-    grid_size = 5
-    radius = .4 / grid_size
-    for a in range(-grid_size,grid_size):
-        for b in range(-grid_size,grid_size):
+    grid_size = 9
+    radius = .9 / grid_size
+    for a in range(grid_size):
+        for b in range(grid_size):
             choose_mat = random.random();
-            center = ((a + .5) / grid_size,
-                      (b + .5) / grid_size,
+            center = ((a + .5 - grid_size/2) / (grid_size/2),
+                      (b + .5 - grid_size/2) / (grid_size/2),
                       0.)
-            metallic = (a+grid_size)/(2*grid_size)
-            roughness = (b+grid_size)/(2*grid_size)
-            add_sphere(center,radius,make_pbr(roughness,metallic))
+            metallic = (a+.5)/grid_size
+            roughness = (b+.5)/grid_size
+            add_sphere(center,radius,make_pbr(roughness*roughness,metallic))
 
 
 spheres = []
 
-device = anari.newDevice('default')
+device = anari.newDevice('barney')
 
 create_spheres()
 
 world = device.newWorld()
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (-.6,-1,+.5))
-light.setParameter('irradiance', anari.float3, (1,1,1))
+light.setParameter('color', anari.float3, (1,1,1))
+light.setParameter('irradiance', anari.float, 1)
 light.commitParameters()
 
 array = device.newArray(anari.LIGHT, [light])
