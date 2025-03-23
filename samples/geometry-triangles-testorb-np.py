@@ -3,6 +3,12 @@ import numpy as np
 import sys, getopt
 import PIL
 import pynari as anari
+import sys
+import os
+
+executable_path = os.path.abspath(__file__)
+executable_directory = os.path.dirname(executable_path)
+
 
 width = 1024
 height = 768
@@ -33,7 +39,8 @@ def makeMaterial_matte(color):
     return mat
     
 def createMesh(file_name, material):
-    mesh_data = np.load(file_name)
+    full_file_name = executable_directory+"/"+file_name
+    mesh_data = np.load(full_file_name)
     vertex = mesh_data['vertex']
     uv = mesh_data['uv']
     normal = mesh_data['normal']
