@@ -167,6 +167,8 @@ PYBIND11_MODULE(pynari, m) {
                  std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
   frame.def("render", &pynari::Frame::render);
   frame.def("get", &pynari::Frame::get);
+  frame.def("map", &pynari::Frame::map);
+  frame.def("unmap", &pynari::Frame::unmap);
   
   // -------------------------------------------------------
   auto array

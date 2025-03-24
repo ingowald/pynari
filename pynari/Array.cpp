@@ -28,9 +28,9 @@ namespace pynari {
   {
     py::array_t<T> asArray = py::cast<py::array_t<T>>(buffer);
     int numScalarsInArray = 1;
-    for (int i=0;i<info.ndim;i++)
+    for (int i=0;i<info.ndim;i++) {
       numScalarsInArray *= (int)info.shape[i];
-
+    }
     anari::Array handle = 0;
     if (D == 1) {
       /*! array over SCALARS */

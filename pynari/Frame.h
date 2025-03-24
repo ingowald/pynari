@@ -39,10 +39,13 @@ namespace pynari {
     /*! trigger rendering a frame; unlike native anari that not only
         starts the frame, it also waits for it to finish */
     void render();
+    uint64_t map(const std::string &channel);
+    void unmap(const std::string &channel);
     
     /*! read a given frame buffer channel, and return it in a
         np::array of proper dimensions */
     py::object get(const std::string &channelName);
+    
   };
 
 }

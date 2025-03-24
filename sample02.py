@@ -63,7 +63,8 @@ def make_metal(albedo,fuzz):
     mat.setParameter('ior',anari.FLOAT32,1.45)
     mat.setParameter('metallic',anari.FLOAT32,1.)
     mat.setParameter('specular',anari.FLOAT32,0.)
-    mat.setParameter('roughness',anari.FLOAT32,0.2)
+    #mat.setParameter('roughness',anari.FLOAT32,0.2)
+    mat.setParameter('roughness',anari.FLOAT32,fuzz)
     mat.commitParameters()
     return mat
     
@@ -122,7 +123,7 @@ bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape(
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .8)
 renderer.setParameter('pixelSamples', anari.INT32, num_paths_per_pixel)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.commitParameters()
