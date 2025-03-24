@@ -31,7 +31,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #endif()
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.2.0 LANGUAGES C CXX)
+project(pynari VERSION 1.2.6 LANGUAGES C CXX)
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)
@@ -50,7 +50,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 #find_package(Python3 COMPONENTS Interpreter Development)
 
-find_package(anari 0.13.0 COMPONENTS code_gen)
+find_package(anari 0.14.0 COMPONENTS code_gen)
 
 set(PYBIND11_FINDPYTHON ON)
 add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
