@@ -11,8 +11,10 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 40.
 
-#volume_dims = (512,512,512)
-#volume_fileName = 'magnetic_512_volume.raw'
+print('@pynari: -------------------------------------------------------')
+print('@pynari: running sample03 - volume rendering')
+print('@pynari: of a simple 3D structured volume')
+print('@pynari: -------------------------------------------------------')
 
 device = anari.newDevice('default')
 
@@ -120,7 +122,7 @@ for opt,arg in opts:
 cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
 structured_data = device.newArray(anari.float,cell_array)
 
-cellSize = (2/volume_dims[0],2/volume_dims[1],2/volume_dims[2])
+cellSize = (2/(volume_dims[0]-1),2/(volume_dims[1]-1),2/(volume_dims[2]-1))
 spatial_field = device.newSpatialField('structuredRegular')
 spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
 spatial_field.setParameter('spacing',anari.float3,cellSize)
@@ -173,15 +175,19 @@ camera.commitParameters()
 
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
-bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)),
+                     dtype=np.float32).reshape((4,1,2))
 bg_gradient = device.newArray(anari.float4, bg_values)
-
 
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
-renderer.setParameter('pixelSamples', anari.INT32, 1024)
+if anari.has_cuda_capable_gpu():
+    # actually we have denoising on the gpu, so probably need way less...
+    renderer.setParameter('pixelSamples', anari.INT32, 1024)
+else:
+    renderer.setParameter('pixelSamples', anari.INT32, 16)
 renderer.commitParameters()
 
 
@@ -189,7 +195,7 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, fb_size)
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
+frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
@@ -207,6 +213,7 @@ else:
     im = PIL.Image.fromarray(pixels)
     im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     im = im.convert('RGB')
+    print(f'@pynari: done. saving to {out_file_name}')
     im.save(out_file_name)
 
 

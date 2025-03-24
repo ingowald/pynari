@@ -36,11 +36,11 @@ namespace pynari {
   struct Context {
     typedef std::shared_ptr<Context> SP;
     
-    Context(const std::string &libName);
+    Context(const std::string &libName, const std::string &subName);
     
     virtual ~Context();
 
-    static SP create(const std::string &libName);
+    static SP create(const std::string &libName, const std::string &devName);
 
     std::shared_ptr<World> newWorld();
     std::shared_ptr<Frame> newFrame();
@@ -65,7 +65,9 @@ namespace pynari {
     void destroy();
 
     Device::SP device;
+    std::mutex mutex;
   };
 
-  std::shared_ptr<Context> createContext(const std::string &libName);
+  std::shared_ptr<Context> createContext(const std::string &libName,
+					 const std::string &devName="default");
 }

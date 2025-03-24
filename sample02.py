@@ -5,12 +5,24 @@ import pynari as anari
 import random
 import sys, getopt,PIL
 
-fb_size = (1600,800)
+if anari.has_cuda_capable_gpu():
+   print('@pynari: detected cuda-capable GPU; using higher res and sample count')
+   fb_size = (1600,800)
+   num_paths_per_pixel = 32
+else:   
+   print('@pynari: no CUDA-capable GPU detected, reducing sample count')
+   fb_size = (800,400)
+   num_paths_per_pixel = 4
 look_from = (13., 2., 3.)
 look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 20.
 
+print('@pynari: -------------------------------------------------------')
+print('@pynari: running sample02 - the first real barney-based sample ')
+print('@pynari: that renders a pynari-version of Pete Shirley\'s famous ')
+print('@pynari: RTOW (ray tracing in one week-end) scene.')
+print('@pynari: -------------------------------------------------------')
 random.seed(80577)
 
 def add_sphere(pos, radius, material):
@@ -51,13 +63,14 @@ def make_metal(albedo,fuzz):
     mat.setParameter('ior',anari.FLOAT32,1.45)
     mat.setParameter('metallic',anari.FLOAT32,1.)
     mat.setParameter('specular',anari.FLOAT32,0.)
-    mat.setParameter('roughness',anari.FLOAT32,0.2)
+    #mat.setParameter('roughness',anari.FLOAT32,0.2)
+    mat.setParameter('roughness',anari.FLOAT32,fuzz)
     mat.commitParameters()
     return mat
     
 def create_spheres():
-    add_sphere((0., 1., 0.), 1., make_dielectric(1.5))
     add_sphere((0.,-1000.,-1),1000.,make_lambertian(.5,.5,.5))
+    add_sphere((0., 1., 0.), 1., make_dielectric(1.5))
     add_sphere((-4.,1.,0.),1.,make_lambertian(.4,.2,.1))
     add_sphere((4.,1.,0.),1.,make_metal((.7,.6,.5),0.))
     for a in range(-11,12):
@@ -110,8 +123,8 @@ bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape(
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
-renderer.setParameter('pixelSamples', anari.INT32, 128)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .8)
+renderer.setParameter('pixelSamples', anari.INT32, num_paths_per_pixel)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.commitParameters()
 
@@ -120,7 +133,7 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, fb_size)
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
+frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
@@ -149,6 +162,7 @@ else:
     im = PIL.Image.fromarray(pixels)
     im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     im = im.convert('RGB')
+    print(f'@pynari: done. saving to {out_file_name}')
     im.save(out_file_name)
 
 

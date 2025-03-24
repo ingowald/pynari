@@ -32,19 +32,17 @@ index = np.array([
   1, 2, 3
 ], dtype = np.uint32)
 
-#library = anariLoadLibrary('default', status_handle)
+print('@pynari: -------------------------------------------------------')
+print('@pynari: running sample01 - the original ANARI "first light" ')
+print('@pynari: sample that just renders a simple pair of triangles')
+print('@pynari: -------------------------------------------------------')
 device = anari.newDevice('default')
 
 camera = device.newCamera('perspective')
-#anariSetParameter(device, camera, 'aspect', ANARI_FLOAT32, width/height)
 camera.setParameter('aspect', anari.FLOAT32, width/height)
-#anariSetParameter(device, camera, 'position', ANARI_FLOAT32_VEC3, cam_pos)
 camera.setParameter('position',anari.FLOAT32_VEC3, cam_pos)
-#anariSetParameter(device, camera, 'direction', ANARI_FLOAT32_VEC3, cam_view)
 camera.setParameter('direction',anari.float3,cam_view)
-#anariSetParameter(device, camera, 'up', ANARI_FLOAT32_VEC3, cam_up)
 camera.setParameter('up',anari.float3,cam_up)
-#anariCommitParameters(device, camera)
 camera.commitParameters()
 
 world = device.newWorld()
@@ -88,7 +86,10 @@ bg_gradient = device.newArray(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('pixelSamples', anari.INT32, 128)
+if anari.has_cuda_capable_gpu():
+    renderer.setParameter('pixelSamples', anari.INT32, 128)
+else:
+    renderer.setParameter('pixelSamples', anari.INT32, 8)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .3)
 renderer.commitParameters()
@@ -98,8 +99,7 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, [width, height])
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
-#frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
+frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
@@ -108,7 +108,7 @@ frame.commitParameters()
 frame.render()
 fb_color = frame.get('channel.color')
 
-pixels = np.array(fb_color)#.reshape([height, width, 4])
+pixels = np.array(fb_color)
 
 out_file_name = ''
 args = sys.argv[1:]
@@ -126,6 +126,7 @@ if out_file_name == '':
     plt.show()
 else:
     im = PIL.Image.fromarray(pixels)
+    print(f'@pynari: done. saving to {out_file_name}')
     im.convert('RGB').save(out_file_name)
 
 

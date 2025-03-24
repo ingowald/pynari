@@ -15,6 +15,8 @@
 // ======================================================================== //
 
 #include "pynari/Object.h"
+#include "pynari/Context.h"
+#include "pynari/Array.h"
 
 namespace pynari {
 
@@ -92,7 +94,7 @@ namespace pynari {
   void Object::setArray_list(const char *name,
                              int type, 
                              const py::list &list)
-  { 
+  {
     assertThisObjectIsValid();
     std::vector<ANARIObject> objects;
     for (auto item : list) {
@@ -110,6 +112,15 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
       
     anari::setParameter(device->handle,this->handle,name,array);
+  }
+  
+  void Object::setArray_np(const char *name,
+                           int type, 
+                           const py::buffer &buffer)
+  {
+    std::shared_ptr<pynari::Array> array
+      = device->context->newArray(type,buffer);
+    anari::setParameter(device->handle,this->handle,name,array->handle);
   }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
@@ -280,14 +291,14 @@ namespace pynari {
     switch(type) {
     case ANARI_FLOAT32_VEC3:
       return anari::setParameter(device->handle,this->handle,name,
-                                 math::float3(std::get<0>(v),
-                                              std::get<1>(v),
-                                              std::get<2>(v)));
+                                 math::float3((float)std::get<0>(v),
+                                              (float)std::get<1>(v),
+                                              (float)std::get<2>(v)));
     case ANARI_UINT32_VEC3:
       return anari::setParameter(device->handle,this->handle,name,
-                                 math::uint3(std::get<0>(v),
-                                             std::get<1>(v),
-                                             std::get<2>(v)));
+                                 math::uint3((uint32_t)std::get<0>(v),
+                                             (uint32_t)std::get<1>(v),
+                                             (uint32_t)std::get<2>(v)));
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)
@@ -303,16 +314,16 @@ namespace pynari {
     switch(type) {
     case ANARI_UINT32_VEC4:
       return anari::setParameter(device->handle,this->handle,name,
-                                 math::uint4(std::get<0>(v),
-                                             std::get<1>(v),
-                                             std::get<2>(v),
-                                             std::get<3>(v)));
+                                 math::uint4((uint32_t)std::get<0>(v),
+                                             (uint32_t)std::get<1>(v),
+                                             (uint32_t)std::get<2>(v),
+                                             (uint32_t)std::get<3>(v)));
     case ANARI_FLOAT32_VEC4:
       return anari::setParameter(device->handle,this->handle,name,
-                                 math::float4(std::get<0>(v),
-                                              std::get<1>(v),
-                                              std::get<2>(v),
-                                              std::get<3>(v)));
+                                 math::float4((float)std::get<0>(v),
+                                              (float)std::get<1>(v),
+                                              (float)std::get<2>(v),
+                                              (float)std::get<3>(v)));
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)+" unsupported type "+to_string((anari::DataType)type));

@@ -26,56 +26,78 @@
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
+#ifdef _WIN32
+# include <windows.h>
+#else
+# include <dlfcn.h>
+#endif
+#include <algorithm>
+#ifdef PYNARI_HAVE_CUDA
+# include <cuda_runtime.h>
+#endif
 
 #define DEFAULT_DEVICE "barney"
-//#define DEFAULT_DEVICE "helide"
 
-extern "C" ANARIDevice createAnariDeviceBarney();
+// extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
-  
-  Context::Context(const std::string &explicitLibName)
-  {
-    std::cout << OWL_TERMINAL_LIGHT_GREEN
-              << "#pynari: creating context..."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
 
-#if PYNARI_BAKED_BACKENDS
-    std::cout << "#pynari: forcing static lib for python wheel" << std::endl;
-    anari::Device device = {};
-# if PYNARI_HAVE_barney
-    std::cout << "#pynari: selecting 'barney' backend on compile time"
-              << std::endl;
-    device = createAnariDeviceBarney();
-# endif
-    throw std::runtime_error("support for backend "+explicitLibName+" not compiled in");
-#else
-    std::string libName = explicitLibName;
+  bool has_cuda_capable_gpu() {
+#if PYNARI_HAVE_CUDA
+    int numGPUs = 0;
+    cudaGetDeviceCount(&numGPUs);
+    return numGPUs;
+#endif
+    return false;
+  }
+
+  bool readDebugEnvVar()
+  {
+    char *flag = getenv("PYNARI_DBG");
+    if (!flag)
+      flag = getenv("PYNARI_LOG_LEVEL");
+    if (!flag) return false;
+    return std::stoi(flag);
+  }
+
+  bool logging_enabled()
+  {
+    static bool cachedValue = readDebugEnvVar();
+    return cachedValue;
+  }
+  
+  anari::Device createDevice(std::string libName,
+                             const std::string devName)
+  {
     if (libName == "default" || libName == "<default>") {
       char *envLib = getenv("ANARI_LIBRARY");
       libName = envLib ? envLib : "barney";
       libName = envLib ? envLib : DEFAULT_DEVICE;
     }
+    if (logging_enabled())
+    std::cout << OWL_TERMINAL_LIGHT_GREEN
+              << "#pynari: looking for _system_ installed ANARI device '"
+              << libName
+              << "'"
+              << OWL_TERMINAL_DEFAULT << std::endl;
     anari::Library library
       = anari::loadLibrary(libName.c_str(), nullptr);
     if (!library)
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
-    anari::Device device
-      = anari::newDevice(library, "default");
-#endif
-    this->device = std::make_shared<Device>(device);
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context created."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
+    anari::Device _device
+      = anari::newDevice(library, devName.c_str());
+    return _device;
+  }
+
+  Context::Context(const std::string &explicitLibName, const std::string &subName)
+  {
+    this->device
+      = std::make_shared<Device>(createDevice(explicitLibName,subName),this);
   }
     
   Context::~Context()
   {
-    std::cout << "#pynari: Context is dying, destroying all remaining anari handles"
-              << std::endl;
     destroy();
   }
 
@@ -157,16 +179,11 @@ namespace pynari {
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
-  std::shared_ptr<Context> createContext(const std::string &libName)
+  std::shared_ptr<Context> createContext(const std::string &libName, const std::string &subName)
   {
-    return std::make_shared<Context>(libName);
+    return std::make_shared<Context>(libName,subName);
   }
 
-  std::shared_ptr<Context> Context::create(const std::string &libName)
-  {
-    return std::make_shared<Context>(libName);
-  }
-  
   /*! allows to query whether the user has already explicitly called
     contextDestroy. if so, any releases of handles are no longer
     valid because whatever they may have pointed to inside the
@@ -183,16 +200,8 @@ namespace pynari {
       // explicit context::destroy()
       return;
     
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shutting down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
     device->release();
     device = nullptr;
-    std::cout << OWL_TERMINAL_GREEN
-              << "#pynari: context shut down."
-              << OWL_TERMINAL_DEFAULT
-              << std::endl;
   }
   
 }

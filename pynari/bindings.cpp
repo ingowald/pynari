@@ -34,13 +34,19 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 using namespace pynari;
 
+namespace pynari {
+  bool has_cuda_capable_gpu();
+}
+
 PYBIND11_MODULE(pynari, m) {
   // optional module docstring
   m.doc() = "barney python wrappers";
 
   // create one context; almost all functions are then per context
   m.def("newDevice", &createContext,
-        "Creates an barney Context object");
+        "Creates an barney Context object",
+        py::arg("libName"),
+        py::arg("devName")="default");
  
   m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
   m.attr("STRING")       = py::int_((int)ANARI_STRING);
@@ -77,6 +83,7 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("INT32_VEC4")  = py::int_((int)ANARI_INT32_VEC4);
 
   m.attr("UFIXED8_VEC4")  = py::int_((int)ANARI_UFIXED8_VEC4);
+  m.attr("UFIXED8_RGBA_SRGB")  = py::int_((int)ANARI_UFIXED8_RGBA_SRGB);
 
   // iw - not anari spelling, but ...
   m.attr("FLOAT")        = py::int_((int)ANARI_FLOAT32);
@@ -101,6 +108,7 @@ PYBIND11_MODULE(pynari, m) {
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameterArray",  &pynari::Object::setArray_list);
+  object.def("setParameterArray",  &pynari::Object::setArray_np);
   /*! set FROM a python float value */
   object.def("setParameter",  &pynari::Object::set_float);
   /*! set FROM a python float tuple */
@@ -159,6 +167,8 @@ PYBIND11_MODULE(pynari, m) {
                  std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
   frame.def("render", &pynari::Frame::render);
   frame.def("get", &pynari::Frame::get);
+  frame.def("map", &pynari::Frame::map);
+  frame.def("unmap", &pynari::Frame::unmap);
   
   // -------------------------------------------------------
   auto array
@@ -169,7 +179,9 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Context,
                  std::shared_ptr<Context>>(m, "anari::Device");
   // // -------------------------------------------------------
-  
+
+  m.def("has_cuda_capable_gpu", &pynari::has_cuda_capable_gpu);
+
   context.def("newCamera", &pynari::Context::newCamera);
   context.def("newRenderer", &pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);
