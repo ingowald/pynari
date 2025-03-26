@@ -53,7 +53,7 @@ def create_spheres():
 
 spheres = []
 
-device = anari.newDevice('barney')
+device = anari.newDevice('default')
 
 create_spheres()
 
