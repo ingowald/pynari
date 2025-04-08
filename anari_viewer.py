@@ -1,6 +1,6 @@
 # // ======================================================================== //
 # // Copyright 2024++ Ingo Wald                                               //
-# // Copyright 2024++ Milan Jaros -IT4Innovations, VSB-TUO                    //
+# // Copyright 2024++ Milan Jaros - IT4Innovations, VSB-TUO                   //
 # //                                                                          //
 # // Licensed under the Apache License, Version 2.0 (the "License");          //
 # // you may not use this file except in compliance with the License.         //
@@ -21,6 +21,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import ctypes
 import numpy as np
+import threading
 
 """
 ANARI Viewer - Python OpenGL Integration
@@ -289,7 +290,7 @@ def init_window():
     return window
 
 
-def run(anari_scene):
+def run_glfw(anari_scene):
     """Main application loop"""
     window = init_window()
     if not window:
@@ -332,14 +333,30 @@ def run(anari_scene):
 
     glfw.terminate()
 
+###############################    
+def run_tf(anari_scene):
+    import examples.anari_tf
+    examples.anari_tf.init_show()
+
+def run(anari_scene):
+    if anari_scene.use_dearpygui_tf():
+        # Launch GLFW OpenGL in a separate thread
+        glfw_thread = threading.Thread(target=lambda: run_glfw(anari_scene), daemon=True)
+        glfw_thread.start()
+
+        run_tf(anari_scene)
+    else:
+        # Run GLFW in the main thread
+        run_glfw(anari_scene)
+
 def main():
     # import examples.sample01  # Import ANARI scene module
     # anari_scene = examples.sample01.AnariScene()
     # run(anari_scene)
     
-    import examples.sample02  # Import ANARI scene module
-    anari_scene = examples.sample02.AnariScene()
-    run(anari_scene)
+    # import examples.sample02  # Import ANARI scene module
+    # anari_scene = examples.sample02.AnariScene()
+    # run(anari_scene)
 
     # import examples.sample04  # Import ANARI scene module
     # anari_scene = examples.sample04.AnariScene()
@@ -352,6 +369,14 @@ def main():
     # import examples.sample07  # Import ANARI scene module
     # anari_scene = examples.sample07.AnariScene()
     # run(anari_scene)
+
+    # import examples.sample_volume_vdb  # Import ANARI scene module
+    # anari_scene = examples.sample_volume_vdb.AnariScene()
+    # run(anari_scene)
+
+    import examples.sample_volume_sitk  # Import ANARI scene module
+    anari_scene = examples.sample_volume_sitk.AnariScene()
+    run(anari_scene)
 
     pass
 

@@ -1,0 +1,130 @@
+# // ======================================================================== //
+# // Copyright 2024++ Ingo Wald                                               //
+# // Copyright 2024++ Milan Jaros - IT4Innovations, VSB-TUO                   //
+# //                                                                          //
+# // Licensed under the Apache License, Version 2.0 (the "License");          //
+# // you may not use this file except in compliance with the License.         //
+# // You may obtain a copy of the License at                                  //
+# //                                                                          //
+# //     http://www.apache.org/licenses/LICENSE-2.0                           //
+# //                                                                          //
+# // Unless required by applicable law or agreed to in writing, software      //
+# // distributed under the License is distributed on an "AS IS" BASIS,        //
+# // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. //
+# // See the License for the specific language governing permissions and      //
+# // limitations under the License.                                           //
+# // ======================================================================== //
+
+import numpy as np
+import pynari as anari
+from pathlib import Path
+import SimpleITK as sitk
+
+from .anari_scene_base import AnariSceneBase
+from . import anari_tf
+
+class AnariScene(AnariSceneBase):
+    def __init__(self):
+        super().__init__()
+
+    def use_dearpygui_tf(self):
+        return True  # Whether to use DearPyGui
+
+    def create_world(self, device):
+        """Create and populate the scene with objects."""
+
+        def download_dicom():
+            import requests
+            import zipfile
+            import io
+            import os
+
+            # Dir to check
+            target_dir = "Class 3 malocclusion"
+
+            # Check if the dir already exists
+            if os.path.exists(target_dir):
+                print(f"'{target_dir}' already exists. Skipping download.")
+            else:
+                # URL of the zip file
+                url = "https://medimodel.com/wp-content/uploads/2018/08/Class-3-malocclusion.zip"
+
+                # Download the file
+                print("Downloading...")
+                response = requests.get(url)
+                response.raise_for_status()  # Raise an error for bad status
+
+                # Extract the zip file
+                print("Extracting...")
+                with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
+                    zip_ref.extractall(os.getcwd())
+
+                print(f"Done. '{target_dir}' extracted to:", os.getcwd())
+
+            return target_dir + '/DICOM'
+            
+        def get_volume_sitk():
+            dicom_dir = download_dicom()
+
+            # Use the directory reader to find all DICOM series
+            reader = sitk.ImageSeriesReader()
+            
+            # Get all DICOM series IDs in the directory
+            series_IDs = sitk.ImageSeriesReader.GetGDCMSeriesIDs(dicom_dir)
+
+            # Use the first series found
+            series_ID = series_IDs[0]
+            print(f"Reading DICOM series: {series_ID}")
+            
+            # Get the file names for the series
+            dicom_names = reader.GetGDCMSeriesFileNames(dicom_dir, series_ID)
+            
+            # Set the file names and read
+            reader.SetFileNames(dicom_names)
+            sitk_image3d = reader.Execute()
+            
+            # Convert to numpy array
+            image_data = sitk.GetArrayFromImage(sitk_image3d)
+            image_data = image_data.astype(np.float32)
+            
+            # Print some info about the loaded data
+            print(f"Loaded volume with shape: {image_data.shape}")
+            print(f"Data range: {image_data.min()} to {image_data.max()}")
+            
+            return image_data.flatten(), image_data.shape
+
+        cell_values, volume_dims = get_volume_sitk()
+        cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
+
+        structured_data = device.newArray(anari.float,cell_array)
+
+        cellSize = (2.0/(volume_dims[0]-1),2.0/(volume_dims[1]-1),2.0/(volume_dims[2]-1))
+        spatial_field = device.newSpatialField('structuredRegular')
+        spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
+        spatial_field.setParameter('spacing',anari.float3,cellSize)
+        spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
+        spatial_field.commitParameters()
+
+        xf = anari_tf.opacity_tf
+        xf_array = device.newArray(anari.float4,xf)
+
+        volume = device.newVolume('transferFunction1D')
+        volume.setParameter('color',anari.ARRAY,xf_array)
+        volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
+        volume.setParameter('unitDistance',anari.FLOAT32,10.)
+        volume.commitParameters()
+                                                            
+        world = device.newWorld()
+        world.setParameterArray('volume', anari.VOLUME, [ volume ] )
+        light = device.newLight('directional')
+        light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
+        light.commitParameters()
+
+        array = device.newArray(anari.LIGHT, [light])
+        world.setParameter('light', anari.ARRAY1D, array)
+        world.commitParameters()
+
+        return world
+
+
+

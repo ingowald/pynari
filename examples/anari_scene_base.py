@@ -1,6 +1,6 @@
 # // ======================================================================== //
 # // Copyright 2024++ Ingo Wald                                               //
-# // Copyright 2024++ Milan Jaros -IT4Innovations, VSB-TUO                    //
+# // Copyright 2024++ Milan Jaros - IT4Innovations, VSB-TUO                   //
 # //                                                                          //
 # // Licensed under the Apache License, Version 2.0 (the "License");          //
 # // you may not use this file except in compliance with the License.         //
@@ -54,6 +54,9 @@ class AnariSceneBase:
     
     def use_cuda_glinterop(self):
         return False  # Whether to use CUDA-OpenGL interop    
+    
+    def use_dearpygui_tf(self):
+        return False  # Whether to use DearPyGui
 
     def anari_init(self,w,h):
         self.fb_size = (w,h)
