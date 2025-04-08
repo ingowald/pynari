@@ -29,6 +29,20 @@ class AnariScene(AnariSceneBase):
 
     def use_dearpygui_tf(self):
         return True  # Whether to use DearPyGui
+    
+    def update_world(self, device, world):
+        xf = anari_tf.opacity_tf
+
+        # Fast comparison of transfer functions
+        if hasattr(self, 'xf') and np.array_equal(xf, self.xf):
+            return  # Skip update if transfer function hasn't changed
+                
+        # Store current transfer function for future comparisons        
+        self.xf = xf
+        xf_array = device.newArray(anari.float4,xf)        
+
+        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.commitParameters()
 
     def create_world(self, device):
         """Create and populate the scene with objects."""
@@ -85,13 +99,13 @@ class AnariScene(AnariSceneBase):
             
             # Convert to numpy array
             image_data = sitk.GetArrayFromImage(sitk_image3d)
-            image_data = image_data.astype(np.float32)
+            image_data = image_data.astype(np.float32)    
             
             # Print some info about the loaded data
             print(f"Loaded volume with shape: {image_data.shape}")
             print(f"Data range: {image_data.min()} to {image_data.max()}")
             
-            return image_data.flatten(), image_data.shape
+            return image_data, image_data.shape
 
         cell_values, volume_dims = get_volume_sitk()
         cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
@@ -105,17 +119,17 @@ class AnariScene(AnariSceneBase):
         spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
         spatial_field.commitParameters()
 
-        xf = anari_tf.opacity_tf
-        xf_array = device.newArray(anari.float4,xf)
+        self.xf = anari_tf.opacity_tf
+        xf_array = device.newArray(anari.float4,self.xf)
 
-        volume = device.newVolume('transferFunction1D')
-        volume.setParameter('color',anari.ARRAY,xf_array)
-        volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-        volume.setParameter('unitDistance',anari.FLOAT32,10.)
-        volume.commitParameters()
+        self.volume = device.newVolume('transferFunction1D')
+        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
+        self.volume.setParameter('unitDistance',anari.FLOAT32,50.)
+        self.volume.commitParameters()
                                                             
         world = device.newWorld()
-        world.setParameterArray('volume', anari.VOLUME, [ volume ] )
+        world.setParameterArray('volume', anari.VOLUME, [ self.volume ] )
         light = device.newLight('directional')
         light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
         light.commitParameters()

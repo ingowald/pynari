@@ -309,13 +309,11 @@ def run_glfw(anari_scene):
 
         # Calculate camera parameters for ANARI
         dir = get_camera_direction()
-        eye = -dir * distance + pan_offset
-        center = pan_offset
-        up = np.array([0, -1, 0])
+        eye = -dir * distance + pan_offset        
         fovy = 60.0
         
         # Render the scene with ANARI
-        anari_scene.anari_render(g_width, g_height, eye, dir, up, fovy)
+        anari_scene.anari_render(g_width, g_height, eye, dir, fovy)
 
         # Draw the rendered image
         draw_texture(anari_scene)

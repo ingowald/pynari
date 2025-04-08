@@ -29,6 +29,20 @@ class AnariScene(AnariSceneBase):
 
     def use_dearpygui_tf(self):
         return True  # Whether to use DearPyGui
+    
+    def update_world(self, device, world):
+        xf = anari_tf.opacity_tf
+
+        # Fast comparison of transfer functions
+        if hasattr(self, 'xf') and np.array_equal(xf, self.xf):
+            return  # Skip update if transfer function hasn't changed
+                
+        # Store current transfer function for future comparisons        
+        self.xf = xf
+        xf_array = device.newArray(anari.float4,xf)        
+
+        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.commitParameters()
 
     def create_world(self, device):
         """Create and populate the scene with objects."""
@@ -73,9 +87,9 @@ class AnariScene(AnariSceneBase):
             bbox_max = [x + padding for x in bbox_max]
             
             # Calculate dimensions of the array needed
-            dims = [bbox_max[0] - bbox_min[0] + 1,
+            dims = [bbox_max[2] - bbox_min[2] + 1,
                     bbox_max[1] - bbox_min[1] + 1,
-                    bbox_max[2] - bbox_min[2] + 1]
+                    bbox_max[0] - bbox_min[0] + 1]
             
             # Create empty array of appropriate dimensions and type
             if grid.valueTypeName == 'float':
@@ -103,10 +117,10 @@ class AnariScene(AnariSceneBase):
             target_file, gridname = download_vdb()
 
             # Read all grids from the file
-            grid = vdb.read(target_file, gridname)            
+            grid = vdb.read(target_file, gridname)
             array = grid_to_numpy(grid)
 
-            return array.flatten(), array.shape
+            return array, array.shape
 
         cell_values, volume_dims = get_volume_vdb()
         cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
@@ -120,49 +134,17 @@ class AnariScene(AnariSceneBase):
         spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
         spatial_field.commitParameters()
 
-        xf = anari_tf.opacity_tf
+        self.xf = anari_tf.opacity_tf
+        xf_array = device.newArray(anari.float4,self.xf)
 
-        # # A simple opacity transfer function for volume rendering
-        # # Format: RGBA values (red, green, blue, alpha) for each point in the transfer function
-        # opacity_tf = np.array([
-        #     # R    G    B    A (opacity)
-        #     [0.0, 0.0, 0.0, 0.0],  # Fully transparent for low density values
-        #     [0.5, 0.5, 0.5, 0.1],  # Slightly visible for medium-low densities
-        #     [0.8, 0.8, 0.8, 0.5],  # More visible for medium densities  
-        #     [1.0, 1.0, 1.0, 0.8],  # Almost opaque for high densities
-        # ], dtype=np.float32)
-
-        # # You can define additional transfer functions here
-        # # For example, a color transfer function for different materials:
-        # color_tf = np.array([
-        #     # R    G    B    A
-        #     [0.0, 0.0, 0.2, 0.0],  # Deep blue, transparent
-        #     [0.0, 0.5, 0.8, 0.3],  # Sky blue, slightly visible
-        #     [1.0, 0.8, 0.0, 0.7],  # Gold, mostly opaque
-        #     [1.0, 0.1, 0.1, 1.0],  # Red, fully opaque
-        # ], dtype=np.float32)
-
-        # # A rainbow-style transfer function
-        # rainbow_tf = np.array([
-        #     [0.5, 0.0, 0.5, 0.1],  # Purple
-        #     [0.0, 0.0, 1.0, 0.3],  # Blue
-        #     [0.0, 1.0, 1.0, 0.5],  # Cyan
-        #     [0.0, 1.0, 0.0, 0.6],  # Green
-        #     [1.0, 1.0, 0.0, 0.8],  # Yellow
-        #     [1.0, 0.0, 0.0, 1.0],  # Red
-        # ], dtype=np.float32)
-
-        # xf = rainbow_tf
-        xf_array = device.newArray(anari.float4,xf)
-
-        volume = device.newVolume('transferFunction1D')
-        volume.setParameter('color',anari.ARRAY,xf_array)
-        volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-        volume.setParameter('unitDistance',anari.FLOAT32,10.)
-        volume.commitParameters()
+        self.volume = device.newVolume('transferFunction1D')
+        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
+        self.volume.setParameter('unitDistance',anari.FLOAT32,50.)
+        self.volume.commitParameters()
                                                             
         world = device.newWorld()
-        world.setParameterArray('volume', anari.VOLUME, [ volume ] )
+        world.setParameterArray('volume', anari.VOLUME, [ self.volume ] )
         light = device.newLight('directional')
         light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
         light.commitParameters()

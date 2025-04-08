@@ -50,7 +50,10 @@ class AnariSceneBase:
         renderer.setParameter('background', anari.ARRAY, self.create_background())
         renderer.commitParameters()
 
-        return renderer 
+        return renderer
+
+    def update_world(self, device, world):
+        pass
     
     def use_cuda_glinterop(self):
         return False  # Whether to use CUDA-OpenGL interop    
@@ -67,12 +70,15 @@ class AnariSceneBase:
         self.renderer = self.create_renderer()
         self.frame = self.device.newFrame()
 
-    def anari_render(self,w,h,eye,dir,up,fovy):
+    def anari_render(self,w,h,eye,dir,fovy):
         self.fb_size = (w,h)
+
+        self.update_world(self.device, self.world)
+
         self.camera.setParameter('aspect', anari.FLOAT32, self.fb_size[0]/self.fb_size[1])
         self.camera.setParameter('position',anari.FLOAT32_VEC3, eye)
         self.camera.setParameter('direction',anari.float3, dir)
-        self.camera.setParameter('up',anari.float3,up)
+        self.camera.setParameter('up',anari.float3, np.array([0, -1, 0]))
         self.camera.setParameter('fovy',anari.FLOAT32,fovy*3.14/180)
         self.camera.commitParameters()
 
