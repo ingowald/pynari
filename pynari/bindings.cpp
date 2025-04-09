@@ -16,7 +16,6 @@
 
 #define PYBIND11_DETAILED_ERROR_MESSAGES 1
 #include "pynari/Context.h"
-#include "pynari/Data.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
 #include "pynari/Camera.h"
@@ -169,6 +168,7 @@ PYBIND11_MODULE(pynari, m) {
   frame.def("get", &pynari::Frame::get);
   frame.def("map", &pynari::Frame::map);
   frame.def("unmap", &pynari::Frame::unmap);
+  frame.def("readGPU", &pynari::Frame::readGPU);
   
   // -------------------------------------------------------
   auto array

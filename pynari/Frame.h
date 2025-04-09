@@ -41,6 +41,8 @@ namespace pynari {
     void render();
     uint64_t map(const std::string &channel);
     void unmap(const std::string &channel);
+
+    void readGPU(uint64_t devicePtr, const std::string &channel);
     
     /*! read a given frame buffer channel, and return it in a
         np::array of proper dimensions */

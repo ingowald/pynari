@@ -42,12 +42,12 @@ namespace pynari {
         break;
       case 2:
         handle = anari::newArray2D
-          (device,anariType,info.shape[0],info.shape[1]);
+          (device,anariType,info.shape[1],info.shape[0]);
         nDims = 2;
         break;
       case 3:
         handle = anari::newArray3D
-          (device,anariType,info.shape[0],info.shape[1],info.shape[2]);
+          (device,anariType,info.shape[2],info.shape[1],info.shape[0]);
         nDims = 3;
         break;
       default:
@@ -79,12 +79,12 @@ namespace pynari {
         break;
       case 3:
         handle = anari::newArray2D
-          (device,anariType,info.shape[1],info.shape[2]);
+          (device,anariType,info.shape[2],info.shape[1]);
         nDims = 2;
         break;
       case 4:
         handle = anari::newArray3D
-          (device,anariType,info.shape[1],info.shape[2],info.shape[3]);
+          (device,anariType,info.shape[3],info.shape[2],info.shape[1]);
         nDims = 3;
         break;
       default:

@@ -83,7 +83,8 @@ class AnariSceneBase:
         self.camera.commitParameters()
 
         self.frame.setParameter('size', anari.uint2, self.fb_size)
-        self.frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
+        #self.frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
+        self.frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
         self.frame.setParameter('renderer', anari.OBJECT, self.renderer)
         self.frame.setParameter('camera', anari.OBJECT, self.camera)
         self.frame.setParameter('world', anari.OBJECT, self.world)
@@ -104,3 +105,7 @@ class AnariSceneBase:
             self.frame.unmap('channel.colorCUDA')
         else:
             self.frame.unmap('channel.color')
+
+    def anari_fb_read(self, devicePtr):
+        self.frame.readGPU(devicePtr, 'channel.colorCUDA')
+       

@@ -15,6 +15,9 @@
 // ======================================================================== //
 
 #include "pynari/Frame.h"
+#if PYNARI_HAVE_CUDA
+# include <cuda_runtime.h>
+#endif
 
 namespace pynari {
 
@@ -44,6 +47,35 @@ namespace pynari {
   void Frame::unmap(const std::string &channel)
   {
     anariUnmapFrame(device->handle, (ANARIFrame)handle, channel.c_str());
+  }
+
+  void Frame::readGPU(uint64_t devicePtr, const std::string &channel)
+  {
+#if PYNARI_HAVE_CUDA
+    size_t numBytes = 0;
+    void *destPtr = (void *)devicePtr;
+    uint32_t width, height;
+    ANARIDataType pixelType;
+    const void *srcPtr
+      = anariMapFrame(device->handle,(ANARIFrame)this->handle,
+                      channel.c_str(),
+                      &width,&height,&pixelType);
+
+    if (pixelType == ANARI_UFIXED8_VEC4 ||
+        pixelType == ANARI_UFIXED8_RGBA_SRGB)
+      numBytes = width*height*sizeof(uint32_t);
+    else
+      throw std::runtime_error
+        ("pynari::FRame::readGPU currently only supporting frame buffers "
+         "of format "
+         "'ANARI_UFIXED8_VEC4', or "
+         "'ANARI_UFIXED8_RGBA_SRGB'");
+    
+    cudaMemcpy(destPtr,srcPtr,numBytes,cudaMemcpyDefault);
+    anariUnmapFrame(device->handle,(ANARIFrame)handle,channel.c_str());
+#else
+    throw std::runtime_error("pnari::Frame::readGPU() requires building with CUDA support");
+#endif
   }
   
   py::object Frame::get(const std::string &channelName)

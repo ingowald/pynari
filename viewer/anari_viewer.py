@@ -126,9 +126,12 @@ def draw_texture(anari_scene):
         device_ptr = mapping.device_ptr_and_size()[0]
         
         # Get frame data from ANARI
-        data_d = anari_scene.anari_fb_map()
-        cuda.memcpy_dtod(device_ptr, data_d, g_width * g_height * 4)
-        anari_scene.anari_fb_unmap()
+        # mj:
+        #data_d = anari_scene.anari_fb_map()
+        #cuda.memcpy_dtod(device_ptr, data_d, g_width * g_height * 4)
+        #anari_scene.anari_fb_unmap()
+        # iw:
+        anari_scene.anari_fb_readGPU(device_ptr)
         
         mapping.unmap()        
         pixels_buf_d.unregister()

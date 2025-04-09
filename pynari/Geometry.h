@@ -18,7 +18,6 @@
 
 #include "pynari/common.h"
 #include "pynari/Material.h"
-#include "pynari/Data.h"
 
 namespace pynari {
 
