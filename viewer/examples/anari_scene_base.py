@@ -40,7 +40,7 @@ class AnariSceneBase:
 
     def create_background(self): 
         # background gradient: use an image of 1 pixel wide and 2 pixels high
-        bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+        bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
         return self.device.newArray(anari.float4, bg_values)    
 
     def create_renderer(self):
