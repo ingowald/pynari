@@ -80,16 +80,13 @@ world.setParameterArray('surface', anari.SURFACE,
                         [ base, inner_sphere, outer_sphere, equation, floor ])
 
 
-bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
-bg_gradient = device.newArray(anari.float4, bg_values)
-
 hdri_res = 512
 
 def checkerboard(y,x,d):
     return 3.*((y//16+x//16) % 2)
 
 rad = np.fromfunction(checkerboard, (hdri_res,2*hdri_res,3), dtype=np.float32)
-radiance_array=device.newArray(anari.float3,rad.reshape((3,2*hdri_res,hdri_res)))
+radiance_array=device.newArray(anari.float3,rad.reshape((hdri_res,2*hdri_res,3)))
 hdri=device.newLight('hdri')
 hdri.setParameter('radiance',anari.ARRAY,radiance_array)
 hdri.setParameter('up',anari.float3,(0,1,0))
@@ -107,7 +104,7 @@ world.commitParameters()
 
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
-bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 

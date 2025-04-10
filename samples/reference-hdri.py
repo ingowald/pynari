@@ -67,7 +67,7 @@ for y in range(0,ny):
             envmap_texels.append(0)
             envmap_texels.append(fy)
 
-envmap_np = np.array(envmap_texels, dtype=np.float32).reshape((3,nx,ny))
+envmap_np = np.array(envmap_texels, dtype=np.float32).reshape((ny,nx,3))
 envmap_array = device.newArray(anari.float3, envmap_np)
 light = device.newLight("hdri")
 light.setParameter('radiance',anari.ARRAY,envmap_array)

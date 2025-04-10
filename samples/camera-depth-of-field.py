@@ -19,7 +19,7 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 70.
 apertureRadius = 2.4
-sphereRadius = .2
+sphereRadius = .25
 # focusDistance is computed from look_from to look_at, so look-at should be in
 # perfect focus
 sphereJitter=.05
@@ -124,7 +124,7 @@ camera.commitParameters()
 
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
-bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
