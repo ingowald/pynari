@@ -23,13 +23,6 @@ endif()
 set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-
-#if ((NOT WIN32) AND (NOT CMAKE_BUILD_TYPE) AND (NOT CMAKE_CONFIGURATION_TYPES))
-# Set the possible values of build type for cmake-gui
-#  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-#    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-#endif()
-
 # project command is required to come after cmake_minimum_required command.
 project(pynari VERSION 1.2.6 LANGUAGES C CXX)
 
@@ -42,13 +35,9 @@ if (CMAKE_CUDA_COMPILER)
   message("found CUDA: ${CMAKE_CUDA_COMPILER}")
 endif()
 
-#if (NOT PYNARI_IS_SUBPROJECT)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-#endif()
-
-#find_package(Python3 COMPONENTS Interpreter Development)
 
 find_package(anari 0.14.0 COMPONENTS code_gen)
 

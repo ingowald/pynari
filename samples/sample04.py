@@ -28,7 +28,7 @@ def add_vertex(v,c):
     global vertex_color
     position = (v[0],v[1],v[2])
     radius   = v[3]
-    color    = (c[0],c[1],c[2],0.)
+    color    = (c[0],c[1],c[2],1.)
     vertex_position.append(position)
     vertex_radius.append(radius)
     vertex_color.append(color)
@@ -100,7 +100,7 @@ def make_color_mapped_metal(albedo,fuzz):
     mat.setParameter('ior',anari.FLOAT32,1.45)
     mat.setParameter('metallic',anari.FLOAT32,1.)
     mat.setParameter('specular',anari.FLOAT32,0.)
-    mat.setParameter('roughness',anari.FLOAT32,.5)
+    mat.setParameter('roughness',anari.FLOAT32,.15)
     mat.commitParameters()
     return mat
     
@@ -158,7 +158,7 @@ def create_curves():
         primitive_index = []
         choose_mat = random.random()
         r = random.random()
-        if (choose_mat < .5):
+        if (choose_mat < 0.5):
             material = make_color_mapped_metal((1,1,1),.2+.5*r*r)
         else:
             material = make_color_mapped_lambertian(1,1,1)
@@ -172,10 +172,10 @@ def create_curves():
             p1 = p0 + d0
             p2 = p1 + d0+d1
             p3 = p2 + d0+d1+d2
-            r0 = .005 + .02*random.random()
-            r1 = .005 + .02*random.random()
-            r2 = .005 + .02*random.random()
-            r3 = .005 + .02*random.random()
+            r0 = .005 + .01*random.random()
+            r1 = .005 + .01*random.random()
+            r2 = .005 + .01*random.random()
+            r3 = .005 + .01*random.random()
             add_curve(make_cp(p0,r0),
                       make_cp(p1,r1),
                       make_cp(p2,r2),
@@ -216,14 +216,14 @@ camera.commitParameters()
 
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
-bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .4)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 if anari.has_cuda_capable_gpu():
    print('@pynari: detected cuda-capable GPU; using higher res and sample count')

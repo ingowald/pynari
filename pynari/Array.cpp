@@ -42,12 +42,12 @@ namespace pynari {
         break;
       case 2:
         handle = anari::newArray2D
-          (device,anariType,info.shape[0],info.shape[1]);
+          (device,anariType,info.shape[1],info.shape[0]);
         nDims = 2;
         break;
       case 3:
         handle = anari::newArray3D
-          (device,anariType,info.shape[0],info.shape[1],info.shape[2]);
+          (device,anariType,info.shape[2],info.shape[1],info.shape[0]);
         nDims = 3;
         break;
       default:
@@ -69,22 +69,22 @@ namespace pynari {
       nDims = 1;
     } else {
       /*! array over a (anari-)vector type - first dim is vector width */
-      if (info.shape[0] != D)
-        throw std::runtime_error("N-dimensional array, but shape[0] doesn't match the vector width of underlying ANARI data type (ie, a 5x3 array over a ANARI_FLOAT32_VEC4 data should have shape (4,5,3)");
+      if (info.shape[info.ndim-1] != D)
+        throw std::runtime_error("N-dimensional array, but shape[ndim-1] doesn't match the vector width of underlying ANARI data type (ie, a 5x3 array over a ANARI_FLOAT32_VEC4 data should have shape (4,5,3)");
       switch (info.ndim) {
       case 2:
         handle = anari::newArray1D
-          (device,anariType,info.shape[1]);
+          (device,anariType,info.shape[0]);
         nDims = 1;
         break;
       case 3:
         handle = anari::newArray2D
-          (device,anariType,info.shape[1],info.shape[2]);
+          (device,anariType,info.shape[1],info.shape[0]);
         nDims = 2;
         break;
       case 4:
         handle = anari::newArray3D
-          (device,anariType,info.shape[1],info.shape[2],info.shape[3]);
+          (device,anariType,info.shape[2],info.shape[1],info.shape[0]);
         nDims = 3;
         break;
       default:

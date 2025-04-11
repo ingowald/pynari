@@ -81,6 +81,10 @@ if (PYNARI_HAVE_CUDA)
     PROPERTIES
     LANGUAGE CUDA
     )
+  set_source_files_properties(Frame.cpp
+    PROPERTIES
+    LANGUAGE CUDA
+    )
   target_compile_definitions(pynari PRIVATE -DPYNARI_HAVE_CUDA=1)
   set_target_properties(pynari PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON

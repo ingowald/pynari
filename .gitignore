@@ -35,5 +35,6 @@ Session.vim
 .idea
 !*png/*.pdf
 .vs/
-samples/advanced/optix7course/models/
-
+__pycache__
+/bunny_cloud.vdb
+/Class 3 malocclusion
