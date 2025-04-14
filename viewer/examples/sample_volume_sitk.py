@@ -30,8 +30,17 @@ class AnariScene(AnariSceneBase):
     def use_dearpygui_tf(self):
         return True  # Whether to use DearPyGui
     
+    def get_camera_up(self):
+        return np.array([0, 0, 1])
+    
+    def get_color_tf(self):
+        color_start = [0.82, 0.70, 0.55, 0.7]
+        color_end = [1.0, 1.0, 1.0]
+
+        return color_start, color_end    
+    
     def update_world(self, device, world):
-        xf = anari_tf.opacity_tf
+        xf = anari_tf.color_tf
 
         # Fast comparison of transfer functions
         if hasattr(self, 'xf') and np.array_equal(xf, self.xf):
@@ -99,11 +108,16 @@ class AnariScene(AnariSceneBase):
             
             # Convert to numpy array
             image_data = sitk.GetArrayFromImage(sitk_image3d)
-            image_data = image_data.astype(np.float32)    
+            image_data = image_data.astype(np.float32)
             
             # Print some info about the loaded data
             print(f"Loaded volume with shape: {image_data.shape}")
             print(f"Data range: {image_data.min()} to {image_data.max()}")
+
+            # Min-max normalization to [0,1] range
+            min_val = image_data.min()
+            max_val = image_data.max()
+            image_data = (image_data - min_val) / (max_val - min_val)            
             
             return image_data, image_data.shape
 
@@ -119,13 +133,15 @@ class AnariScene(AnariSceneBase):
         spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
         spatial_field.commitParameters()
 
-        self.xf = anari_tf.opacity_tf
+        #####TF####
+        # Create transfer function using the DearPyGui library
+        self.xf = anari_tf.color_tf
         xf_array = device.newArray(anari.float4,self.xf)
 
         self.volume = device.newVolume('transferFunction1D')
         self.volume.setParameter('color',anari.ARRAY,xf_array)
         self.volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-        self.volume.setParameter('unitDistance',anari.FLOAT32,50.)
+        self.volume.setParameter('unitDistance',anari.FLOAT32,100.)
         self.volume.commitParameters()
                                                             
         world = device.newWorld()
