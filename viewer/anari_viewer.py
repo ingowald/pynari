@@ -54,6 +54,7 @@ middle_pressed = False
 pan_offset = np.array([0.0, 0.0, 0.0])
 move_speed = 0.1
 keys = {}
+up_vector = [0, 1, 0]
 
 # OpenGL resources
 g_textureId = -1
@@ -99,7 +100,7 @@ def to_ortho(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(0, 1, 0, 1, -1, 1)
+    glOrtho(0, width, 0, height, -1, 1)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -156,17 +157,17 @@ def draw_texture(anari_scene):
     glBegin(GL_QUADS)
     glColor4f(1.0, 1.0, 1.0, 1.0)
     
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(0.0, 0.0, 0.0)
+    
     glTexCoord2f(0.0, 1.0)
-    glVertex2f(0.0, 0.0)
+    glVertex3f(0.0, g_height, 0.0)
     
     glTexCoord2f(1.0, 1.0)
-    glVertex2f(1.0, 0.0)
+    glVertex3f(g_width, g_height, 0.0)
     
     glTexCoord2f(1.0, 0.0)
-    glVertex2f(1.0, 1.0)
-    
-    glTexCoord2f(0.0, 0.0)
-    glVertex2f(0.0, 1.0)
+    glVertex3f(g_width, 0.0, 0.0)
     
     glEnd()
 
@@ -202,25 +203,44 @@ def key_callback(window, key, scancode, action, mods):
 
 def process_keyboard_input():
     """Process keyboard input for camera movement"""
-    global pan_offset
+    global pan_offset, up_vector, move_speed
     
     direction = get_camera_direction()
-    right = np.cross(direction, np.array([0, 1, 0]))
+    right = np.cross(direction, get_camera_up())
     right = right / np.linalg.norm(right)
-    up = np.array([0, 1, 0])
+    up = get_camera_up()
     
     if keys.get(glfw.KEY_W, False):
         pan_offset += direction * move_speed
     if keys.get(glfw.KEY_S, False):
         pan_offset -= direction * move_speed
-    if keys.get(glfw.KEY_D, False):
-        pan_offset -= right * move_speed
     if keys.get(glfw.KEY_A, False):
+        pan_offset -= right * move_speed
+    if keys.get(glfw.KEY_D, False):
         pan_offset += right * move_speed
     if keys.get(glfw.KEY_Q, False):
         pan_offset += up * move_speed
     if keys.get(glfw.KEY_E, False):
-        pan_offset -= up * move_speed        
+        pan_offset -= up * move_speed
+        
+    if keys.get(glfw.KEY_X, False):
+        if up_vector[0] == 1:
+            up_vector = [-1, 0, 0]
+        else:
+            up_vector = [1, 0, 0]
+        keys[glfw.KEY_X] = False  # Reset the key state
+    if keys.get(glfw.KEY_Y, False):
+        if up_vector[1] == 1:
+            up_vector = [0, -1, 0]
+        else:
+            up_vector = [0, 1, 0]
+        keys[glfw.KEY_Y] = False  # Reset the key state
+    if keys.get(glfw.KEY_Z, False):
+        if up_vector[2] == 1:
+            up_vector = [0, 0, -1]
+        else:
+            up_vector = [0, 0, 1]
+        keys[glfw.KEY_Z] = False  # Reset the key state
 
 
 def framebuffer_size_callback(window, width, height):
@@ -246,14 +266,24 @@ def cursor_position_callback(window, xpos, ypos):
     lastX, lastY = xpos, ypos
 
     if left_pressed:
-        yaw -= xoffset * 0.3
+        yaw += xoffset * 0.3
         pitch += yoffset * 0.3
         pitch = np.clip(pitch, -89.0, 89.0)
     elif middle_pressed:
-        right = np.cross(get_camera_direction(), np.array([0, 1, 0]))
-        up = np.array([0, 1, 0])
-        pan_offset += (right * xoffset - up * yoffset) * 0.005
-
+        # Get camera direction and up vector
+        direction = get_camera_direction()
+        up = get_camera_up()
+        
+        # Calculate right vector (cross product of direction and up)
+        right = np.cross(direction, up)
+        right = right / np.linalg.norm(right)
+        
+        # Recalculate true up based on right and direction to ensure orthogonality
+        true_up = np.cross(right, direction)
+        true_up = true_up / np.linalg.norm(true_up)
+        
+        # Apply pan movement based on mouse offset
+        pan_offset -= (right * xoffset + true_up * yoffset) * 0.005
 
 def scroll_callback(window, xoffset, yoffset):
     """Handle mouse wheel for zooming"""
@@ -261,16 +291,57 @@ def scroll_callback(window, xoffset, yoffset):
     distance -= yoffset * 0.5
     distance = max(1.0, distance)
 
+def get_camera_up():
+    global up_vector
+    return np.array(up_vector)
 
 def get_camera_direction():
-    """Calculate camera direction vector from yaw and pitch"""
-    front = np.array([
-        np.cos(np.radians(yaw)) * np.cos(np.radians(pitch)),
-        np.sin(np.radians(pitch)),
-        np.sin(np.radians(yaw)) * np.cos(np.radians(pitch))
-    ])
-    return front / np.linalg.norm(front)
+    """Calculate camera direction vector based on yaw, pitch and current up vector"""    
+    
+    # Get current up vector
+    up = get_camera_up()
+        
+    # Check which axis is being used as up
+    if np.array_equal(up, [1, 0, 0]) or np.array_equal(up, [-1, 0, 0]):  # X-axis up
+        # For X-axis up, rotate around X
+        front = np.array([
+            np.sin(np.radians(pitch)),
+            np.cos(np.radians(yaw)) * np.cos(np.radians(pitch)),
+            np.sin(np.radians(yaw)) * np.cos(np.radians(pitch))
+        ])
+        if up[0] < 0:  # Handle negative X direction
+            front[0] = -front[0]
 
+        if up[0] > 0:  # Handle positive X direction
+            front[1] = -front[1]
+
+    elif np.array_equal(up, [0, 0, 1]) or np.array_equal(up, [0, 0, -1]):  # Z-axis up
+        # For Z-axis up, rotate around Z
+        front = np.array([
+            np.cos(np.radians(yaw)) * np.cos(np.radians(pitch)),
+            np.sin(np.radians(yaw)) * np.cos(np.radians(pitch)),
+            np.sin(np.radians(pitch))
+        ])
+        if up[2] < 0:  # Handle negative Z direction
+            front[2] = -front[2]
+
+        if up[2] > 0:  # Handle positive Z direction
+            front[1] = -front[1]
+            pass
+
+    else:  # Y-axis up (default)
+        # Standard calculation for Y-up
+        front = np.array([
+            np.cos(np.radians(yaw)) * np.cos(np.radians(pitch)),
+            np.sin(np.radians(pitch)),
+            np.sin(np.radians(yaw)) * np.cos(np.radians(pitch))
+        ])
+        if up[1] < 0:  # Handle negative Y direction
+            front[0] = -front[0]
+            front[1] = -front[1]
+    
+    # Normalize
+    return front / np.linalg.norm(front)
 
 def init_window():
     """Initialize GLFW window and set up callbacks"""
@@ -295,6 +366,8 @@ def init_window():
 
 def run_glfw(anari_scene):
     """Main application loop"""
+    global w_width, w_height, g_width, g_height, pan_offset, up_vector
+
     window = init_window()
     if not window:
         return
@@ -302,9 +375,10 @@ def run_glfw(anari_scene):
     anari_scene.anari_init(w_width, w_height)
     glEnable(GL_DEPTH_TEST)
 
+    up_vector = anari_scene.get_camera_up()
     frame_count = 0
     last_time = glfw.get_time()
-    fps = 0    
+    fps = 0 
 
     while not glfw.window_should_close(window):
         process_keyboard_input()
@@ -312,11 +386,13 @@ def run_glfw(anari_scene):
 
         # Calculate camera parameters for ANARI
         dir = get_camera_direction()
-        eye = -dir * distance + pan_offset        
+        eye = -dir * distance + pan_offset
+        up = get_camera_up()
+
         fovy = 60.0
         
         # Render the scene with ANARI
-        anari_scene.anari_render(g_width, g_height, eye, dir, fovy)
+        anari_scene.anari_render(g_width, g_height, eye, dir, up, fovy)
 
         # Draw the rendered image
         draw_texture(anari_scene)
@@ -337,7 +413,7 @@ def run_glfw(anari_scene):
 ###############################    
 def run_tf(anari_scene):
     import examples.anari_tf
-    examples.anari_tf.init_show()
+    examples.anari_tf.init_show(anari_scene)
 
 def run(anari_scene):
     if anari_scene.use_dearpygui_tf():

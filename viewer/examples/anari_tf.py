@@ -27,25 +27,47 @@ control_points = [
     [1.0, 1.0]
 ]
 
-RESOLUTION = 256
-opacity_tf = np.zeros(RESOLUTION, dtype=np.float32)
+color_start = [0.0, 0.0, 1.0]  # Blue
+color_end = [1.0, 0.0, 0.0]   # Red
+
+RESOLUTION = 128  # Number of points in the transfer function
+# Create a float4 array for color+opacity transfer function
+color_tf = np.zeros((RESOLUTION, 4), dtype=np.float32).flatten()
 
 # Update curve line and recompute opacity transfer function
 def update_transfer_function():
+    global color_tf, control_points, color_start, color_end
+
     xs = [dpg.get_value(f"pt_{i}")[0] for i in range(len(control_points))]
     ys = [dpg.get_value(f"pt_{i}")[1] for i in range(len(control_points))]
     dpg.set_value("opacity_curve", [xs, ys])
     interp_x = np.linspace(0.0, 1.0, RESOLUTION)
-    interp_y = np.interp(interp_x, xs, ys)
-    global opacity_tf
-    opacity_tf = np.clip(interp_y, 0.0, 1.0)
-    #print("Updated transfer function:", opacity_tf)
+    interp_y = np.interp(interp_x, xs, ys)    
+
+    tf = np.zeros((RESOLUTION, 4), dtype=np.float32)
+
+    # Calculate color ramp
+    for i, t in enumerate(interp_x):
+        # Color from blue to red gradient
+        r = color_start[0] + t * (color_end[0] - color_start[0])
+        g = color_start[1] + t * (color_end[1] - color_start[1])
+        b = color_start[2] + t * (color_end[2] - color_start[2])        
+        a = interp_y[i]  # Alpha from the opacity curve
+        
+        tf[i] = [r, g, b, a]
+    
+    # Clip all values to [0,1] range
+    color_tf = np.clip(tf, 0.0, 1.0).flatten()
 
 # Drag point callback
 def on_drag(sender, app_data, user_data):
     update_transfer_function()
 
-def init_show():
+def init_show(anari_scene):
+    global color_start, color_end, control_points
+
+    color_start, color_end = anari_scene.get_color_tf()
+
     # Setup
     dpg.create_context()
 
@@ -55,26 +77,20 @@ def init_show():
 
             def lerp_color(color1, color2, t):
                 return [
-                    int(color1[0] + (color2[0] - color1[0]) * t),
-                    int(color1[1] + (color2[1] - color1[1]) * t),
-                    int(color1[2] + (color2[2] - color1[2]) * t),
-                    int(color1[3] + (color2[3] - color1[3]) * t),
+                    int(color1[0] * 255.0 + (color2[0] * 255.0 - color1[0] * 255.0) * t),
+                    int(color1[1] * 255.0 + (color2[1] * 255.0 - color1[1] * 255.0) * t),
+                    int(color1[2] * 255.0 + (color2[2] * 255.0 - color1[2] * 255.0) * t),
+                    int(0.2 * 255.0), # Alpha channel (constant for gradient)
                 ]        
 
             with dpg.draw_layer(parent="tf_plot", tag="gradient_layer", before="x_axis"):
-                start_x = 0
-                end_x = 1
                 y1 = 0
                 y2 = 1
-                steps = RESOLUTION
-
-                color_start = [0, 0, 255, 50]     # Blue
-                color_end = [255, 0, 0, 50]   # Red
+                steps = RESOLUTION           
 
                 for i in range(steps):
                     t = i / steps
-                    x = t #start_x + (end_x - start_x) * t
-                    #next_x = start_x + (end_x - start_x) * (i + 1) / steps
+                    x = t
                     color = lerp_color(color_start, color_end, t)
                     dpg.draw_line([x, y1], [x, y2], color=color, thickness=2.0/steps, parent="gradient_layer")
 

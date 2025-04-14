@@ -31,7 +31,7 @@ class AnariScene(AnariSceneBase):
         return True  # Whether to use DearPyGui
     
     def update_world(self, device, world):
-        xf = anari_tf.opacity_tf
+        xf = anari_tf.color_tf
 
         # Fast comparison of transfer functions
         if hasattr(self, 'xf') and np.array_equal(xf, self.xf):
@@ -134,7 +134,7 @@ class AnariScene(AnariSceneBase):
         spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
         spatial_field.commitParameters()
 
-        self.xf = anari_tf.opacity_tf
+        self.xf = anari_tf.color_tf
         xf_array = device.newArray(anari.float4,self.xf)
 
         self.volume = device.newVolume('transferFunction1D')
