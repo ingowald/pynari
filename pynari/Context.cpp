@@ -20,6 +20,7 @@
 #include "pynari/Surface.h"
 #include "pynari/Material.h"
 #include "pynari/Light.h"
+#include "pynari/Sampler.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
 #include "pynari/Geometry.h"
@@ -155,13 +156,19 @@ namespace pynari {
     return std::make_shared<Material>(device,type);
   }
   
+  std::shared_ptr<Sampler>
+  Context::newSampler(const std::string &type)
+  {
+    return std::make_shared<Sampler>(device,type);
+  }
+ 
   std::shared_ptr<Light>
   Context::newLight(const std::string &type)
   {
     return std::make_shared<Light>(device,type);
   }
-
-  std::shared_ptr<Array>
+ 
+ std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
     std::vector<Object::SP> objects;

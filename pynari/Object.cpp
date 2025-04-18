@@ -234,7 +234,7 @@ namespace pynari {
     }
   }
 
-  void Object::set_string(const char *name, int type,
+  void Object::set_string(const char *name, //int type,
                           const std::string &stringValue)
   {
     assert(type == ANARI_STRING);
