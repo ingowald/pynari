@@ -124,6 +124,24 @@ namespace pynari {
       return importArrayT<uint32_t,3>(device,ANARI_UINT32_VEC3,info,buffer,nDims);
     case ANARI_UINT32_VEC4:
       return importArrayT<uint32_t,4>(device,ANARI_UINT32_VEC4,info,buffer,nDims);
+
+    case ANARI_UINT8:
+      return importArrayT<uint8_t,1>(device,ANARI_UINT8,info,buffer,nDims);
+    case ANARI_UINT8_VEC2:
+      return importArrayT<uint8_t,2>(device,ANARI_UINT8_VEC2,info,buffer,nDims);
+    case ANARI_UINT8_VEC3:
+      return importArrayT<uint8_t,3>(device,ANARI_UINT8_VEC3,info,buffer,nDims);
+    case ANARI_UINT8_VEC4:
+      return importArrayT<uint8_t,4>(device,ANARI_UINT8_VEC4,info,buffer,nDims);
+
+    case ANARI_INT32:
+      return importArrayT<uint32_t,1>(device,ANARI_INT32,info,buffer,nDims);
+    case ANARI_INT32_VEC2:
+      return importArrayT<uint32_t,2>(device,ANARI_INT32_VEC2,info,buffer,nDims);
+    case ANARI_INT32_VEC3:
+      return importArrayT<uint32_t,3>(device,ANARI_INT32_VEC3,info,buffer,nDims);
+    case ANARI_INT32_VEC4:
+      return importArrayT<uint32_t,4>(device,ANARI_INT32_VEC4,info,buffer,nDims);
     default:
       throw std::runtime_error("un-implemented array type of "+std::to_string(type));
     }

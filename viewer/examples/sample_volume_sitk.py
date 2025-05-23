@@ -108,7 +108,7 @@ class AnariScene(AnariSceneBase):
 
             # Cell type array — one entry per cell
             VTK_HEXAHEDRON = 12
-            cell_types = np.array([VTK_HEXAHEDRON], dtype=np.uint32)
+            cell_types = np.array([VTK_HEXAHEDRON], dtype=np.uint8)
 
             # Offset into index array per cell (0 since one cell starts at beginning)
             cell_index = np.array([0], dtype=np.uint32)
@@ -123,12 +123,14 @@ class AnariScene(AnariSceneBase):
         
             array_cell_temperature = device.newArray(anari.FLOAT32,data)        
             spatial_field.setParameter('cell.data',anari.ARRAY,array_cell_temperature)
-        
-            array_cell_types_np = device.newArray(anari.UINT32,cell_types)
+
+            print('------------------------------------------------------- CELL TYPE')
+            array_cell_types_np = device.newArray(anari.UINT8,cell_types)
             spatial_field.setParameter('cell.type',anari.ARRAY,array_cell_types_np)
 
             array_cells_index_first_np = device.newArray(anari.UINT32,cell_index)
             spatial_field.setParameter('cell.index',anari.ARRAY,array_cells_index_first_np)
+            spatial_field.commitParameters()
             return spatial_field
         
         

@@ -99,6 +99,12 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("uint3")  = py::int_((int)ANARI_UINT32_VEC3);
   m.attr("uint4")  = py::int_((int)ANARI_UINT32_VEC4);
 
+  m.attr("UINT8")        = py::int_((int)ANARI_UINT8);
+  m.attr("UINT8_VEC2")   = py::int_((int)ANARI_UINT8_VEC2);
+  m.attr("UINT8_VEC3")   = py::int_((int)ANARI_UINT8_VEC3);
+  m.attr("UINT8_VEC4")   = py::int_((int)ANARI_UINT8_VEC4);
+
+  
   
   // -------------------------------------------------------
   auto object
