@@ -88,6 +88,9 @@ namespace pynari {
                                +libName+"'");
     anari::Device _device
       = anari::newDevice(library, devName.c_str());
+    PING;
+    anariCommitParameters(_device,_device);
+    PING;
     return _device;
   }
 

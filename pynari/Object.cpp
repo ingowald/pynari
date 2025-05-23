@@ -127,10 +127,14 @@ namespace pynari {
   {
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
-    anari::setParameter(device->handle,this->handle,
-                        name,
-                        object->anariType(),
-                        &object->handle);
+    if (object)
+      anari::setParameter(device->handle,this->handle,
+                          name,
+                          object->anariType(),
+                          &object->handle);
+    else
+      anari::setParameter(device->handle,this->handle,
+                          name, ANARI_OBJECT, nullptr);
   }
     
   void Object::set_float(const char *name,

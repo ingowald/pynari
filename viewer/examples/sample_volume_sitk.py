@@ -85,7 +85,53 @@ class AnariScene(AnariSceneBase):
                 print(f"Done. '{target_dir}' extracted to:", os.getcwd())
 
             return target_dir + '/DICOM'
-            
+
+        def get_volume_unstructured_hexahedra():
+            #-------------------------------------------------------------------------------
+            # Define 8 vertices for a single hexahedron (cube-like volume)
+            positions = np.array([
+                [0, 0, 0],   # 0
+                [1, 0, 0],   # 1
+                [1, 1, 0],   # 2
+                [0, 1, 0],   # 3
+                [0, 0, 1],   # 4
+                [1, 0, 1],   # 5
+                [1, 1, 1],   # 6
+                [0, 1, 1]    # 7
+            ], dtype=np.float32)            
+
+            # One hexahedral cell with 8 vertex indices (assumes CCW ordering)
+            indices = np.array([0, 1, 2, 3, 4, 5, 6, 7], dtype=np.uint32)
+
+            # Scalar value associated with the cell (e.g. density)
+            data = np.array([0.5], dtype=np.float32)
+
+            # Cell type array — one entry per cell
+            VTK_HEXAHEDRON = 12
+            cell_types = np.array([VTK_HEXAHEDRON], dtype=np.uint32)
+
+            # Offset into index array per cell (0 since one cell starts at beginning)
+            cell_index = np.array([0], dtype=np.uint32)
+
+            spatial_field = device.newSpatialField('unstructured')
+
+            array_vertex = device.newArray(anari.FLOAT32_VEC3,positions)
+            spatial_field.setParameter('vertex.position',anari.ARRAY,array_vertex)
+        
+            array_new_cells_np = device.newArray(anari.UINT32,indices)        
+            spatial_field.setParameter('index',anari.ARRAY,array_new_cells_np)
+        
+            array_cell_temperature = device.newArray(anari.FLOAT32,data)        
+            spatial_field.setParameter('cell.data',anari.ARRAY,array_cell_temperature)
+        
+            array_cell_types_np = device.newArray(anari.UINT32,cell_types)
+            spatial_field.setParameter('cell.type',anari.ARRAY,array_cell_types_np)
+
+            array_cells_index_first_np = device.newArray(anari.UINT32,cell_index)
+            spatial_field.setParameter('cell.index',anari.ARRAY,array_cells_index_first_np)
+            return spatial_field
+        
+        
         def get_volume_sitk():
             dicom_dir = download_dicom()
 
@@ -121,18 +167,22 @@ class AnariScene(AnariSceneBase):
             
             return image_data, image_data.shape
 
-        cell_values, volume_dims = get_volume_sitk()
-        cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
+        def get_volume_structured():
+            cell_values, volume_dims = get_volume_sitk()
+            cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
 
-        structured_data = device.newArray(anari.float,cell_array)
+            structured_data = device.newArray(anari.float,cell_array)
 
-        cellSize = (2.0/(volume_dims[0]-1),2.0/(volume_dims[1]-1),2.0/(volume_dims[2]-1))
-        spatial_field = device.newSpatialField('structuredRegular')
-        spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
-        spatial_field.setParameter('spacing',anari.float3,cellSize)
-        spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
-        spatial_field.commitParameters()
+            cellSize = (2.0/(volume_dims[0]-1),2.0/(volume_dims[1]-1),2.0/(volume_dims[2]-1))
+            spatial_field = device.newSpatialField('structuredRegular')
+            spatial_field.setParameter('origin',anari.float3,(-1,-1,-1))
+            spatial_field.setParameter('spacing',anari.float3,cellSize)
+            spatial_field.setParameter('data',anari.ARRAY3D,structured_data)
+            spatial_field.commitParameters()
+            return spatial_field
 
+        spatial_field = get_volume_structured()
+        #spatial_field = get_volume_unstructured_hexahedra()
         #####TF####
         # Create transfer function using the DearPyGui library
         self.xf = anari_tf.color_tf
