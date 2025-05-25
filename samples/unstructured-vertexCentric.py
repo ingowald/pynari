@@ -14,10 +14,10 @@ fovy = 40.
 look_at = (7.41, 0.20, 2.65)
 look_up = (0.,0.,1.)
 fovy = 50.
-out_file_name = 'unstructured-vertexCentric-uint32.jpg'
+out_file_name = 'unstructured-vertexCentric.jpg'
 
 print('@pynari: -------------------------------------------------------')
-print('@pynari: unstructured data, vertex centric scalars, uint32 data')
+print('@pynari: unstructured data, vertex centric scalars')
 print('@pynari: -------------------------------------------------------')
 
 device = anari.newDevice('default')
@@ -123,13 +123,8 @@ cell_type = np.array([elt_tet,elt_tet,#elt_tet,elt_tet,
                           elt_wedge,elt_wedge,
                           elt_hex,elt_hex],dtype=np.uint8)
 # for per vertex
-cell_data = np.array([
+vertex_data = np.array([
     0, 0.5, 1, 0, 0.333333, 0.666667, 1, 0, 0.333333, 0.666667, 1, 0, 0.25, 0.5, 0.75, 1, 0, 0.2, 0.4, 0.6, 0.8, 1, 0, 0.142857, 0.285714, 0.428571, 0.571429, 0.714286, 0.857143, 1, 0, 0.5, 1, 0, 0.333333, 0.666667, 1, 0, 0.333333, 0.666667, 1, 0, 0.25, 0.5, 0.75, 1, 0, 0.2, 0.4, 0.6, 0.8, 1, 0, 0.142857, 0.285714, 0.428571, 0.571429, 0.714286, 0.857143, 1],dtype=np.float32)
-
-# for per cell
-cell_data = np.array([
-    0/7., 1/7., 2/7., 3/7., 4/7., 5/7., 6/7., 7/7., 
-    ],dtype=np.float32)
 
 args = sys.argv[1:]
 opts, args = getopt.getopt(args,"ho:",["help","output="])
@@ -146,26 +141,18 @@ spatial_field.setParameterArray('cell.type',anari.UINT8,cell_type)
 spatial_field.setParameterArray('cell.index',anari.UINT32,cell_index)
 spatial_field.setParameterArray('index',anari.UINT32,index)
 spatial_field.setParameterArray('vertex.position',anari.FLOAT32_VEC3,vertex_position)
-spatial_field.setParameterArray('cell.data',anari.FLOAT32,cell_data)
+spatial_field.setParameterArray('vertex.data',anari.FLOAT32,vertex_data)
 spatial_field.commitParameters()
 
-xf = np.array([0, 0, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 1, 0,
-               0, 0, 1, 1,
+xf = np.array([0, 0, 1, 1,
+               0, 1, 1, 1,
                0, 1, 0, 1,
-               0, 1, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 0, 0,
-               0, 0, 0, 0
+               1, 1, 0, 1,
+               1, 0, 0, 1,
+               1, 0, 1, 1,
+               0, 0, 1, 1,
                ],dtype=np.float32)
 # for cell-centered data, make sure we see all the prims
-xf = np.array([1, 1, 0, 1,
-               0, 1, 1, 1
-               ],dtype=np.float32)
 xf_array = device.newArray(anari.float4,xf)
 
 volume = device.newVolume('transferFunction1D')
