@@ -24,7 +24,7 @@ set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.2.6 LANGUAGES C CXX)
+project(pynari VERSION 1.2.9 LANGUAGES C CXX)
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)
