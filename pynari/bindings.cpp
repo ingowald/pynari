@@ -104,6 +104,14 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("UINT8_VEC3")   = py::int_((int)ANARI_UINT8_VEC3);
   m.attr("UINT8_VEC4")   = py::int_((int)ANARI_UINT8_VEC4);
 
+  m.attr("FLOAT32_BOX1") = py::int_((int)ANARI_FLOAT32_BOX1);
+  m.attr("FLOAT32_BOX2") = py::int_((int)ANARI_FLOAT32_BOX2);
+  m.attr("FLOAT32_BOX3") = py::int_((int)ANARI_FLOAT32_BOX3);
+  m.attr("FLOAT32_BOX4") = py::int_((int)ANARI_FLOAT32_BOX4);
+  m.attr("FLOAT32_RANGE1") = py::int_((int)ANARI_FLOAT32_BOX1);
+  m.attr("FLOAT32_RANGE2") = py::int_((int)ANARI_FLOAT32_BOX2);
+  m.attr("FLOAT32_RANGE3") = py::int_((int)ANARI_FLOAT32_BOX3);
+  m.attr("FLOAT32_RANGE4") = py::int_((int)ANARI_FLOAT32_BOX4);
   
   
   // -------------------------------------------------------

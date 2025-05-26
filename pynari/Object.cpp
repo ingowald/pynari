@@ -158,10 +158,12 @@ namespace pynari {
   { 
     assertThisObjectIsValid();
     switch(type) {
-    case ANARI_FLOAT32:
+    case ANARI_FLOAT32_VEC2:
       return anari::setParameter(device->handle,handle,name,
                                  math::float2(std::get<0>(v),
                                               std::get<1>(v)));
+    case ANARI_FLOAT32_BOX1: 
+      return anariSetParameter(device->handle,handle,name,type,&v);
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)

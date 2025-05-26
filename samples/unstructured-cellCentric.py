@@ -128,7 +128,7 @@ cell_data = np.array([
 
 # for per cell
 cell_data = np.array([
-    0/7., 1/7., 2/7., 3/7., 4/7., 5/7., 6/7., 7/7., 
+    0., 1., 2., 3., 4., 5., 6., 7., 
     ],dtype=np.float32)
 
 args = sys.argv[1:]
@@ -163,6 +163,7 @@ volume = device.newVolume('transferFunction1D')
 volume.setParameter('color',anari.ARRAY,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
 volume.setParameter('unitDistance',anari.FLOAT32,10.)
+volume.setParameter('valueRange',anari.FLOAT32_BOX1,(0.,7.))
 volume.commitParameters()
                                                     
 world = device.newWorld()
