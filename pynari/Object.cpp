@@ -127,10 +127,14 @@ namespace pynari {
   {
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
-    anari::setParameter(device->handle,this->handle,
-                        name,
-                        object->anariType(),
-                        &object->handle);
+    if (object)
+      anari::setParameter(device->handle,this->handle,
+                          name,
+                          object->anariType(),
+                          &object->handle);
+    else
+      anari::setParameter(device->handle,this->handle,
+                          name, ANARI_OBJECT, nullptr);
   }
     
   void Object::set_float(const char *name,
@@ -154,10 +158,12 @@ namespace pynari {
   { 
     assertThisObjectIsValid();
     switch(type) {
-    case ANARI_FLOAT32:
+    case ANARI_FLOAT32_VEC2:
       return anari::setParameter(device->handle,handle,name,
                                  math::float2(std::get<0>(v),
                                               std::get<1>(v)));
+    case ANARI_FLOAT32_BOX1: 
+      return anariSetParameter(device->handle,handle,name,type,&v);
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)
@@ -238,6 +244,12 @@ namespace pynari {
                           const std::string &stringValue)
   {
     assert(type == ANARI_STRING);
+    anari::setParameter(device->handle,this->handle,name,stringValue.c_str());
+  }
+
+  void Object::set_string_notype(const char *name, 
+                          const std::string &stringValue)
+  {
     anari::setParameter(device->handle,this->handle,name,stringValue.c_str());
   }
 

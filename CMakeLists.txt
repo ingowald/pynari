@@ -14,6 +14,10 @@
 # limitations under the License.                                           #
 # ======================================================================== #
 
+set(PYNARI_VERSION_MAJOR 1)
+set(PYNARI_VERSION_MINOR 2)
+set(PYNARI_VERSION_PATCH 9)
+
 cmake_minimum_required(VERSION 3.12)
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.18)
@@ -24,7 +28,8 @@ set(CMAKE_BUILD_TYPE_INIT "Release")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # project command is required to come after cmake_minimum_required command.
-project(pynari VERSION 1.2.6 LANGUAGES C CXX)
+set(PYNARI_VERSION ${PYNARI_VERSION_MAJOR}.${PYNARI_VERSION_MINOR}.${PYNARI_VERSION_PATCH})
+project(pynari VERSION ${PYNARI_VERSION} LANGUAGES C CXX)
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)

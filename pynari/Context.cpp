@@ -20,6 +20,7 @@
 #include "pynari/Surface.h"
 #include "pynari/Material.h"
 #include "pynari/Light.h"
+#include "pynari/Sampler.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
 #include "pynari/Geometry.h"
@@ -41,6 +42,27 @@
 // extern "C" ANARIDevice createAnariDeviceBarney();
 
 namespace pynari {
+
+  static void statusFunc(const void * /*userData*/,
+                         ANARIDevice /*device*/,
+                         ANARIObject source,
+                         ANARIDataType /*sourceType*/,
+                         ANARIStatusSeverity severity,
+                         ANARIStatusCode /*code*/,
+                         const char *message)
+  {
+    if (severity == ANARI_SEVERITY_FATAL_ERROR) {
+      fprintf(stderr, "[FATAL][%p] %s\n", source, message);
+      std::exit(1);
+    } else if (severity == ANARI_SEVERITY_ERROR) {
+      fprintf(stderr, "[ERROR][%p] %s\n", source, message);
+    } else if (severity == ANARI_SEVERITY_WARNING) {
+      fprintf(stderr, "[WARN ][%p] %s\n", source, message);
+    } else if (severity == ANARI_SEVERITY_PERFORMANCE_WARNING) {
+      fprintf(stderr, "[PERF ][%p] %s\n", source, message);
+    }
+    // Ignore INFO/DEBUG messages
+  }
 
   bool has_cuda_capable_gpu() {
 #if PYNARI_HAVE_CUDA
@@ -81,12 +103,13 @@ namespace pynari {
               << "'"
               << OWL_TERMINAL_DEFAULT << std::endl;
     anari::Library library
-      = anari::loadLibrary(libName.c_str(), nullptr);
+      = anari::loadLibrary(libName.c_str(), statusFunc);
     if (!library)
       throw std::runtime_error("pynari: could not load anari library '"
                                +libName+"'");
     anari::Device _device
       = anari::newDevice(library, devName.c_str());
+    // anariCommitParameters(_device,_device);
     return _device;
   }
 
@@ -155,13 +178,19 @@ namespace pynari {
     return std::make_shared<Material>(device,type);
   }
   
+  std::shared_ptr<Sampler>
+  Context::newSampler(const std::string &type)
+  {
+    return std::make_shared<Sampler>(device,type);
+  }
+ 
   std::shared_ptr<Light>
   Context::newLight(const std::string &type)
   {
     return std::make_shared<Light>(device,type);
   }
-
-  std::shared_ptr<Array>
+ 
+ std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
     std::vector<Object::SP> objects;

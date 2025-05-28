@@ -17,6 +17,8 @@
 #pragma once
 
 #include "pynari/Device.h"
+#include <helium/helium_math.h>
+#include <anari/anari_cpp.hpp>
 
 namespace pynari {
 
@@ -40,10 +42,14 @@ namespace pynari {
                     const Object::SP &object);
     void set_string(const char *name, int type,
                     const std::string &stringValue);
+    void set_string_notype(const char *name, //int type,
+                    const std::string &stringValue);
     void setArray_list(const char *name, int type, 
                        const py::list &list);
     void setArray_np(const char *name, int type, 
                      const py::buffer &buffer);
+    void set_box1(const char *name, int type,
+                  const helium::box1 b);
     void set_float(const char *name, int type,
                    float v);
     void set_float2(const char *name, int type, 

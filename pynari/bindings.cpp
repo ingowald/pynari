@@ -23,6 +23,7 @@
 #include "pynari/Surface.h"
 #include "pynari/Material.h"
 #include "pynari/Light.h"
+#include "pynari/Sampler.h"
 #include "pynari/Geometry.h"
 #include "pynari/Group.h"
 #include "pynari/Array.h"
@@ -47,56 +48,71 @@ PYBIND11_MODULE(pynari, m) {
         py::arg("libName"),
         py::arg("devName")="default");
  
-  m.attr("DATA_TYPE")    = py::int_((int)ANARI_DATA_TYPE);
-  m.attr("STRING")       = py::int_((int)ANARI_STRING);
-  m.attr("OBJECT")       = py::int_((int)ANARI_OBJECT);
-  m.attr("SURFACE")      = py::int_((int)ANARI_SURFACE);
-  m.attr("GEOMETRY")     = py::int_((int)ANARI_GEOMETRY);
-  m.attr("MATERIAL")     = py::int_((int)ANARI_MATERIAL);
-  m.attr("LIGHT")        = py::int_((int)ANARI_LIGHT);
-  m.attr("RENDERER")     = py::int_((int)ANARI_RENDERER);
+  m.attr("DATA_TYPE")     = py::int_((int)ANARI_DATA_TYPE);
+  m.attr("STRING")        = py::int_((int)ANARI_STRING);
+  m.attr("OBJECT")        = py::int_((int)ANARI_OBJECT);
+  m.attr("SURFACE")       = py::int_((int)ANARI_SURFACE);
+  m.attr("GEOMETRY")      = py::int_((int)ANARI_GEOMETRY);
+  m.attr("MATERIAL")      = py::int_((int)ANARI_MATERIAL);
+  m.attr("LIGHT")         = py::int_((int)ANARI_LIGHT);
+  m.attr("SAMPLER")       = py::int_((int)ANARI_SAMPLER);
+  m.attr("RENDERER")      = py::int_((int)ANARI_RENDERER);
   m.attr("SPATIAL_FIELD") = py::int_((int)ANARI_SPATIAL_FIELD);
-  m.attr("CAMERA")       = py::int_((int)ANARI_CAMERA);
-  m.attr("WORLD")        = py::int_((int)ANARI_WORLD);
-  m.attr("SPATIAL_FIELD")= py::int_((int)ANARI_SPATIAL_FIELD);
-  m.attr("VOLUME")       = py::int_((int)ANARI_VOLUME);
+  m.attr("CAMERA")        = py::int_((int)ANARI_CAMERA);
+  m.attr("WORLD")         = py::int_((int)ANARI_WORLD);
+  m.attr("SPATIAL_FIELD") = py::int_((int)ANARI_SPATIAL_FIELD);
+  m.attr("VOLUME")        = py::int_((int)ANARI_VOLUME);
   
-  m.attr("ARRAY")        = py::int_((int)ANARI_ARRAY);
-  m.attr("ARRAY1D")      = py::int_((int)ANARI_ARRAY1D);
-  m.attr("ARRAY2D")      = py::int_((int)ANARI_ARRAY2D);
-  m.attr("ARRAY3D")      = py::int_((int)ANARI_ARRAY3D);
+  m.attr("ARRAY")         = py::int_((int)ANARI_ARRAY);
+  m.attr("ARRAY1D")       = py::int_((int)ANARI_ARRAY1D);
+  m.attr("ARRAY2D")       = py::int_((int)ANARI_ARRAY2D);
+  m.attr("ARRAY3D")       = py::int_((int)ANARI_ARRAY3D);
 
-  m.attr("FLOAT32")      = py::int_((int)ANARI_FLOAT32);
-  m.attr("FLOAT32_VEC2") = py::int_((int)ANARI_FLOAT32_VEC2);
-  m.attr("FLOAT32_VEC3") = py::int_((int)ANARI_FLOAT32_VEC3);
-  m.attr("FLOAT32_VEC4") = py::int_((int)ANARI_FLOAT32_VEC4);
+  m.attr("FLOAT32")       = py::int_((int)ANARI_FLOAT32);
+  m.attr("FLOAT32_VEC2")  = py::int_((int)ANARI_FLOAT32_VEC2);
+  m.attr("FLOAT32_VEC3")  = py::int_((int)ANARI_FLOAT32_VEC3);
+  m.attr("FLOAT32_VEC4")  = py::int_((int)ANARI_FLOAT32_VEC4);
 
-  m.attr("UINT32")       = py::int_((int)ANARI_UINT32);
-  m.attr("UINT32_VEC2")  = py::int_((int)ANARI_UINT32_VEC2);
-  m.attr("UINT32_VEC3")  = py::int_((int)ANARI_UINT32_VEC3);
-  m.attr("UINT32_VEC4")  = py::int_((int)ANARI_UINT32_VEC4);
+  m.attr("UINT32")        = py::int_((int)ANARI_UINT32);
+  m.attr("UINT32_VEC2")   = py::int_((int)ANARI_UINT32_VEC2);
+  m.attr("UINT32_VEC3")   = py::int_((int)ANARI_UINT32_VEC3);
+  m.attr("UINT32_VEC4")   = py::int_((int)ANARI_UINT32_VEC4);
 
-  m.attr("INT32")       = py::int_((int)ANARI_INT32);
-  m.attr("INT32_VEC2")  = py::int_((int)ANARI_INT32_VEC2);
-  m.attr("INT32_VEC3")  = py::int_((int)ANARI_INT32_VEC3);
-  m.attr("INT32_VEC4")  = py::int_((int)ANARI_INT32_VEC4);
+  m.attr("INT32")         = py::int_((int)ANARI_INT32);
+  m.attr("INT32_VEC2")    = py::int_((int)ANARI_INT32_VEC2);
+  m.attr("INT32_VEC3")    = py::int_((int)ANARI_INT32_VEC3);
+  m.attr("INT32_VEC4")    = py::int_((int)ANARI_INT32_VEC4);
 
   m.attr("UFIXED8_VEC4")  = py::int_((int)ANARI_UFIXED8_VEC4);
   m.attr("UFIXED8_RGBA_SRGB")  = py::int_((int)ANARI_UFIXED8_RGBA_SRGB);
 
   // iw - not anari spelling, but ...
-  m.attr("FLOAT")        = py::int_((int)ANARI_FLOAT32);
-  m.attr("float")        = py::int_((int)ANARI_FLOAT32);
-  m.attr("float2")       = py::int_((int)ANARI_FLOAT32_VEC2);
-  m.attr("float3")       = py::int_((int)ANARI_FLOAT32_VEC3);
-  m.attr("float4")       = py::int_((int)ANARI_FLOAT32_VEC4);
+  m.attr("FLOAT")  = py::int_((int)ANARI_FLOAT32);
+  m.attr("float")  = py::int_((int)ANARI_FLOAT32);
+  m.attr("float2") = py::int_((int)ANARI_FLOAT32_VEC2);
+  m.attr("float3") = py::int_((int)ANARI_FLOAT32_VEC3);
+  m.attr("float4") = py::int_((int)ANARI_FLOAT32_VEC4);
 
-  m.attr("UINT")         = py::int_((int)ANARI_UINT32);
-  m.attr("uint")         = py::int_((int)ANARI_UINT32);
-  m.attr("uint2")        = py::int_((int)ANARI_UINT32_VEC2);
-  m.attr("uint3")        = py::int_((int)ANARI_UINT32_VEC3);
-  m.attr("uint4")        = py::int_((int)ANARI_UINT32_VEC4);
+  m.attr("UINT")   = py::int_((int)ANARI_UINT32);
+  m.attr("uint")   = py::int_((int)ANARI_UINT32);
+  m.attr("uint2")  = py::int_((int)ANARI_UINT32_VEC2);
+  m.attr("uint3")  = py::int_((int)ANARI_UINT32_VEC3);
+  m.attr("uint4")  = py::int_((int)ANARI_UINT32_VEC4);
 
+  m.attr("UINT8")        = py::int_((int)ANARI_UINT8);
+  m.attr("UINT8_VEC2")   = py::int_((int)ANARI_UINT8_VEC2);
+  m.attr("UINT8_VEC3")   = py::int_((int)ANARI_UINT8_VEC3);
+  m.attr("UINT8_VEC4")   = py::int_((int)ANARI_UINT8_VEC4);
+
+  m.attr("FLOAT32_BOX1") = py::int_((int)ANARI_FLOAT32_BOX1);
+  m.attr("FLOAT32_BOX2") = py::int_((int)ANARI_FLOAT32_BOX2);
+  m.attr("FLOAT32_BOX3") = py::int_((int)ANARI_FLOAT32_BOX3);
+  m.attr("FLOAT32_BOX4") = py::int_((int)ANARI_FLOAT32_BOX4);
+  m.attr("FLOAT32_RANGE1") = py::int_((int)ANARI_FLOAT32_BOX1);
+  m.attr("FLOAT32_RANGE2") = py::int_((int)ANARI_FLOAT32_BOX2);
+  m.attr("FLOAT32_RANGE3") = py::int_((int)ANARI_FLOAT32_BOX3);
+  m.attr("FLOAT32_RANGE4") = py::int_((int)ANARI_FLOAT32_BOX4);
+  
   
   // -------------------------------------------------------
   auto object
@@ -106,6 +122,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_object);
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
+  object.def("setParameter",  &pynari::Object::set_string_notype);
   object.def("setParameterArray",  &pynari::Object::setArray_list);
   object.def("setParameterArray",  &pynari::Object::setArray_np);
   /*! set FROM a python float value */
@@ -153,6 +170,10 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::Light,pynari::Object,
                  std::shared_ptr<pynari::Light>>(m, "anari::Light");
   // -------------------------------------------------------
+  auto sampler
+    = py::class_<pynari::Sampler,pynari::Object,
+                 std::shared_ptr<pynari::Sampler>>(m, "anari::Sampler");
+  // -------------------------------------------------------
   auto geometry
     = py::class_<pynari::Geometry,pynari::Object,
                  std::shared_ptr<pynari::Geometry>>(m, "anari::Geometry");
@@ -182,18 +203,19 @@ PYBIND11_MODULE(pynari, m) {
 
   m.def("has_cuda_capable_gpu", &pynari::has_cuda_capable_gpu);
 
-  context.def("newCamera", &pynari::Context::newCamera);
-  context.def("newRenderer", &pynari::Context::newRenderer);
+  context.def("newCamera",  &pynari::Context::newCamera);
+  context.def("newRenderer",&pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);
   context.def("newSpatialField", &pynari::Context::newSpatialField);
-  context.def("newVolume", &pynari::Context::newVolume);
-  context.def("newMaterial", &pynari::Context::newMaterial);
-  context.def("newLight", &pynari::Context::newLight);
-  context.def("newWorld", &pynari::Context::newWorld);
-  context.def("newFrame", &pynari::Context::newFrame);
-  context.def("newGeometry", &pynari::Context::newGeometry);
-  context.def("newArray", &pynari::Context::newArray);
-  context.def("newArray", &pynari::Context::newArray_objects);
-  context.def("newArray", &pynari::Context::newArray);
-  context.def("newArray", &pynari::Context::newArray_objects);
+  context.def("newVolume",  &pynari::Context::newVolume);
+  context.def("newMaterial",&pynari::Context::newMaterial);
+  context.def("newLight",   &pynari::Context::newLight);
+  context.def("newWorld",   &pynari::Context::newWorld);
+  context.def("newFrame",   &pynari::Context::newFrame);
+  context.def("newGeometry",&pynari::Context::newGeometry);
+  context.def("newSampler", &pynari::Context::newSampler);
+  context.def("newArray",   &pynari::Context::newArray);
+  context.def("newArray",   &pynari::Context::newArray_objects);
+  context.def("newArray",   &pynari::Context::newArray);
+  context.def("newArray",   &pynari::Context::newArray_objects);
 }
