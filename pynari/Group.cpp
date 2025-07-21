@@ -26,17 +26,17 @@ namespace pynari {
     : Object(device)
   {
     handle = anari::newObject<anari::Group>(device->handle);
-    std::vector<Surface::SP> surfaces;
-    std::vector<Volume::SP> volumes;
+    std::vector<anari::Object> surfaces;
+    std::vector<anari::Object> volumes;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
       assert(object);
       
       Surface::SP surface = item.cast<Surface::SP>();
-      if (surface) { surfaces.push_back(surface); continue; }
+      if (surface) { surfaces.push_back(surface->handle); continue; }
       
       Volume::SP volume = item.cast<Volume::SP>();
-      if (volume) { volumes.push_back(volume); continue; }
+      if (volume) { volumes.push_back(volume->handle); continue; }
     }
 
     if (!surfaces.empty())

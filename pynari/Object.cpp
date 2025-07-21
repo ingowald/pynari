@@ -103,7 +103,7 @@ namespace pynari {
       ANARIObject handle = object->handle;
       objects.push_back(handle);
     }
-    anari::Array array
+    anari::Array1D array
       = anari::newArray1D(device->handle,
                           type,//ANARI_OBJECT,
                           objects.size());
@@ -229,8 +229,18 @@ namespace pynari {
     switch(type) {
     case ANARI_FLOAT32_MAT3x4: {
       anari::math::mat4 mat = anari::math::identity;
-      static_assert(sizeof(v) == 12*sizeof(float));
-      memcpy(&mat,&v,12*sizeof(float));
+      mat[0].x = std::get<0>(v);
+      mat[0].y = std::get<1>(v);
+      mat[0].z = std::get<2>(v);
+      mat[1].x = std::get<3>(v);
+      mat[1].y = std::get<4>(v);
+      mat[1].z = std::get<5>(v);
+      mat[2].x = std::get<6>(v);
+      mat[2].y = std::get<7>(v);
+      mat[2].z = std::get<8>(v);
+      mat[3].x = std::get<9>(v);
+      mat[3].y = std::get<10>(v);
+      mat[3].z = std::get<11>(v);
       return anari::setParameter(device->handle,this->handle,name,mat);
     }
     default:

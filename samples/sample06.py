@@ -104,11 +104,14 @@ mpi_rank, mpi_size = (MPI.COMM_WORLD.Get_rank(), MPI.COMM_WORLD.Get_size())
 create_surfaces(mpi_rank,mpi_size)
 
 world = device.newWorld()
-print(f'pynari - setting surfaces')
 if False:
+    # this works as well:
     world.setParameterArray('surface', anari.SURFACE, surfaces )
 else:
+    # works just as if setting surface[] array directly, but using a single
+    # instance, for those backedns that do not allow zero-instance models
     rootGroup = device.newGroup(surfaces)
+    rootGroup.commitParameters()
     inst = device.newInstance('transform')
     inst.setParameter('group',anari.OBJECT,rootGroup)
     inst.setParameter('transform',anari.FLOAT32_MAT3X4,
