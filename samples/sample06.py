@@ -94,14 +94,38 @@ def create_surfaces(mpi_rank,mpi_size):
             for ix in range(grid_size):
                 add_cube(mpi_rank,mpi_size,ix,iy,iz)
 
-device = anari.newDevice('default')
+#device = anari.newDevice('default')
+device = anari.newDevice('barney_mpi','mpi')
 
+name = MPI.COMM_WORLD.Get_name()
+addr = MPI._addressof(MPI.COMM_WORLD)
+print(f'world comm name {name} addr {addr}')
 mpi_rank, mpi_size = (MPI.COMM_WORLD.Get_rank(), MPI.COMM_WORLD.Get_size())
 create_surfaces(mpi_rank,mpi_size)
 
 world = device.newWorld()
-world.setParameterArray('surface', anari.SURFACE, surfaces )
+if False:
+    # this works as well:
+    world.setParameterArray('surface', anari.SURFACE, surfaces )
+else:
+    # works just as if setting surface[] array directly, but using a single
+    # instance, for those backedns that do not allow zero-instance models
+    rootGroup = device.newGroup(surfaces)
+    rootGroup.commitParameters()
+    inst = device.newInstance('transform')
+    inst.setParameter('group',anari.OBJECT,rootGroup)
+    inst.setParameter('transform',anari.FLOAT32_MAT3X4,
+                      [
+                       1,0,0,
+                       0,1,0,
+                       0,0,1,
+                       0,0,0
+                      ]
+                      )
+    inst.commitParameters()
+    world.setParameterArray('instance', anari.OBJECT, [ inst ])
 world.commitParameters()
+   
 
 
 camera = device.newCamera('perspective')

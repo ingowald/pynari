@@ -17,21 +17,24 @@
 #pragma once
 
 #include "pynari/common.h"
-#include "pynari/Geometry.h"
+#include "pynari/Group.h"
 
 namespace pynari {
 
   struct Geometry;
   
-  struct Group : public Object {
-    typedef std::shared_ptr<Group> SP;
+  struct Instance : public Object {
+    typedef std::shared_ptr<Instance> SP;
     
-    Group(Device::SP device,
-          const py::list &list);
-    virtual ~Group() = default;
+    Instance(Device::SP device,
+             const std::string &type);
+    virtual ~Instance() = default;
+
+    std::string toString() const override { return "py_barn::Instance<"+type+">"; }
+    ANARIDataType anariType() const override { return ANARI_INSTANCE; }
     
-    std::string toString() const override { return "py_barn::Group"; }
-    ANARIDataType anariType() const override { return ANARI_GROUP; }
+    const std::string type;
+    
   };
 
 }
