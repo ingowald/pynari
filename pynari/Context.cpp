@@ -23,7 +23,9 @@
 #include "pynari/Sampler.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
+#include "pynari/Group.h"
 #include "pynari/Geometry.h"
+#include "pynari/Instance.h"
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
@@ -142,6 +144,12 @@ namespace pynari {
     return std::make_shared<Geometry>(device,type);
   }
   
+  std::shared_ptr<Instance>
+  Context::newInstance(const std::string &type)
+  {
+    return std::make_shared<Instance>(device,type);
+  }
+  
   std::shared_ptr<Renderer>
   Context::newRenderer(const std::string &type)
   {
@@ -190,7 +198,7 @@ namespace pynari {
     return std::make_shared<Light>(device,type);
   }
  
- std::shared_ptr<Array>
+  std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
     std::vector<Object::SP> objects;
@@ -202,13 +210,20 @@ namespace pynari {
     return std::make_shared<Array>(device,(anari::DataType)type,objects);
   }
 
+  std::shared_ptr<Group>
+  Context::newGroup(const py::list &list)
+  {
+    return std::make_shared<Group>(device,list);
+  }
+
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
   {
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
-  std::shared_ptr<Context> createContext(const std::string &libName, const std::string &subName)
+  std::shared_ptr<Context> createContext(const std::string &libName,
+                                         const std::string &subName)
   {
     return std::make_shared<Context>(libName,subName);
   }

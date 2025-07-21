@@ -18,6 +18,7 @@
 #include "pynari/Context.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
+#include "pynari/Instance.h"
 #include "pynari/Camera.h"
 #include "pynari/Renderer.h"
 #include "pynari/Surface.h"
@@ -73,6 +74,9 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("FLOAT32_VEC3")  = py::int_((int)ANARI_FLOAT32_VEC3);
   m.attr("FLOAT32_VEC4")  = py::int_((int)ANARI_FLOAT32_VEC4);
 
+  m.attr("FLOAT32_MAT3x4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
+  m.attr("FLOAT32_MAT3X4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
+  
   m.attr("UINT32")        = py::int_((int)ANARI_UINT32);
   m.attr("UINT32_VEC2")   = py::int_((int)ANARI_UINT32_VEC2);
   m.attr("UINT32_VEC3")   = py::int_((int)ANARI_UINT32_VEC3);
@@ -131,6 +135,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_float2);
   object.def("setParameter",  &pynari::Object::set_float3);
   object.def("setParameter",  &pynari::Object::set_float4);
+  object.def("setParameter",  &pynari::Object::set_float12);
   object.def("setParameter",  &pynari::Object::set_float_vec);
 
   object.def("setParameter",  &pynari::Object::set_uint);
@@ -182,6 +187,14 @@ PYBIND11_MODULE(pynari, m) {
     = py::class_<pynari::World,pynari::Object,
                  std::shared_ptr<pynari::World>>(m, "anari::World");
   // -------------------------------------------------------
+  auto group
+    = py::class_<pynari::Group,pynari::Object,
+                 std::shared_ptr<pynari::Group>>(m, "anari::Group");
+  // -------------------------------------------------------
+  auto instance
+    = py::class_<pynari::Instance,pynari::Object,
+                 std::shared_ptr<pynari::Instance>>(m, "anari::Instance");
+  // -------------------------------------------------------
   auto frame
     = py::class_<pynari::Frame,pynari::Object,
                  std::shared_ptr<pynari::Frame>>(m, "anari::Frame");
@@ -204,6 +217,8 @@ PYBIND11_MODULE(pynari, m) {
   m.def("has_cuda_capable_gpu", &pynari::has_cuda_capable_gpu);
 
   context.def("newCamera",  &pynari::Context::newCamera);
+  context.def("newGroup",   &pynari::Context::newGroup);
+  context.def("newInstance",&pynari::Context::newInstance);
   context.def("newRenderer",&pynari::Context::newRenderer);
   context.def("newSurface", &pynari::Context::newSurface);
   context.def("newSpatialField", &pynari::Context::newSpatialField);

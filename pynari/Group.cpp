@@ -14,24 +14,38 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
-#include "pynari/common.h"
-#include "pynari/Geometry.h"
+#include "pynari/Group.h"
+#include "pynari/Context.h"
+#include "pynari/Surface.h"
+#include "pynari/Volume.h"
 
 namespace pynari {
-
-  struct Geometry;
   
-  struct Group : public Object {
-    typedef std::shared_ptr<Group> SP;
-    
-    Group(Device::SP device,
-          const py::list &list);
-    virtual ~Group() = default;
-    
-    std::string toString() const override { return "py_barn::Group"; }
-    ANARIDataType anariType() const override { return ANARI_GROUP; }
-  };
+  Group::Group(Device::SP device,
+               const py::list &list)
+    : Object(device)
+  {
+    handle = anari::newObject<anari::Group>(device->handle);
+    std::vector<Surface::SP> surfaces;
+    std::vector<Volume::SP> volumes;
+    for (auto item : list) {
+      Object::SP object = item.cast<Object::SP>();
+      assert(object);
+      
+      Surface::SP surface = item.cast<Surface::SP>();
+      if (surface) { surfaces.push_back(surface); continue; }
+      
+      Volume::SP volume = item.cast<Volume::SP>();
+      if (volume) { volumes.push_back(volume); continue; }
+    }
 
+    if (!surfaces.empty())
+      anari::setParameterArray1D(device->handle, handle, "surface",
+                                 surfaces.data(),surfaces.size());
+    if (!volumes.empty())
+      anari::setParameterArray1D(device->handle, handle, "volume",
+                                 volumes.data(),volumes.size());
+    anari::commitParameters(device->handle,handle);
+  }
 }
+

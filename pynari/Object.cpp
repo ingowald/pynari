@@ -104,13 +104,19 @@ namespace pynari {
       objects.push_back(handle);
     }
     anari::Array array
-      = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
+      = anari::newArray1D(device->handle,
+                          type,//ANARI_OBJECT,
+                          objects.size());
       
     ANARIObject *mapped
       = (ANARIObject*)anariMapArray(device->handle,array);
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
-      
+
+    PING;
+    PRINT(name); 
+    PRINT((int*)this->handle);
+    PRINT((int*)array);
     anari::setParameter(device->handle,this->handle,name,array);
   }
   
@@ -120,6 +126,10 @@ namespace pynari {
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
+    PING;
+    PRINT(name); 
+    PRINT((int*)this->handle);
+    PRINT((int*)array->handle);
     anari::setParameter(device->handle,this->handle,name,array->handle);
   }
   
@@ -208,6 +218,28 @@ namespace pynari {
     }
   }
     
+  void Object::set_float12(const char *name,
+                           int type, 
+                           const std::tuple<
+                           float,float,float,float,
+                           float,float,float,float,
+                           float,float,float,float> &v)
+  {
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_FLOAT32_MAT3x4: {
+      anari::math::mat4 mat = anari::math::identity;
+      static_assert(sizeof(v) == 12*sizeof(float));
+      memcpy(&mat,&v,12*sizeof(float));
+      return anari::setParameter(device->handle,this->handle,name,mat);
+    }
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)+" unsupported type "
+         +to_string((anari::DataType)type));
+    }
+  }
+    
   void Object::set_uint_vec(const char *name,
                             int type, 
                             const std::vector<uint> &v)
@@ -233,6 +265,14 @@ namespace pynari {
     case ANARI_FLOAT32_VEC3:
       return anari::setParameter(device->handle,this->handle,name,
                                  math::float3(v[0],v[1],v[2]));
+    case ANARI_FLOAT32_MAT3x4: {
+      anari::math::mat4 mat = anari::math::identity;
+      if (v.size() != 12)
+        throw std::runtime_error("setParameter(...,...MAT4X3,...) must only be used with tuple or list with 12 elements");
+      std::copy(v.begin(),v.end(),(float*)&mat);
+      return anari::setParameter(device->handle,this->handle,name,
+                                 mat);
+    }
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)

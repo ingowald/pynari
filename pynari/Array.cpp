@@ -163,7 +163,8 @@ namespace pynari {
   {
     anari::Array1D array
       = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
-    
+
+    PING;
     ANARIObject *mapped
       = (ANARIObject*)anariMapArray(device->handle,array);
     for (int i=0;i<objects.size();i++)

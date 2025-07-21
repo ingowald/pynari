@@ -33,8 +33,12 @@ pybind11_add_module(pynari
   Renderer.h
   Surface.h
   SpatialField.h
+  Instance.h
+  Instance.cpp
 
   # more complicted objects that require additional functions
+  Group.h
+  Group.cpp
   Context.h
   Context.cpp
   Object.h
