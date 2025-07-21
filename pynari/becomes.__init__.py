@@ -21,6 +21,20 @@ from .pynari import ARRAY1D
 from .pynari import ARRAY2D
 from .pynari import ARRAY3D
 
+from .pynari import UINT8
+from .pynari import UINT8_VEC2
+from .pynari import UINT8_VEC3
+from .pynari import UINT8_VEC4
+
+from .pynari import FLOAT32_BOX1
+from .pynari import FLOAT32_BOX2
+from .pynari import FLOAT32_BOX3
+from .pynari import FLOAT32_BOX4
+from .pynari import FLOAT32_RANGE1
+from .pynari import FLOAT32_RANGE2
+from .pynari import FLOAT32_RANGE3
+from .pynari import FLOAT32_RANGE4
+
 from .pynari import FLOAT32
 from .pynari import FLOAT32_VEC2
 from .pynari import FLOAT32_VEC3
