@@ -22,6 +22,8 @@
 
 namespace pynari {
 
+  struct Device;
+  
   std::string to_string(anari::DataType type);
 
   /*! base class for any anari object type such as a light, a
@@ -67,6 +69,9 @@ namespace pynari {
                        const std::vector<float> &v);
     void set_uint(const char *name, int type,
                   uint v);
+    void set_ulong(const char *name,
+                   int type,
+                   uint64_t v);
     void set_uint2(const char *name, int type, 
                    const std::tuple<uint,uint> &v);
     void set_uint3(const char *name, int type, 

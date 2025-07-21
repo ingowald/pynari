@@ -87,6 +87,9 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("INT32_VEC3")    = py::int_((int)ANARI_INT32_VEC3);
   m.attr("INT32_VEC4")    = py::int_((int)ANARI_INT32_VEC4);
 
+  m.attr("UINT64")        = py::int_((int)ANARI_UINT64);
+  m.attr("INT64")         = py::int_((int)ANARI_INT64);
+  
   m.attr("UFIXED8_VEC4")  = py::int_((int)ANARI_UFIXED8_VEC4);
   m.attr("UFIXED8_RGBA_SRGB")  = py::int_((int)ANARI_UFIXED8_RGBA_SRGB);
 
@@ -138,6 +141,8 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_float12);
   object.def("setParameter",  &pynari::Object::set_float_vec);
 
+  object.def("setParameter",  &pynari::Object::set_ulong);
+  
   object.def("setParameter",  &pynari::Object::set_uint);
   object.def("setParameter",  &pynari::Object::set_uint2);
   object.def("setParameter",  &pynari::Object::set_uint3);
@@ -212,6 +217,10 @@ PYBIND11_MODULE(pynari, m) {
   auto context
     = py::class_<pynari::Context,
                  std::shared_ptr<Context>>(m, "anari::Device");
+  context.def("setParameter",  &pynari::Context::set_ulong);
+  context.def("commitParameters", &pynari::Context::commit);
+  
+  
   // // -------------------------------------------------------
 
   m.def("has_cuda_capable_gpu", &pynari::has_cuda_capable_gpu);

@@ -9,6 +9,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 #from pynari import *
 import pynari as anari
 import random
@@ -94,12 +95,18 @@ def create_surfaces(mpi_rank,mpi_size):
             for ix in range(grid_size):
                 add_cube(mpi_rank,mpi_size,ix,iy,iz)
 
+anariDeviceToUse = os.getenv('ANARI_DEVICE')
+if anariDeviceToUse == None:
+    anariDeviceToUse = 'barney_mpi'
+device = anari.newDevice(anariDeviceToUse,'default')
 #device = anari.newDevice('default')
-device = anari.newDevice('barney_mpi','mpi')
+#device = anari.newDevice('barney_mpi','mpi')
+#device = anari.newDevice('barney_mpi')
 
 name = MPI.COMM_WORLD.Get_name()
 addr = MPI._addressof(MPI.COMM_WORLD)
-print(f'world comm name {name} addr {addr}')
+device.setParameter('pointer_to_mpi_communicator', anari.UINT64, addr);
+device.commitParameters()
 mpi_rank, mpi_size = (MPI.COMM_WORLD.Get_rank(), MPI.COMM_WORLD.Get_size())
 create_surfaces(mpi_rank,mpi_size)
 

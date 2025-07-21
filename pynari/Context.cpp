@@ -249,5 +249,40 @@ namespace pynari {
     device->release();
     device = nullptr;
   }
+
+  void Context::set_ulong(const char *name,
+                          int type,
+                          uint64_t v)
+  {
+    switch(type) {
+    case ANARI_DATA_TYPE:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (anari::DataType)v);
+    case ANARI_INT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (int)v);
+    case ANARI_INT64:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (int64_t)v);
+    case ANARI_UINT64:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (uint64_t)v);
+    case ANARI_UINT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (uint)v);
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (float)v);
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+
+  void Context::commit()
+  {
+    anariCommitParameters(device->handle,device->handle);
+  }
   
 }

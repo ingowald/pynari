@@ -47,6 +47,9 @@ namespace pynari {
     case ANARI_INT32_VEC2:     return "ANARI_INT32_VEC2";
     case ANARI_INT32_VEC3:     return "ANARI_INT32_VEC3";
     case ANARI_INT32_VEC4:     return "ANARI_INT32_VEC4";
+      
+    case ANARI_UINT64:         return "ANARI_UINT64";
+    case ANARI_INT64:          return "ANARI_INT64";
     default:
       throw std::runtime_error
         ("unsupported type "
@@ -113,10 +116,6 @@ namespace pynari {
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
 
-    PING;
-    PRINT(name); 
-    PRINT((int*)this->handle);
-    PRINT((int*)array);
     anari::setParameter(device->handle,this->handle,name,array);
   }
   
@@ -126,10 +125,6 @@ namespace pynari {
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
-    PING;
-    PRINT(name); 
-    PRINT((int*)this->handle);
-    PRINT((int*)array->handle);
     anari::setParameter(device->handle,this->handle,name,array->handle);
   }
   
@@ -327,7 +322,38 @@ namespace pynari {
          +" unsupported type "+to_string((anari::DataType)type));
     }
   }
-    
+
+  void Object::set_ulong(const char *name,
+                         int type,
+                         uint64_t v)
+  {
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_DATA_TYPE:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (anari::DataType)v);
+    case ANARI_INT32:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (int)v);
+    case ANARI_INT64:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (int64_t)v);
+    case ANARI_UINT64:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (uint64_t)v);
+    case ANARI_UINT32:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (uint)v);
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,this->handle,name,
+                                 (float)v);
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+  
   void Object::set_uint2(const char *name,
                          int type, 
                          const std::tuple<uint,uint> &v)

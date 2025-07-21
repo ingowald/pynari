@@ -71,6 +71,14 @@ namespace pynari {
 
     void destroy();
 
+    /*! DEVICE setparamter ... */
+    void set_ulong(const char *name,
+                   int type,
+                   uint64_t v);
+    void commit();
+    
+
+    
     Device::SP device;
     std::mutex mutex;
   };
