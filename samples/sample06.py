@@ -22,6 +22,20 @@ look_at = (0., 0., 0.)
 look_up = (0.,1.,0.)
 fovy = 40.
 grid_size = 7
+use_floatFB = False#True
+
+out_file_name = ''
+args = sys.argv[1:]
+opts, args = getopt.getopt(args,"ho:f",["help","output=","float4"])
+for opt,arg in opts:
+    if opt == '-h':
+        print('mpirun -n <numRanks> sample06.py [-o outfile.jpg]')
+        print('note: make sure to use a ANARI_LIBRARY that supports data parallel rendering')
+        sys.exit(0)
+    elif opt == '-f':
+        use_floatFB = True
+    elif opt == '-o':
+        out_file_name = arg
 
 random.seed(80577)
 surfaces = []
@@ -32,10 +46,13 @@ def make_material(color_idx):
     red   = random.uniform(.05,.95)
     green = random.uniform(.05,.95)
     blue  = random.uniform(.05,.95)
+    red = .2+.8*red*red
+    green = .2+.8*green*green
+    blue = .2+.8*blue*blue
     mat = device.newMaterial('physicallyBased')
-    mat.setParameter('baseColor',anari.float3,(red*red,green*green,blue*blue))
+    mat.setParameter('baseColor',anari.float3,(red,green,blue))
     mat.setParameter('ior',anari.FLOAT32,1.45)
-    mat.setParameter('metallic',anari.FLOAT32,1.)
+    mat.setParameter('metallic',anari.FLOAT32,0.5)
     mat.setParameter('specular',anari.FLOAT32,0.)
     mat.setParameter('roughness',anari.FLOAT32,0.3)
     mat.commitParameters()
@@ -67,7 +84,7 @@ def add_cube(mpi_rank,mpi_size,ix,iy,iz):
      
     _vertices = device.newArray(anari.FLOAT32_VEC3,np.array(vertices,dtype=np.float32).flatten())
     indices = [
-        ( 0,1,3 ), ( 2,3,0 ),
+        ( 0,1,3 ), ( 0,3,2 ),
         ( 5,7,6 ), ( 5,6,4 ),
         ( 0,4,5 ), ( 0,5,1 ),
         ( 2,3,7 ), ( 2,7,6 ),
@@ -99,9 +116,6 @@ anariDeviceToUse = os.getenv('ANARI_DEVICE')
 if anariDeviceToUse == None:
     anariDeviceToUse = 'barney_mpi'
 device = anari.newDevice(anariDeviceToUse,'default')
-#device = anari.newDevice('default')
-#device = anari.newDevice('barney_mpi','mpi')
-#device = anari.newDevice('barney_mpi')
 
 name = MPI.COMM_WORLD.Get_name()
 addr = MPI._addressof(MPI.COMM_WORLD)
@@ -110,17 +124,25 @@ device.commitParameters()
 mpi_rank, mpi_size = (MPI.COMM_WORLD.Get_rank(), MPI.COMM_WORLD.Get_size())
 create_surfaces(mpi_rank,mpi_size)
 
+light = device.newLight('directional')
+#look_from = (-.7,2.,-4.)
+light.setParameter('direction', anari.float3, ( -1., -1., 1. ) )
+light.setParameter('radiance', anari.float, 4.)
+light.commitParameters()
+light_array = device.newArray(anari.LIGHT, [light])
+    
+
 world = device.newWorld()
-if False:
-    # this works as well:
+if True:
     world.setParameterArray('surface', anari.SURFACE, surfaces )
+    world.setParameterArray('light', anari.LIGHT, [ light ])
 else:
-    # works just as if setting surface[] array directly, but using a single
-    # instance, for those backedns that do not allow zero-instance models
+    # this _should_ work,but currently ignores the lights
     rootGroup = device.newGroup(surfaces)
     rootGroup.commitParameters()
     inst = device.newInstance('transform')
     inst.setParameter('group',anari.OBJECT,rootGroup)
+    inst.setParameterArray('light', anari.LIGHT, [ light ])
     inst.setParameter('transform',anari.FLOAT32_MAT3X4,
                       [
                        1,0,0,
@@ -131,6 +153,7 @@ else:
                       )
     inst.commitParameters()
     world.setParameterArray('instance', anari.OBJECT, [ inst ])
+
 world.commitParameters()
    
 
@@ -153,7 +176,7 @@ bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape(
 bg_gradient = device.newArray(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
 renderer.setParameter('background', anari.ARRAY, bg_gradient)
 renderer.setParameter('pixelSamples', anari.INT32, 16)
 renderer.commitParameters()
@@ -163,29 +186,34 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, fb_size)
 
-frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
+if use_floatFB:
+    frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
+else:
+    frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)
 frame.setParameter('world', anari.OBJECT, world)
+
 frame.commitParameters()
 
 frame.render()
 fb_color = frame.get('channel.color')
 
-pixels = np.array(fb_color)#.reshape([height, width, 4])
-
-out_file_name = ''
-args = sys.argv[1:]
-opts, args = getopt.getopt(args,"ho:",["help","output="])
-for opt,arg in opts:
-    if opt == '-h':
-        print('mpirun -n <numRanks> sample06.py [-o outfile.jpg]')
-        print('note: make sure to use a ANARI_LIBRARY that supports data parallel rendering')
-        sys.exit(0)
-    elif opt == '-o':
-        out_file_name = arg
+pixels = np.array(fb_color)
 
 if MPI.COMM_WORLD.Get_rank() == 0:
+    if use_floatFB:
+        width = fb_size[0]
+        height = fb_size[1]
+        pixels = pixels.reshape(width*height*4)
+        r = pixels[0::4]
+        g = pixels[1::4]
+        b = pixels[2::4]
+        pixels = np.empty(width*height*3,dtype=np.float32)
+        pixels[0::3] = r
+        pixels[1::3] = g
+        pixels[2::3] = b
+        pixels = pixels.reshape((width,height,3))
     if out_file_name == '':
         plt.imshow(pixels)
         plt.gca().invert_yaxis()
