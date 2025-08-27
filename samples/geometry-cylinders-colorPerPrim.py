@@ -100,7 +100,7 @@ light.commitParameters()
 array = device.newArray(anari.LIGHT, [light])
 
 world = device.newWorld();
-world.setParameterArray('surface',anari.SURFACE,[surface]);
+world.setParameterArray1D('surface',anari.SURFACE,[surface]);
 world.setParameter('light', anari.ARRAY1D, array)
 world.commitParameters()
 camera = device.newCamera('perspective')

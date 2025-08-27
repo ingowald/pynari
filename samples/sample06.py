@@ -100,7 +100,7 @@ mpi_rank, mpi_size = (MPI.COMM_WORLD.Get_rank(), MPI.COMM_WORLD.Get_size())
 create_surfaces(mpi_rank,mpi_size)
 
 world = device.newWorld()
-world.setParameterArray('surface', anari.SURFACE, surfaces )
+world.setParameterArray1D('surface', anari.SURFACE, surfaces )
 world.commitParameters()
 
 

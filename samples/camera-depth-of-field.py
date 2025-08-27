@@ -104,7 +104,7 @@ device = anari.newDevice('default')
 create_spheres()
 
 world = device.newWorld()
-world.setParameterArray('surface', anari.SURFACE, spheres )
+world.setParameterArray1D('surface', anari.SURFACE, spheres )
 world.commitParameters()
 
 
