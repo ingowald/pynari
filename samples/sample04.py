@@ -191,7 +191,7 @@ device = anari.newDevice('default')
 curves = create_curves()
 
 world = device.newWorld()
-world.setParameterArray('surface', anari.SURFACE, curves )
+world.setParameterArray1D('surface', anari.SURFACE, curves )
 
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (1,-1,1))

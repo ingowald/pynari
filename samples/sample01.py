@@ -67,7 +67,7 @@ surface.setParameter('geometry', anari.GEOMETRY, mesh)
 surface.setParameter('material', anari.MATERIAL, material)
 surface.commitParameters()
 
-world.setParameterArray('surface', anari.SURFACE, [ surface ])
+world.setParameterArray1D('surface', anari.SURFACE, [ surface ])
 
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (0,0,1))

@@ -152,7 +152,7 @@ else:
                       ]
                       )
     inst.commitParameters()
-    world.setParameterArray('instance', anari.OBJECT, [ inst ])
+    world.setParameterArray1D('instance', anari.OBJECT, [ inst ])
 
 world.commitParameters()
    

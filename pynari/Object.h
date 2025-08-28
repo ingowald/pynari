@@ -45,11 +45,19 @@ namespace pynari {
     void set_string(const char *name, int type,
                     const std::string &stringValue);
     void set_string_notype(const char *name, //int type,
-                    const std::string &stringValue);
-    void setArray_list(const char *name, int type, 
-                       const py::list &list);
-    void setArray_np(const char *name, int type, 
-                     const py::buffer &buffer);
+                           const std::string &stringValue);
+    void setArray1D_list(const char *name, int type, 
+                         const py::list &list);
+    void setArray1D_np(const char *name, int type, 
+                       const py::buffer &buffer);
+    void setArray2D_list(const char *name, int type, 
+                         const py::list &list);
+    void setArray2D_np(const char *name, int type, 
+                       const py::buffer &buffer);
+    void setArray3D_list(const char *name, int type, 
+                         const py::list &list);
+    void setArray3D_np(const char *name, int type, 
+                       const py::buffer &buffer);
     void set_box1(const char *name, int type,
                   const helium::box1 b);
     void set_float(const char *name, int type,

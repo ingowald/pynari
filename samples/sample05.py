@@ -68,7 +68,7 @@ array = device.newArray(anari.LIGHT, [light])
 world.setParameter('light', anari.ARRAY1D, array)
 
 
-world.setParameterArray('surface', anari.SURFACE, spheres )
+world.setParameterArray1D('surface', anari.SURFACE, spheres )
 world.commitParameters()
 
 

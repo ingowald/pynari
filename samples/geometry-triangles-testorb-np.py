@@ -45,9 +45,9 @@ def createMesh(file_name, material):
     uv = mesh_data['uv']
     normal = mesh_data['normal']
     geom = device.newGeometry('triangle')
-    geom.setParameterArray('vertex.position',anari.float3,vertex)
-    geom.setParameterArray('vertex.normal',anari.float3,normal)
-    #geom.setParameterArray('vertex.attribute0',anari.float2,uv)
+    print("vertices :"+str(vertex))
+    geom.setParameterArray1D('vertex.position',anari.float3,vertex)
+    geom.setParameterArray1D('vertex.normal',anari.float3,normal)
     geom.commitParameters()
     surf = device.newSurface()
     surf.setParameter('material',anari.MATERIAL, material)
@@ -76,7 +76,7 @@ outer_sphere = createMesh('testorb-outer-sphere.npz',orb_material)
 floor = createMesh('testorb-floor.npz',floor_material)
 equation = createMesh('testorb-equation.npz',equation_material)
                           
-world.setParameterArray('surface', anari.SURFACE,
+world.setParameterArray1D('surface', anari.SURFACE,
                         [ base, inner_sphere, outer_sphere, equation, floor ])
 
 
@@ -88,7 +88,7 @@ def checkerboard(y,x,d):
 rad = np.fromfunction(checkerboard, (hdri_res,2*hdri_res,3), dtype=np.float32)
 radiance_array=device.newArray(anari.float3,rad.reshape((hdri_res,2*hdri_res,3)))
 hdri=device.newLight('hdri')
-hdri.setParameter('radiance',anari.ARRAY,radiance_array)
+hdri.setParameter('radiance',anari.ARRAY2D,radiance_array)
 hdri.setParameter('up',anari.float3,(0,1,0))
 hdri.commitParameters()
 

@@ -94,7 +94,7 @@ namespace pynari {
     device = nullptr;
   }
 
-  void Object::setArray_list(const char *name,
+  void Object::setArray1D_list(const char *name,
                              int type, 
                              const py::list &list)
   {
@@ -115,17 +115,35 @@ namespace pynari {
       = (ANARIObject*)anariMapArray(device->handle,array);
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
-
     anari::setParameter(device->handle,this->handle,name,array);
+    anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array);
   }
   
-  void Object::setArray_np(const char *name,
-                           int type, 
-                           const py::buffer &buffer)
+  void Object::setArray1D_np(const char *name,
+                             int type, 
+                             const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
-    anari::setParameter(device->handle,this->handle,name,array->handle);
+    anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array->handle);
+  }
+  
+  void Object::setArray2D_np(const char *name,
+                             int type, 
+                             const py::buffer &buffer)
+  {
+    std::shared_ptr<pynari::Array> array
+      = device->context->newArray(type,buffer);
+    anari::setParameter(device->handle,this->handle,name,(ANARIArray2D)array->handle);
+  }
+  
+  void Object::setArray3D_np(const char *name,
+                             int type, 
+                             const py::buffer &buffer)
+  {
+    std::shared_ptr<pynari::Array> array
+      = device->context->newArray(type,buffer);
+    anari::setParameter(device->handle,this->handle,name,(ANARIArray3D)array->handle);
   }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)

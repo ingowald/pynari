@@ -142,11 +142,11 @@ for opt,arg in opts:
         out_file_name = arg
 
 spatial_field = device.newSpatialField('unstructured')
-spatial_field.setParameterArray('cell.type',anari.UINT8,cell_type)
-spatial_field.setParameterArray('cell.index',anari.UINT32,cell_index)
-spatial_field.setParameterArray('index',anari.UINT32,index)
-spatial_field.setParameterArray('vertex.position',anari.FLOAT32_VEC3,vertex_position)
-spatial_field.setParameterArray('cell.data',anari.FLOAT32,cell_data)
+spatial_field.setParameterArray1D('cell.type',anari.UINT8,cell_type)
+spatial_field.setParameterArray1D('cell.index',anari.UINT32,cell_index)
+spatial_field.setParameterArray1D('index',anari.UINT32,index)
+spatial_field.setParameterArray1D('vertex.position',anari.FLOAT32_VEC3,vertex_position)
+spatial_field.setParameterArray1D('cell.data',anari.FLOAT32,cell_data)
 spatial_field.commitParameters()
 
 xf = np.array([0, 0, 1, 1,
@@ -162,13 +162,12 @@ xf_array = device.newArray(anari.float4,xf)
 volume = device.newVolume('transferFunction1D')
 volume.setParameter('color',anari.ARRAY,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-volume.setParameter('unitDistance',anari.FLOAT32,10.)
+volume.setParameter('unitDistance',anari.FLOAT32,1.)
 volume.setParameter('valueRange',anari.FLOAT32_BOX1,(0.,7.))
 volume.commitParameters()
                                                     
 world = device.newWorld()
-#world.setParameterArray('surface', anari.SURFACE, spheres )
-world.setParameterArray('volume', anari.VOLUME, [ volume ] )
+world.setParameterArray1D('volume', anari.VOLUME, [ volume ] )
 light = device.newLight('directional')
 light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
 light.commitParameters()
@@ -191,19 +190,19 @@ camera.commitParameters()
 
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
-#bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)),
-#                     dtype=np.float32).reshape((2,1,4))
-#bg_gradient = device.newArray(anari.float4, bg_values)
+bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)),
+                     dtype=np.float32).reshape((2,1,4))
+bg_gradient = device.newArray(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, .5)
-#renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.5)
+renderer.setParameter('background', anari.ARRAY, bg_gradient)
 if anari.has_cuda_capable_gpu():
     # actually we have denoising on the gpu, so probably need way less...
-    renderer.setParameter('pixelSamples', anari.INT32, 1024)
+    renderer.setParameter('pixelSamples', anari.INT32, 128)
 else:
-    renderer.setParameter('pixelSamples', anari.INT32, 16)
+    renderer.setParameter('pixelSamples', anari.INT32, 4)
 renderer.commitParameters()
 
 
