@@ -26,6 +26,8 @@ namespace pynari {
   struct Surface;
   struct World;
   struct Frame;
+  struct Group;
+  struct Instance;
   struct Geometry;
   struct Array;
   struct Material;
@@ -44,8 +46,11 @@ namespace pynari {
     static SP create(const std::string &libName, const std::string &devName);
 
     std::shared_ptr<World> newWorld();
+    std::shared_ptr<Group> newGroup(const py::list &list);
+    // std::shared_ptr<Group> newGroup(const py::list &list);
     std::shared_ptr<Frame> newFrame();
-    std::shared_ptr<Geometry> newGeometry(const std::string &type);
+    std::shared_ptr<Geometry> newGeometry(const std::string &type); 
+    std::shared_ptr<Instance> newInstance(const std::string &type);
     std::shared_ptr<Camera> newCamera(const std::string &type);
     std::shared_ptr<Renderer> newRenderer(const std::string &type);
     std::shared_ptr<Surface> newSurface();
@@ -54,7 +59,7 @@ namespace pynari {
     std::shared_ptr<Sampler> newSampler(const std::string &type);
     std::shared_ptr<Array> newArray(int type, const py::buffer &buffer);
     std::shared_ptr<Array> newArray_objects(int type,
-                                                const py::list &list);
+                                            const py::list &list);
     std::shared_ptr<Material> newMaterial(const std::string &type);
     std::shared_ptr<Light> newLight(const std::string &type);
 
@@ -66,6 +71,14 @@ namespace pynari {
 
     void destroy();
 
+    /*! DEVICE setparamter ... */
+    void set_ulong(const char *name,
+                   int type,
+                   uint64_t v);
+    void commit();
+    
+
+    
     Device::SP device;
     std::mutex mutex;
   };

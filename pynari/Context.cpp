@@ -23,7 +23,9 @@
 #include "pynari/Sampler.h"
 #include "pynari/World.h"
 #include "pynari/Frame.h"
+#include "pynari/Group.h"
 #include "pynari/Geometry.h"
+#include "pynari/Instance.h"
 #include "pynari/Array.h"
 #include "pynari/SpatialField.h"
 #include "pynari/Volume.h"
@@ -56,10 +58,12 @@ namespace pynari {
       std::exit(1);
     } else if (severity == ANARI_SEVERITY_ERROR) {
       fprintf(stderr, "[ERROR][%p] %s\n", source, message);
+#ifndef NDEBUG
     } else if (severity == ANARI_SEVERITY_WARNING) {
       fprintf(stderr, "[WARN ][%p] %s\n", source, message);
     } else if (severity == ANARI_SEVERITY_PERFORMANCE_WARNING) {
       fprintf(stderr, "[PERF ][%p] %s\n", source, message);
+#endif
     }
     // Ignore INFO/DEBUG messages
   }
@@ -142,6 +146,12 @@ namespace pynari {
     return std::make_shared<Geometry>(device,type);
   }
   
+  std::shared_ptr<Instance>
+  Context::newInstance(const std::string &type)
+  {
+    return std::make_shared<Instance>(device,type);
+  }
+  
   std::shared_ptr<Renderer>
   Context::newRenderer(const std::string &type)
   {
@@ -190,7 +200,7 @@ namespace pynari {
     return std::make_shared<Light>(device,type);
   }
  
- std::shared_ptr<Array>
+  std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
     std::vector<Object::SP> objects;
@@ -202,13 +212,20 @@ namespace pynari {
     return std::make_shared<Array>(device,(anari::DataType)type,objects);
   }
 
+  std::shared_ptr<Group>
+  Context::newGroup(const py::list &list)
+  {
+    return std::make_shared<Group>(device,list);
+  }
+
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
   {
     return std::make_shared<Array>(device,(anari::DataType)type,buffer);
   }
   
-  std::shared_ptr<Context> createContext(const std::string &libName, const std::string &subName)
+  std::shared_ptr<Context> createContext(const std::string &libName,
+                                         const std::string &subName)
   {
     return std::make_shared<Context>(libName,subName);
   }
@@ -231,6 +248,41 @@ namespace pynari {
     
     device->release();
     device = nullptr;
+  }
+
+  void Context::set_ulong(const char *name,
+                          int type,
+                          uint64_t v)
+  {
+    switch(type) {
+    case ANARI_DATA_TYPE:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (anari::DataType)v);
+    case ANARI_INT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (int)v);
+    case ANARI_INT64:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (int64_t)v);
+    case ANARI_UINT64:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (uint64_t)v);
+    case ANARI_UINT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (uint)v);
+    case ANARI_FLOAT32:
+      return anari::setParameter(device->handle,device->handle,name,
+                                 (float)v);
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)
+         +" unsupported type "+to_string((anari::DataType)type));
+    }
+  }
+
+  void Context::commit()
+  {
+    anariCommitParameters(device->handle,device->handle);
   }
   
 }

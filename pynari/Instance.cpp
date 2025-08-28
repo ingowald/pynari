@@ -14,24 +14,18 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
-#include "pynari/common.h"
-#include "pynari/Geometry.h"
+#include "pynari/Instance.h"
+#include "pynari/Context.h"
 
 namespace pynari {
 
-  struct Geometry;
-  
-  struct Group : public Object {
-    typedef std::shared_ptr<Group> SP;
-    
-    Group(Device::SP device,
-          const py::list &list);
-    virtual ~Group() = default;
-    
-    std::string toString() const override { return "py_barn::Group"; }
-    ANARIDataType anariType() const override { return ANARI_GROUP; }
-  };
+  Instance::Instance(Device::SP device,
+                     const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Instance>(device->handle,type.c_str());
+  }
 
 }
+
