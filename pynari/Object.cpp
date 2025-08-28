@@ -94,9 +94,30 @@ namespace pynari {
     device = nullptr;
   }
 
-  void Object::setArray1D_list(const char *name,
+  void Object::setArray_list(const char *name,
                              int type, 
                              const py::list &list)
+  {
+    static bool warned = false;
+    if (warned == false) {
+      std::cout
+        << "#pynari: this python app using pynari just called Object::setParameterArray()\n"
+        << "#pynari: due to some changes in the ANARI SDK these calls are now (starting\n"
+        << "#pynari: with v0.15) any such call should now be replaced with either\n"
+        << "#pynari: setParameterArray1D, setParameterArray2D, or setParameterArray3D,\n"
+        << "#pynari: depending on what dimensionality the underlying array is\n"
+        << "#pynari: supposed to be. I'm trying my best to figure this out, but\n"
+        << "#pynari: the better way would be for the app to swtich to the new\n"
+        << "#pynari: intended behavior.\n"
+        ;
+      warned = true;
+    }
+    setArray1D_list(name,type,list);
+  }
+  
+  void Object::setArray1D_list(const char *name,
+                               int type, 
+                               const py::list &list)
   {
     assertThisObjectIsValid();
     std::vector<ANARIObject> objects;
@@ -115,8 +136,45 @@ namespace pynari {
       = (ANARIObject*)anariMapArray(device->handle,array);
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
-    anari::setParameter(device->handle,this->handle,name,array);
     anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array);
+  }
+  
+  void Object::setArray_np(const char *name,
+                             int type, 
+                             const py::buffer &buffer)
+  {
+    static bool warned = false;
+    if (warned == false) {
+      std::cout
+        << "#pynari: this python app using pynari just called Object::setParameterArray()\n"
+        << "#pynari: due to some changes in the ANARI SDK these calls are now (starting\n"
+        << "#pynari: with v0.15) any such call should now be replaced with either\n"
+        << "#pynari: setParameterArray1D, setParameterArray2D, or setParameterArray3D,\n"
+        << "#pynari: depending on what dimensionality the underlying array is\n"
+        << "#pynari: supposed to be. I'm trying my best to figure this out, but\n"
+        << "#pynari: the better way would be for the app to swtich to the new\n"
+        << "#pynari: intended behavior.\n"
+        ;
+      warned = true;
+    }
+    std::shared_ptr<pynari::Array> array
+      = device->context->newArray(type,buffer);
+    switch (array->nDims) {
+    case 1:
+      anari::setParameter(device->handle,this->handle,name,
+                          (ANARIArray1D)array->handle);
+      break;
+    case 2:
+      anari::setParameter(device->handle,this->handle,name,
+                          (ANARIArray2D)array->handle);
+      break;
+    case 3:
+      anari::setParameter(device->handle,this->handle,name,
+                          (ANARIArray3D)array->handle);
+      break;
+    default:
+      throw std::runtime_error("invalid array type in Object::setArray_np()");
+    }
   }
   
   void Object::setArray1D_np(const char *name,
@@ -125,7 +183,8 @@ namespace pynari {
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
-    anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array->handle);
+    anari::setParameter(device->handle,this->handle,name,
+                        (ANARIArray1D)array->handle);
   }
   
   void Object::setArray2D_np(const char *name,
@@ -134,7 +193,8 @@ namespace pynari {
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
-    anari::setParameter(device->handle,this->handle,name,(ANARIArray2D)array->handle);
+    anari::setParameter(device->handle,this->handle,name,
+                        (ANARIArray2D)array->handle);
   }
   
   void Object::setArray3D_np(const char *name,
@@ -143,7 +203,8 @@ namespace pynari {
   {
     std::shared_ptr<pynari::Array> array
       = device->context->newArray(type,buffer);
-    anari::setParameter(device->handle,this->handle,name,(ANARIArray3D)array->handle);
+    anari::setParameter(device->handle,this->handle,name,
+                        (ANARIArray3D)array->handle);
   }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
