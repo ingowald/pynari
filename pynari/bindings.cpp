@@ -130,6 +130,10 @@ PYBIND11_MODULE(pynari, m) {
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameter",  &pynari::Object::set_string_notype);
+  object.def("setParameterArray",  &pynari::Object::setArray_list);
+  object.def("setParameterArray",  &pynari::Object::setArray_np);
+  object.def("setParameterArray1D",  &pynari::Object::setArray1D_list);
+  object.def("setParameterArray1D",  &pynari::Object::setArray1D_np);
   object.def("setParameterArray1D",  &pynari::Object::setArray1D_list);
   object.def("setParameterArray1D",  &pynari::Object::setArray1D_np);
   object.def("setParameterArray2D",  &pynari::Object::setArray2D_np);
