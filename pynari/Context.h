@@ -58,7 +58,12 @@ namespace pynari {
     std::shared_ptr<Volume> newVolume(const std::string &type);
     std::shared_ptr<Sampler> newSampler(const std::string &type);
     std::shared_ptr<Array> newArray(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray1D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray2D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray3D(int type, const py::buffer &buffer);
     std::shared_ptr<Array> newArray_objects(int type,
+                                            const py::list &list); 
+    std::shared_ptr<Array> newArray1D_objects(int type,
                                             const py::list &list);
     std::shared_ptr<Material> newMaterial(const std::string &type);
     std::shared_ptr<Light> newLight(const std::string &type);

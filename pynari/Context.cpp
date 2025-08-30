@@ -203,6 +203,12 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
+    return newArray1D_objects(type,list);
+  }
+
+  std::shared_ptr<Array>
+  Context::newArray1D_objects(int type, const py::list &list)
+  {
     std::vector<Object::SP> objects;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
@@ -211,7 +217,7 @@ namespace pynari {
     }
     return std::make_shared<Array>(device,(anari::DataType)type,objects);
   }
-
+  
   std::shared_ptr<Group>
   Context::newGroup(const py::list &list)
   {

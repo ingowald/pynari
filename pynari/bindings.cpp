@@ -130,11 +130,11 @@ PYBIND11_MODULE(pynari, m) {
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameter",  &pynari::Object::set_string_notype);
-  object.def("setParameterArray",  &pynari::Object::setArray_list);
-  object.def("setParameterArray",  &pynari::Object::setArray_np);
+  object.def("setParameterArray",    &pynari::Object::setArray_list);
   object.def("setParameterArray1D",  &pynari::Object::setArray1D_list);
-  object.def("setParameterArray1D",  &pynari::Object::setArray1D_np);
-  object.def("setParameterArray1D",  &pynari::Object::setArray1D_list);
+  object.def("setParameterArray2D",  &pynari::Object::setArray2D_list);
+  object.def("setParameterArray3D",  &pynari::Object::setArray3D_list);
+  object.def("setParameterArray",    &pynari::Object::setArray_np);
   object.def("setParameterArray1D",  &pynari::Object::setArray1D_np);
   object.def("setParameterArray2D",  &pynari::Object::setArray2D_np);
   object.def("setParameterArray3D",  &pynari::Object::setArray3D_np);
@@ -244,8 +244,11 @@ PYBIND11_MODULE(pynari, m) {
   context.def("newFrame",   &pynari::Context::newFrame);
   context.def("newGeometry",&pynari::Context::newGeometry);
   context.def("newSampler", &pynari::Context::newSampler);
+  
   context.def("newArray",   &pynari::Context::newArray);
+  context.def("newArray1D", &pynari::Context::newArray1D);
+  context.def("newArray2D", &pynari::Context::newArray2D);
+  context.def("newArray3D", &pynari::Context::newArray3D);
   context.def("newArray",   &pynari::Context::newArray_objects);
-  context.def("newArray",   &pynari::Context::newArray);
-  context.def("newArray",   &pynari::Context::newArray_objects);
+  context.def("newArray1D", &pynari::Context::newArray1D_objects);
 }
