@@ -353,9 +353,19 @@ namespace pynari {
       anari::math::mat4 mat = anari::math::identity;
       if (v.size() != 12)
         throw std::runtime_error("setParameter(...,...MAT4X3,...) must only be used with tuple or list with 12 elements");
+      const float *in = v.data();
+      float *out = (float *)&mat;
+      for (int y=0;y<4;y++)
+        for (int x=0;x<3;x++)
+          out[4*y+x] = in[3*y+x];
+      return anari::setParameter(device->handle,this->handle,name,mat);
+    }
+    case ANARI_FLOAT32_MAT4x4: {
+      anari::math::mat4 mat = anari::math::identity;
+      if (v.size() != 16)
+        throw std::runtime_error("setParameter(...,...MAT4X4,...) must only be used with tuple or list with 16 elements");
       std::copy(v.begin(),v.end(),(float*)&mat);
-      return anari::setParameter(device->handle,this->handle,name,
-                                 mat);
+      return anari::setParameter(device->handle,this->handle,name,mat);
     }
     default:
       throw std::runtime_error

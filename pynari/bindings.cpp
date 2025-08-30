@@ -75,7 +75,7 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("FLOAT32_VEC4")  = py::int_((int)ANARI_FLOAT32_VEC4);
 
   m.attr("FLOAT32_MAT3x4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
-  m.attr("FLOAT32_MAT3X4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
+  m.attr("FLOAT32_MAT4X4")  = py::int_((int)ANARI_FLOAT32_MAT4x4);
   
   m.attr("UINT32")        = py::int_((int)ANARI_UINT32);
   m.attr("UINT32_VEC2")   = py::int_((int)ANARI_UINT32_VEC2);

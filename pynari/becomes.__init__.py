@@ -55,7 +55,7 @@ from .pynari import UINT64
 from .pynari import INT64
 
 from .pynari import FLOAT32_MAT3x4
-from .pynari import FLOAT32_MAT3X4
+from .pynari import FLOAT32_MAT4X4
 
 from .pynari import UFIXED8_VEC4
 from .pynari import UFIXED8_RGBA_SRGB
