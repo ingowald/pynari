@@ -74,8 +74,9 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("FLOAT32_VEC3")  = py::int_((int)ANARI_FLOAT32_VEC3);
   m.attr("FLOAT32_VEC4")  = py::int_((int)ANARI_FLOAT32_VEC4);
 
-  m.attr("FLOAT32_MAT3x4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
-  m.attr("FLOAT32_MAT4X4")  = py::int_((int)ANARI_FLOAT32_MAT4x4);
+  m.attr("FLOAT32_MAT3x4")= py::int_((int)ANARI_FLOAT32_MAT3x4);
+  m.attr("FLOAT32_MAT4X4")= py::int_((int)ANARI_FLOAT32_MAT4);
+  m.attr("FLOAT32_MAT4")  = py::int_((int)ANARI_FLOAT32_MAT4);
   
   m.attr("UINT32")        = py::int_((int)ANARI_UINT32);
   m.attr("UINT32_VEC2")   = py::int_((int)ANARI_UINT32_VEC2);
@@ -145,6 +146,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_float3);
   object.def("setParameter",  &pynari::Object::set_float4);
   object.def("setParameter",  &pynari::Object::set_float12);
+  object.def("setParameter",  &pynari::Object::set_float16);
   object.def("setParameter",  &pynari::Object::set_float_vec);
 
   object.def("setParameter",  &pynari::Object::set_ulong);

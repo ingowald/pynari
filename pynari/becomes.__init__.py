@@ -16,7 +16,7 @@ from .pynari import WORLD
 from .pynari import SPATIAL_FIELD
 from .pynari import VOLUME
 from .pynari import SAMPLER
-  
+\  
 from .pynari import ARRAY
 from .pynari import ARRAY1D
 from .pynari import ARRAY2D
@@ -56,6 +56,7 @@ from .pynari import INT64
 
 from .pynari import FLOAT32_MAT3x4
 from .pynari import FLOAT32_MAT4X4
+from .pynari import FLOAT32_MAT4
 
 from .pynari import UFIXED8_VEC4
 from .pynari import UFIXED8_RGBA_SRGB

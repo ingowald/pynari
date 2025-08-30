@@ -82,6 +82,12 @@ namespace pynari {
                      float,float,float,float,
                      float,float,float,float,
                      float,float,float,float> &v);
+    void set_float16(const char *name, int type, 
+                     const std::tuple<
+                     float,float,float,float,
+                     float,float,float,float,
+                     float,float,float,float,
+                     float,float,float,float> &v);
     void set_float_vec(const char *name, int type, 
                        const std::vector<float> &v);
     void set_uint(const char *name, int type,

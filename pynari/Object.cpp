@@ -31,6 +31,8 @@ namespace pynari {
     case ANARI_ARRAY2D:        return "ANARI_ARRAY2D";
     case ANARI_ARRAY3D:        return "ANARI_ARRAY3D";
     case ANARI_WORLD:          return "ANARI_WORLD";
+    case ANARI_MAT3x4:         return "ANARI_MAT3x4"; 
+    case ANARI_MAT4:           return "ANARI_MAT4"; 
     case ANARI_RENDERER:       return "ANARI_RENDERER";
     case ANARI_MATERIAL:       return "ANARI_MATERIAL";
     case ANARI_GEOMETRY:       return "ANARI_GEOMETRY";
@@ -323,7 +325,44 @@ namespace pynari {
          +to_string((anari::DataType)type));
     }
   }
-    
+
+  void Object::set_float16(const char *name,
+                           int type, 
+                           const std::tuple<
+                           float,float,float,float,
+                           float,float,float,float,
+                           float,float,float,float,
+                           float,float,float,float> &v)
+  {
+    assertThisObjectIsValid();
+    switch(type) {
+    case ANARI_FLOAT32_MAT4: {
+      anari::math::mat4 mat = anari::math::identity;
+      mat[0].x = std::get<0>(v);
+      mat[0].y = std::get<1>(v);
+      mat[0].z = std::get<2>(v);
+      mat[0].w = std::get<3>(v);
+      mat[1].x = std::get<4>(v);
+      mat[1].y = std::get<5>(v);
+      mat[1].z = std::get<6>(v);
+      mat[1].w = std::get<7>(v);
+      mat[2].x = std::get<8>(v);
+      mat[2].y = std::get<9>(v);
+      mat[2].z = std::get<10>(v);
+      mat[2].w = std::get<11>(v);
+      mat[3].x = std::get<12>(v);
+      mat[3].y = std::get<13>(v);
+      mat[3].z = std::get<14>(v);
+      mat[3].w = std::get<15>(v);
+      return anari::setParameter(device->handle,this->handle,name,mat);
+    }
+    default:
+      throw std::runtime_error
+        (std::string(__PRETTY_FUNCTION__)+" unsupported type "
+         +to_string((anari::DataType)type));
+    }
+  }
+  
   void Object::set_uint_vec(const char *name,
                             int type, 
                             const std::vector<uint> &v)
@@ -360,7 +399,7 @@ namespace pynari {
           out[4*y+x] = in[3*y+x];
       return anari::setParameter(device->handle,this->handle,name,mat);
     }
-    case ANARI_FLOAT32_MAT4x4: {
+    case ANARI_FLOAT32_MAT4: {
       anari::math::mat4 mat = anari::math::identity;
       if (v.size() != 16)
         throw std::runtime_error("setParameter(...,...MAT4X4,...) must only be used with tuple or list with 16 elements");
