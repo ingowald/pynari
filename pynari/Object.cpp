@@ -182,7 +182,7 @@ namespace pynari {
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray(type,buffer);
+      = device->context->newArray1D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray1D)array->handle);
   }
@@ -192,7 +192,7 @@ namespace pynari {
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray(type,buffer);
+      = device->context->newArray2D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray2D)array->handle);
   }
@@ -202,7 +202,7 @@ namespace pynari {
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray(type,buffer);
+      = device->context->newArray3D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray3D)array->handle);
   }

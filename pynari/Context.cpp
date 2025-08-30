@@ -203,6 +203,20 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray_objects(int type, const py::list &list)
   {
+    static bool warned = false;
+    if (warned == false) {
+      std::cout
+        << "#pynari: this python app using pynari just called Object::newArray()\n"
+        << "#pynari: due to some changes in the ANARI SDK these calls are now (starting\n"
+        << "#pynari: with v0.15) any such call should now be replaced with either\n"
+        << "#pynari: newArray1D, newArray2D, or newArray3D,\n"
+        << "#pynari: depending on what dimensionality the underlying array is\n"
+        << "#pynari: supposed to be. I'm trying my best to figure this out, but\n"
+        << "#pynari: the better way would be for the app to swtich to the new\n"
+        << "#pynari: intended behavior.\n"
+        ;
+      warned = true;
+    }
     return newArray1D_objects(type,list);
   }
 
@@ -227,7 +241,39 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
   {
-    return std::make_shared<Array>(device,(anari::DataType)type,buffer);
+    static bool warned = false;
+    if (warned == false) {
+      std::cout
+        << "#pynari: this python app using pynari just called Object::newArray()\n"
+        << "#pynari: due to some changes in the ANARI SDK these calls are now (starting\n"
+        << "#pynari: with v0.15) any such call should now be replaced with either\n"
+        << "#pynari: newArray1D, newArray2D, or newArray3D,\n"
+        << "#pynari: depending on what dimensionality the underlying array is\n"
+        << "#pynari: supposed to be. I'm trying my best to figure this out, but\n"
+        << "#pynari: the better way would be for the app to swtich to the new\n"
+        << "#pynari: intended behavior.\n"
+        ;
+      warned = true;
+    }
+    return newArray1D(type,buffer);
+  }
+
+  std::shared_ptr<Array>
+  Context::newArray1D(int type, const py::buffer &buffer)
+  {
+    return std::make_shared<Array>(device,1,(anari::DataType)type,buffer);
+  }
+  
+  std::shared_ptr<Array>
+  Context::newArray2D(int type, const py::buffer &buffer)
+  {
+    return std::make_shared<Array>(device,2,(anari::DataType)type,buffer);
+  }
+  
+  std::shared_ptr<Array>
+  Context::newArray3D(int type, const py::buffer &buffer)
+  {
+    return std::make_shared<Array>(device,3,(anari::DataType)type,buffer);
   }
   
   std::shared_ptr<Context> createContext(const std::string &libName,

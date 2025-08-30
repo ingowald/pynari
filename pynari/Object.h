@@ -59,12 +59,12 @@ namespace pynari {
                          const py::list &list);
     void setArray1D_np(const char *name, int type, 
                        const py::buffer &buffer);
-    void setArray2D_list(const char *name, int type, 
-                         const py::list &list);
+    // void setArray2D_list(const char *name, int type, 
+    //                      const py::list &list);
     void setArray2D_np(const char *name, int type, 
                        const py::buffer &buffer);
-    void setArray3D_list(const char *name, int type, 
-                         const py::list &list);
+    // void setArray3D_list(const char *name, int type, 
+    //                      const py::list &list);
     void setArray3D_np(const char *name, int type, 
                        const py::buffer &buffer);
     void set_box1(const char *name, int type,

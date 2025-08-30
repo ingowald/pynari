@@ -108,20 +108,20 @@ def make_anari_surface(material):
     geom = device.newGeometry('curve')
 
     np_position = np.array(vertex_position,dtype=np.float32).flatten()
-    position = device.newArray(anari.FLOAT32_VEC3,np_position)
-    geom.setParameter('vertex.position',anari.ARRAY,position)
+    position = device.newArray1D(anari.FLOAT32_VEC3,np_position)
+    geom.setParameter('vertex.position',anari.ARRAY1D,position)
     
     np_radius = np.array(vertex_radius,dtype=np.float32).flatten()
-    radius = device.newArray(anari.FLOAT32,np_radius)
-    geom.setParameter('vertex.radius',anari.ARRAY,radius)
+    radius = device.newArray1D(anari.FLOAT32,np_radius)
+    geom.setParameter('vertex.radius',anari.ARRAY1D,radius)
 
     np_color = np.array(vertex_color,dtype=np.float32).flatten()
-    color = device.newArray(anari.FLOAT32_VEC4,np_color)
-    geom.setParameter('vertex.color',anari.ARRAY,color)
+    color = device.newArray1D(anari.FLOAT32_VEC4,np_color)
+    geom.setParameter('vertex.color',anari.ARRAY1D,color)
 
     np_index = np.array(primitive_index,dtype=np.uint32).flatten()
-    index = device.newArray(anari.UINT32,np_index)
-    geom.setParameter('primitive.index',anari.ARRAY,index)
+    index = device.newArray1D(anari.UINT32,np_index)
+    geom.setParameter('primitive.index',anari.ARRAY1D,index)
 
     geom.commitParameters()
 
@@ -197,7 +197,7 @@ light = device.newLight('directional')
 light.setParameter('direction', anari.float3, (1,-1,1))
 light.commitParameters()
 
-array = device.newArray(anari.LIGHT, [light])
+array = device.newArray1D(anari.LIGHT, [light])
 world.setParameter('light', anari.ARRAY1D, array)
 
 world.commitParameters()
@@ -217,14 +217,14 @@ camera.commitParameters()
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
+bg_gradient = device.newArray1D(anari.float4, bg_values)
 
 
 
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .4)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 if anari.has_cuda_capable_gpu():
    print('@pynari: detected cuda-capable GPU; using higher res and sample count')
    renderer.setParameter('pixelSamples', anari.INT32, 16)

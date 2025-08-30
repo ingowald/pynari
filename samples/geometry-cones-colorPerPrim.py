@@ -105,18 +105,18 @@ device = anari.newDevice('default')
 mat    = device.newMaterial('physicallyBased')
 
 cones  = device.newGeometry('cone')
-cones.setParameter('vertex.radius',anari.ARRAY,
-                       device.newArray(anari.float,np_vertex_radius))
-cones.setParameter('primitive.index',anari.ARRAY,
-                       device.newArray(anari.uint2,np_primitive_index))
-cones.setParameter('vertex.position',anari.ARRAY,
-                       device.newArray(anari.float3,np_vertex_position))
+cones.setParameter('vertex.radius',anari.ARRAY1D,
+                       device.newArray1D(anari.float,np_vertex_radius))
+cones.setParameter('primitive.index',anari.ARRAY1D,
+                       device.newArray1D(anari.uint2,np_primitive_index))
+cones.setParameter('vertex.position',anari.ARRAY1D,
+                       device.newArray1D(anari.float3,np_vertex_position))
 if use_vertex_color:
-    cones.setParameter('vertex.color',anari.ARRAY,
-                        device.newArray(anari.float3,np_vertex_color))
+    cones.setParameter('vertex.color',anari.ARRAY1D,
+                        device.newArray1D(anari.float3,np_vertex_color))
 else:
-    cones.setParameter('primitive.color',anari.ARRAY,
-                        device.newArray(anari.float3,np_primitive_color))
+    cones.setParameter('primitive.color',anari.ARRAY1D,
+                        device.newArray1D(anari.float3,np_primitive_color))
     
 mat.setParameter("baseColor",anari.STRING,"color")
 mat.commitParameters();
@@ -131,7 +131,7 @@ light = device.newLight('directional')
 light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
 light.commitParameters()
 
-array = device.newArray(anari.LIGHT, [light])
+array = device.newArray1D(anari.LIGHT, [light])
 
 world = device.newWorld();
 world.setParameterArray1D('surface',anari.SURFACE,[surface]);
@@ -148,8 +148,8 @@ renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('pixelSamples', anari.INT32, 16)
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+bg_gradient = device.newArray1D(anari.float4, bg_values)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 renderer.commitParameters()
 
 frame = device.newFrame()
