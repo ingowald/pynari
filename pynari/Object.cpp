@@ -31,8 +31,8 @@ namespace pynari {
     case ANARI_ARRAY2D:        return "ANARI_ARRAY2D";
     case ANARI_ARRAY3D:        return "ANARI_ARRAY3D";
     case ANARI_WORLD:          return "ANARI_WORLD";
-    case ANARI_MAT3x4:         return "ANARI_MAT3x4"; 
-    case ANARI_MAT4:           return "ANARI_MAT4"; 
+    case ANARI_FLOAT32_MAT3x4: return "ANARI_FLOAT32_MAT3x4"; 
+    case ANARI_FLOAT32_MAT4:   return "ANARI_FLOAT32_MAT4"; 
     case ANARI_RENDERER:       return "ANARI_RENDERER";
     case ANARI_MATERIAL:       return "ANARI_MATERIAL";
     case ANARI_GEOMETRY:       return "ANARI_GEOMETRY";
