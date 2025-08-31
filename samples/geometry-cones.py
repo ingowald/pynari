@@ -150,7 +150,7 @@ renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('pixelSamples', anari.INT32, 16)
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray1D(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 renderer.commitParameters()
 

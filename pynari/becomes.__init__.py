@@ -13,10 +13,9 @@ from .pynari import RENDERER
 from .pynari import SPATIAL_FIELD
 from .pynari import CAMERA
 from .pynari import WORLD
-from .pynari import SPATIAL_FIELD
 from .pynari import VOLUME
 from .pynari import SAMPLER
-\  
+
 from .pynari import ARRAY
 from .pynari import ARRAY1D
 from .pynari import ARRAY2D
