@@ -253,4 +253,27 @@ PYBIND11_MODULE(pynari, m) {
   context.def("newArray3D", &pynari::Context::newArray3D);
   context.def("newArray",   &pynari::Context::newArray_objects);
   context.def("newArray1D", &pynari::Context::newArray1D_objects);
+
+  context.def("getObjectSubtypes",
+              &pynari::Context::getObjectSubtypes,
+              "returns a list of strings that list all subtypes of the given "
+              "ANARI type supported by this device",
+              py::arg("type"));
+  context.def("getObjectInfo",
+              &pynari::Context::getObjectInfo,
+              "returns a dictionary that describes the object. "
+              "The entry 'description' is a string and gives a high-level "
+              "description of the object; the 'parameters' field is "
+              "a list of strings that lists which parameters that object "
+              "understands (also see getParamterInfo)",
+              py::arg("type"),
+              py::arg("subtype")="default");
+  context.def("getParameterInfo",
+              &pynari::Context::getParameterInfo,
+              "returns a dictionary that describes a given object type's "
+              "parameter of that given name.",
+              py::arg("type"),
+              py::arg("subtype")="subtype of object class whose param we are querying",
+              py::arg("paramName")="name of parameter being queried",
+              py::arg("paramType")="type of the parameter being queried");
 }

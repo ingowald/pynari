@@ -24,6 +24,7 @@ namespace pynari {
   {
     switch(type) {
     case ANARI_DATA_TYPE:      return "ANARI_DATA_TYPE";
+    case ANARI_BOOL:           return "ANARI_BOOL";
     case ANARI_STRING:         return "ANARI_STRING";
     case ANARI_OBJECT:         return "ANARI_OBJECT";
     case ANARI_ARRAY:          return "ANARI_ARRAY";

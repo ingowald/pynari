@@ -68,6 +68,15 @@ namespace pynari {
     std::shared_ptr<Material> newMaterial(const std::string &type);
     std::shared_ptr<Light> newLight(const std::string &type);
 
+    std::vector<std::string> getObjectSubtypes(int type);
+    
+    std::map<std::string/*desc*/,py::object>
+    getObjectInfo(int type, const std::string &subtype);
+    
+    std::map<std::string/*desc*/,py::object>
+    getParameterInfo(int type, const std::string &subtype,
+                     const std::string &paramName, int paramType);
+    
     /*! allows to query whether the user has already explicitly called
       contextDestroy. if so, any releases of handles are no longer
       valid because whatever they may have pointed to inside the
