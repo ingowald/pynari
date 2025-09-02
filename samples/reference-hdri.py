@@ -20,8 +20,8 @@ random.seed(80577)
 
 def add_sphere(pos, radius, material):
     geom = device.newGeometry('sphere')
-    array = device.newArray(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
-    geom.setParameter('vertex.position',anari.ARRAY,array)
+    array = device.newArray1D(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
+    geom.setParameter('vertex.position',anari.ARRAY1D,array)
     geom.setParameter('radius',anari.FLOAT32,radius)
     geom.commitParameters()
 
@@ -68,9 +68,9 @@ for y in range(0,ny):
             envmap_texels.append(fy)
 
 envmap_np = np.array(envmap_texels, dtype=np.float32).reshape((ny,nx,3))
-envmap_array = device.newArray(anari.float3, envmap_np)
+envmap_array = device.newArray2D(anari.float3, envmap_np)
 light = device.newLight("hdri")
-light.setParameter('radiance',anari.ARRAY,envmap_array)
+light.setParameter('radiance',anari.ARRAY2D,envmap_array)
 light.setParameter("up",anari.float3,(0.,1.,0.))
 light.setParameter("direction",anari.float3,(0.,0.,1.))
 light.commitParameters()
@@ -78,8 +78,8 @@ light.commitParameters()
 
 
 world = device.newWorld()
-world.setParameterArray('surface', anari.SURFACE, spheres )
-array = device.newArray(anari.LIGHT, [light])
+world.setParameterArray1D('surface', anari.SURFACE, spheres )
+array = device.newArray1D(anari.LIGHT, [light])
 world.setParameter('light', anari.ARRAY1D, array)
 
 world.commitParameters()

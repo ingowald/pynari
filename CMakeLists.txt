@@ -15,8 +15,8 @@
 # ======================================================================== #
 
 set(PYNARI_VERSION_MAJOR 1)
-set(PYNARI_VERSION_MINOR 2)
-set(PYNARI_VERSION_PATCH 9)
+set(PYNARI_VERSION_MINOR 3)
+set(PYNARI_VERSION_PATCH 0)
 
 cmake_minimum_required(VERSION 3.12)
 

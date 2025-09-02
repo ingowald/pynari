@@ -23,14 +23,15 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <string>
 #include <array>
 #include <stdint.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <string>
 
 namespace pynari {
   using uint = uint32_t;

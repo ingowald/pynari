@@ -82,7 +82,7 @@ def add_cube(mpi_rank,mpi_size,ix,iy,iz):
                 # store vertex
                 vertices.append((x,y,z))
      
-    _vertices = device.newArray(anari.FLOAT32_VEC3,np.array(vertices,dtype=np.float32).flatten())
+    _vertices = device.newArray1D(anari.FLOAT32_VEC3,np.array(vertices,dtype=np.float32).flatten())
     indices = [
         ( 0,1,3 ), ( 0,3,2 ),
         ( 5,7,6 ), ( 5,6,4 ),
@@ -91,11 +91,11 @@ def add_cube(mpi_rank,mpi_size,ix,iy,iz):
         ( 1,5,7 ), ( 1,7,3 ),
         ( 4,0,2 ), ( 4,2,6 )
     ]
-    _indices = device.newArray(anari.UINT32_VEC3,
+    _indices = device.newArray1D(anari.UINT32_VEC3,
                                np.array(indices,dtype=np.uint32).flatten())
 
-    geom.setParameter('vertex.position',anari.ARRAY,_vertices)
-    geom.setParameter('primitive.index',anari.ARRAY,_indices)
+    geom.setParameter('vertex.position',anari.ARRAY1D,_vertices)
+    geom.setParameter('primitive.index',anari.ARRAY1D,_indices)
     geom.commitParameters()
 
     material = make_material(mpi_rank)
@@ -129,20 +129,20 @@ light = device.newLight('directional')
 light.setParameter('direction', anari.float3, ( -1., -1., 1. ) )
 light.setParameter('radiance', anari.float, 4.)
 light.commitParameters()
-light_array = device.newArray(anari.LIGHT, [light])
+light_array = device.newArray1D(anari.LIGHT, [light])
     
 
 world = device.newWorld()
 if True:
-    world.setParameterArray('surface', anari.SURFACE, surfaces )
-    world.setParameterArray('light', anari.LIGHT, [ light ])
+    world.setParameterArray1D('surface', anari.SURFACE, surfaces )
+    world.setParameterArray1D('light', anari.LIGHT, [ light ])
 else:
     # this _should_ work,but currently ignores the lights
     rootGroup = device.newGroup(surfaces)
     rootGroup.commitParameters()
     inst = device.newInstance('transform')
     inst.setParameter('group',anari.OBJECT,rootGroup)
-    inst.setParameterArray('light', anari.LIGHT, [ light ])
+    inst.setParameterArray1D('light', anari.LIGHT, [ light ])
     inst.setParameter('transform',anari.FLOAT32_MAT3X4,
                       [
                        1,0,0,
@@ -152,7 +152,7 @@ else:
                       ]
                       )
     inst.commitParameters()
-    world.setParameterArray('instance', anari.OBJECT, [ inst ])
+    world.setParameterArray1D('instance', anari.OBJECT, [ inst ])
 
 world.commitParameters()
    
@@ -173,11 +173,11 @@ camera.commitParameters()
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .2)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 renderer.setParameter('pixelSamples', anari.INT32, 16)
 renderer.commitParameters()
 

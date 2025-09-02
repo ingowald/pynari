@@ -23,7 +23,8 @@ namespace pynari {
   struct Array : public Object {
     typedef std::shared_ptr<Array> SP;
     
-    Array(Device::SP device, anari::DataType type,
+    Array(Device::SP device, int dims,
+          anari::DataType type,
           const py::buffer &buffer);
     Array(Device::SP device, anari::DataType type,
           const std::vector<Object::SP> &list);

@@ -74,8 +74,9 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("FLOAT32_VEC3")  = py::int_((int)ANARI_FLOAT32_VEC3);
   m.attr("FLOAT32_VEC4")  = py::int_((int)ANARI_FLOAT32_VEC4);
 
-  m.attr("FLOAT32_MAT3x4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
-  m.attr("FLOAT32_MAT3X4")  = py::int_((int)ANARI_FLOAT32_MAT3x4);
+  m.attr("FLOAT32_MAT3x4")= py::int_((int)ANARI_FLOAT32_MAT3x4);
+  m.attr("FLOAT32_MAT4X4")= py::int_((int)ANARI_FLOAT32_MAT4);
+  m.attr("FLOAT32_MAT4")  = py::int_((int)ANARI_FLOAT32_MAT4);
   
   m.attr("UINT32")        = py::int_((int)ANARI_UINT32);
   m.attr("UINT32_VEC2")   = py::int_((int)ANARI_UINT32_VEC2);
@@ -130,8 +131,14 @@ PYBIND11_MODULE(pynari, m) {
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameter",  &pynari::Object::set_string_notype);
-  object.def("setParameterArray",  &pynari::Object::setArray_list);
-  object.def("setParameterArray",  &pynari::Object::setArray_np);
+  object.def("setParameterArray",    &pynari::Object::setArray_list);
+  object.def("setParameterArray1D",  &pynari::Object::setArray1D_list);
+  // object.def("setParameterArray2D",  &pynari::Object::setArray2D_list);
+  // object.def("setParameterArray3D",  &pynari::Object::setArray3D_list);
+  object.def("setParameterArray",    &pynari::Object::setArray_np);
+  object.def("setParameterArray1D",  &pynari::Object::setArray1D_np);
+  object.def("setParameterArray2D",  &pynari::Object::setArray2D_np);
+  object.def("setParameterArray3D",  &pynari::Object::setArray3D_np);
   /*! set FROM a python float value */
   object.def("setParameter",  &pynari::Object::set_float);
   /*! set FROM a python float tuple */
@@ -139,6 +146,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_float3);
   object.def("setParameter",  &pynari::Object::set_float4);
   object.def("setParameter",  &pynari::Object::set_float12);
+  object.def("setParameter",  &pynari::Object::set_float16);
   object.def("setParameter",  &pynari::Object::set_float_vec);
 
   object.def("setParameter",  &pynari::Object::set_ulong);
@@ -238,8 +246,34 @@ PYBIND11_MODULE(pynari, m) {
   context.def("newFrame",   &pynari::Context::newFrame);
   context.def("newGeometry",&pynari::Context::newGeometry);
   context.def("newSampler", &pynari::Context::newSampler);
+  
   context.def("newArray",   &pynari::Context::newArray);
+  context.def("newArray1D", &pynari::Context::newArray1D);
+  context.def("newArray2D", &pynari::Context::newArray2D);
+  context.def("newArray3D", &pynari::Context::newArray3D);
   context.def("newArray",   &pynari::Context::newArray_objects);
-  context.def("newArray",   &pynari::Context::newArray);
-  context.def("newArray",   &pynari::Context::newArray_objects);
+  context.def("newArray1D", &pynari::Context::newArray1D_objects);
+
+  context.def("getObjectSubtypes",
+              &pynari::Context::getObjectSubtypes,
+              "returns a list of strings that list all subtypes of the given "
+              "ANARI type supported by this device",
+              py::arg("type"));
+  context.def("getObjectInfo",
+              &pynari::Context::getObjectInfo,
+              "returns a dictionary that describes the object. "
+              "The entry 'description' is a string and gives a high-level "
+              "description of the object; the 'parameters' field is "
+              "a list of strings that lists which parameters that object "
+              "understands (also see getParamterInfo)",
+              py::arg("type"),
+              py::arg("subtype")="default");
+  context.def("getParameterInfo",
+              &pynari::Context::getParameterInfo,
+              "returns a dictionary that describes a given object type's "
+              "parameter of that given name.",
+              py::arg("type"),
+              py::arg("subtype")="subtype of object class whose param we are querying",
+              py::arg("paramName")="name of parameter being queried",
+              py::arg("paramType")="type of the parameter being queried");
 }
