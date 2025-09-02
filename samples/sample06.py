@@ -112,7 +112,7 @@ def create_surfaces(mpi_rank,mpi_size):
             for ix in range(grid_size):
                 add_cube(mpi_rank,mpi_size,ix,iy,iz)
 
-anariDeviceToUse = os.getenv('ANARI_DEVICE')
+anariDeviceToUse = os.getenv('ANARI_LIBRARY')
 if anariDeviceToUse == None:
     anariDeviceToUse = 'barney_mpi'
 device = anari.newDevice(anariDeviceToUse,'default')
