@@ -193,12 +193,10 @@ curves = create_curves()
 world = device.newWorld()
 world.setParameterArray1D('surface', anari.SURFACE, curves )
 
-light = device.newLight('directional')
-#direction = [ look_at[0] - look_from[0],
-#              look_at[1] - look_from[1],
-#              look_at[2] - look_from[2] ]
-direction = (1,-1,1)
-light.setParameter('direction', anari.float3, direction)
+light = device.newLight('point')
+light.setParameter('position', anari.float3, (0.5,0.5+5,.5))
+light.setParameter('intensity', anari.float, 10)
+
 light.commitParameters()
 
 array = device.newArray1D(anari.LIGHT, [light])
@@ -227,7 +225,7 @@ bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, .4)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, .04)
 renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 if anari.has_cuda_capable_gpu():
    print('@pynari: detected cuda-capable GPU; using higher res and sample count')
