@@ -33,6 +33,7 @@ project(pynari VERSION ${PYNARI_VERSION} LANGUAGES C CXX)
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)
+set(CUDA_ARCHITECTURES_INIT "all-major")
 check_language(CUDA)
 if (CMAKE_CUDA_COMPILER)
   enable_language(CUDA)
