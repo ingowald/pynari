@@ -195,7 +195,7 @@ world.setParameterArray1D('surface', anari.SURFACE, curves )
 
 light = device.newLight('point')
 light.setParameter('position', anari.float3, (0.5,0.5+5,.5))
-light.setParameter('intensity', anari.float, 10)
+light.setParameter('intensity', anari.float, 200)
 
 light.commitParameters()
 
