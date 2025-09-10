@@ -371,6 +371,8 @@ namespace pynari {
   
   void Context::destroy()
   {
+    if (verbose)
+      std::cout << "#pynari: context is dying" << std::endl;
     if (!device)
       // already destroyed, probably becasue the user called an
       // explicit context::destroy()

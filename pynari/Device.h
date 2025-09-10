@@ -33,7 +33,7 @@ namespace pynari {
     Device(anari::Device handle, Context *context)
       : handle(handle), context(context)
     {}
-    virtual ~Device() {}
+    virtual ~Device();
 
     /*! force-releases this device, and all objects created from
         it. This will force-release all respective objects on the

@@ -16,9 +16,18 @@
 
 #include "pynari/Device.h"
 #include "pynari/Object.h"
+#include "pynari/Context.h"
 
 namespace pynari {
 
+  Device::~Device()
+  {
+    if (context->verbose)
+      std::cout << "#pynari: device is dying" << std::endl;
+    anari::release(this->handle,this->handle);
+    handle = nullptr;
+  }
+  
   void Device::release()
   {
     if (!handle)
@@ -30,10 +39,15 @@ namespace pynari {
     // gets released
     std::set<Object *> copyOfCurrentObjects
       = listOfAllObjectsCreatedOnThisDevice;
+    if (context->verbose)
+      std::cout << "#pynari: device being released - releasing "
+                << copyOfCurrentObjects.size() << " owned handles" << std::endl;
     for (Object *obj : copyOfCurrentObjects)
       obj->release();
 
     // and finally, release the device itself
+    if (context->verbose)
+      std::cout << "#pynari: releasing device" << std::endl;
     anari::release(this->handle,this->handle);
     handle = nullptr;
   }

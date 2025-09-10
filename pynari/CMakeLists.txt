@@ -29,6 +29,7 @@ pybind11_add_module(pynari
   Volume.h
   Group.h
   Geometry.h
+  Geometry.cpp
   Camera.h
   Renderer.h
   Surface.h
