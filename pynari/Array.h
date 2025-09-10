@@ -28,7 +28,7 @@ namespace pynari {
           const py::buffer &buffer);
     Array(Device::SP device, anari::DataType type,
           const std::vector<Object::SP> &list);
-    virtual ~Array() = default;
+    virtual ~Array();
     std::string toString() const override { return "pynari::Array"; }
 
     ANARIDataType anariType() const override
@@ -43,6 +43,8 @@ namespace pynari {
     
     /*! number of DIMENSIONS of this array, NOT the 'size' */
     int          nDims  = -1;
+    anari::DataType const type;
+    int numObjects = 0;
   };
 
 }

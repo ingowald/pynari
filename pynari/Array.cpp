@@ -32,10 +32,6 @@ namespace pynari {
       numScalarsInArray *= (int)info.shape[i];
     }
     anari::Array handle = 0;
-    // PRINT(info.ndim);
-    // PRINT(info.shape[0]);
-    // PRINT(info.shape[1]);
-    // PRINT(info.shape[2]);
     if (nDims == 1) {
       handle = anari::newArray1D(device,anariType,numScalarsInArray/D);
     } else if (nDims == 2) {
@@ -120,16 +116,18 @@ namespace pynari {
                anari::DataType type,
                const py::buffer &buffer)
     : Object(device),
-      nDims(dims)
+      nDims(dims), type(type), numObjects(0)
   {
     py::buffer_info info = buffer.request();
     this->handle = importArray(device->handle,type,info,buffer,nDims);
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created DATA-array"
+                       << std::endl);
   }
   
   Array::Array(Device::SP device,
                anari::DataType type,
                const std::vector<Object::SP> &objects)
-    : Object(device)
+    : Object(device), type(type), numObjects(objects.size())
   {
     anari::Array1D array
       = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
@@ -141,6 +139,28 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
     this->handle = array;
     nDims = 1;
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created OBJECT-array of "
+                       << numObjects << " objects" << std::endl);
   }
-  
+
+  Array::~Array()
+  {
+    if (numObjects != 0) {
+      PYNARI_TRACK_LEAKS(std::cout << "#pynari: array of objects releases its objects"
+                         << " *** count= "
+                         << numObjects<< std::endl);
+      
+      ANARIObject *mapped
+        = (ANARIObject*)anariMapArray(device->handle,(ANARIArray)handle);
+      for (int i=0;i<numObjects;i++) {
+        anariRelease(device->handle,mapped[i]);
+        mapped[i] = {};
+      }
+      anariUnmapArray(device->handle,(ANARIArray)handle);
+    }
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING array "
+                       << (int*)this << ":" << (int*)handle << std::endl);
+    anariRelease(device->handle,handle);
+    handle = {};
+  }
 }

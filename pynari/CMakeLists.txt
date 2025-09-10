@@ -24,14 +24,19 @@ pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
   # operations on it:
   Material.h
+  Material.cpp
   Light.h
+  Light.cpp
   World.h
+  World.cpp
   Volume.h
   Group.h
   Geometry.h
+  Geometry.cpp
   Camera.h
   Renderer.h
   Surface.h
+  Surface.cpp
   SpatialField.h
   Instance.h
   Instance.cpp
@@ -49,6 +54,8 @@ pybind11_add_module(pynari
   Array.cpp
   Frame.h
   Frame.cpp
+  Sampler.h
+  Sampler.cpp
   
   # the actual pybind11 bindings file
   bindings.cpp

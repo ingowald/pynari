@@ -14,24 +14,25 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
-#include "pynari/common.h"
-#include "pynari/Geometry.h"
+#include "pynari/Light.h"
 
 namespace pynari {
 
-  struct Geometry;
+  Light::Light(Device::SP device,
+               const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Light>(device->handle,type.c_str());
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new light "
+                       << (int*)this << ":" << (int*)handle << std::endl);
+  }
   
-  struct Group : public Object {
-    typedef std::shared_ptr<Group> SP;
-    
-    Group(Device::SP device,
-          const py::list &list);
-    virtual ~Group();
-    
-    std::string toString() const override { return "py_barn::Group"; }
-    ANARIDataType anariType() const override { return ANARI_GROUP; }
-  };
-
+  Light::~Light()
+  {
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING light "
+                       << (int*)this << ":" << (int*)handle << std::endl);
+    anariRelease(device->handle,handle);
+    handle = {};
+  }
 }

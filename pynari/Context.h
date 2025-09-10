@@ -90,8 +90,12 @@ namespace pynari {
                    int type,
                    uint64_t v);
     void commit();
-    
 
+#ifdef NDEBUG
+    bool verbose = false;
+#else
+    bool verbose = true;
+#endif
     
     Device::SP device;
     std::mutex mutex;

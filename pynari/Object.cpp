@@ -140,6 +140,7 @@ namespace pynari {
     std::copy(objects.begin(),objects.end(),mapped);
     anariUnmapArray(device->handle,array);
     anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array);
+    anariRelease(device->handle,array);
   }
   
   void Object::setArray_np(const char *name,
