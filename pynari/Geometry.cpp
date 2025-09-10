@@ -24,12 +24,15 @@ namespace pynari {
       type(type)
   {
     handle = anari::newObject<anari::Geometry>(device->handle,type.c_str());
+    std::cout << "#pynari: have new geometry "
+              << (int*)this << ":" << (int*)handle << std::endl;
   }
   
   Geometry::~Geometry()
   {
-    std::cout << "RELEASING geometry" << std::endl;
+    std::cout << "#pynari: RELEASING geometry "
+              << (int*)this << ":" << (int*)handle << std::endl;
     anariRelease(device->handle,handle);
-    handle = 0;
+    handle = {};
   }
 }

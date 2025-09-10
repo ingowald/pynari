@@ -31,16 +31,10 @@ namespace pynari {
     typedef std::shared_ptr<World> SP;
     
     World(Device::SP device);
-    virtual ~World() = default;
+    virtual ~World();
     
     std::string toString() const override { return "pynari::World"; }
     ANARIDataType anariType() const override { return ANARI_WORLD; }
   };
 
-
-  inline World::World(Device::SP device)
-    : Object(device)
-  {
-    handle = anari::newObject<anari::World>(device->handle);
-  }
 }

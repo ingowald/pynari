@@ -24,16 +24,11 @@ namespace pynari {
     typedef std::shared_ptr<Surface> SP;
     
     Surface(Device::SP device);
-    virtual ~Surface() = default;
+    virtual ~Surface();
 
     std::string toString() const override { return "pynari::Surface"; }
     ANARIDataType anariType() const override { return ANARI_SURFACE; }
   };
 
-  inline Surface::Surface(Device::SP device)
-    : Object(device)
-  {
-    handle = anari::newObject<anari::Surface>(device->handle);
-  }
 
 }

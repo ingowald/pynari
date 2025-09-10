@@ -74,6 +74,7 @@ namespace pynari {
                            const py::buffer &buffer,
                            int const nDims)
   {
+    PING; PRINT(toString(type));
     switch (type) {
     case ANARI_FLOAT32:
       return importArrayT<float,1>(device,ANARI_FLOAT32,info,buffer,nDims);
@@ -120,16 +121,17 @@ namespace pynari {
                anari::DataType type,
                const py::buffer &buffer)
     : Object(device),
-      nDims(dims)
+      nDims(dims), type(type), numObjects(0)
   {
     py::buffer_info info = buffer.request();
     this->handle = importArray(device->handle,type,info,buffer,nDims);
+    std::cout << "@pynari: created DATA-array" << std::endl;
   }
   
   Array::Array(Device::SP device,
                anari::DataType type,
                const std::vector<Object::SP> &objects)
-    : Object(device)
+    : Object(device), type(type), numObjects(objects.size())
   {
     anari::Array1D array
       = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
@@ -141,6 +143,27 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
     this->handle = array;
     nDims = 1;
+    std::cout << "@pynari: created OBJECT-array of " << numObjects << " objects" << std::endl;
   }
-  
+
+  Array::~Array()
+  {
+    PING;
+    if (numObjects != 0) {
+      std::cout << "#pynari: array of objects releases its objects *** count= "
+                << numObjects<< std::endl;
+      
+      ANARIObject *mapped
+        = (ANARIObject*)anariMapArray(device->handle,(ANARIArray)handle);
+      for (int i=0;i<numObjects;i++) {
+        anariRelease(device->handle,mapped[i]);
+        mapped[i] = {};
+      }
+      anariUnmapArray(device->handle,(ANARIArray)handle);
+    }
+    std::cout << "#pynari: RELEASING array "
+              << (int*)this << ":" << (int*)handle << std::endl;
+    anariRelease(device->handle,handle);
+    handle = {};
+  }
 }

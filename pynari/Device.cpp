@@ -23,13 +23,15 @@ namespace pynari {
   Device::~Device()
   {
     if (context->verbose)
-      std::cout << "#pynari: device is dying" << std::endl;
+      std::cout << "#pynari: ~Device wrapper is dying" << std::endl;
     anari::release(this->handle,this->handle);
-    handle = nullptr;
+    PING;
+    handle = {};
   }
   
   void Device::release()
   {
+    std::cout << "#pynari: ~Device is dying" << std::endl;
     if (!handle)
       /* was already force-relased before, it's only the python object
          that's till live -> don't do anything */

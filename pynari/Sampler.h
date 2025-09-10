@@ -28,7 +28,7 @@ namespace pynari {
     /*! constructor, for given subtype on given device */
     Sampler(Device::SP device,
             const std::string &type);
-    virtual ~Sampler() = default;
+    virtual ~Sampler();
     
     std::string   toString()  const override { return "pynari::Sampler"; }
     ANARIDataType anariType() const override { return ANARI_SAMPLER; }
@@ -36,12 +36,4 @@ namespace pynari {
     const std::string type;
   };
   
-  /*! constructor, for given subtype on given device */
-  inline Sampler::Sampler(Device::SP device,
-                          const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Sampler>(device->handle,type.c_str());
-  }
 }

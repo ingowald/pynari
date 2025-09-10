@@ -125,7 +125,17 @@ namespace pynari {
     
   Context::~Context()
   {
-    destroy();
+    std::cout << "#pynari: ~Context is dying" << std::endl;
+
+    /* IW - IMPROTANT: explicitly do NOT destroy the actual anari
+       device itself; only release the shared_ptr: python may release
+       some of the created objects only after it relases this context
+       wrapper, and these other objects need the device around to tell
+       anari to release their respective handles. This is why each
+       object has a shared-ptr to the device in the first place - to
+       make sure devices live until all the objects have been
+       released. */ 
+    device = {};
   }
 
   std::shared_ptr<World>
@@ -372,7 +382,7 @@ namespace pynari {
   void Context::destroy()
   {
     if (verbose)
-      std::cout << "#pynari: context is dying" << std::endl;
+      std::cout << "#pynari: context is DESTROYING itself" << std::endl;
     if (!device)
       // already destroyed, probably becasue the user called an
       // explicit context::destroy()

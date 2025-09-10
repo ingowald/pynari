@@ -25,18 +25,11 @@ namespace pynari {
     
     Material(Device::SP device,
              const std::string &type);
-    virtual ~Material() = default;
+    virtual ~Material();
     std::string toString() const override { return "pynari::Material"; }
     ANARIDataType anariType() const override { return ANARI_MATERIAL; }
     
     const std::string type;
   };
 
-  inline Material::Material(Device::SP device,
-                     const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-  }
 }
