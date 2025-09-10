@@ -32,10 +32,6 @@ namespace pynari {
       numScalarsInArray *= (int)info.shape[i];
     }
     anari::Array handle = 0;
-    // PRINT(info.ndim);
-    // PRINT(info.shape[0]);
-    // PRINT(info.shape[1]);
-    // PRINT(info.shape[2]);
     if (nDims == 1) {
       handle = anari::newArray1D(device,anariType,numScalarsInArray/D);
     } else if (nDims == 2) {
@@ -74,7 +70,6 @@ namespace pynari {
                            const py::buffer &buffer,
                            int const nDims)
   {
-    PING; PRINT(toString(type));
     switch (type) {
     case ANARI_FLOAT32:
       return importArrayT<float,1>(device,ANARI_FLOAT32,info,buffer,nDims);
@@ -125,7 +120,8 @@ namespace pynari {
   {
     py::buffer_info info = buffer.request();
     this->handle = importArray(device->handle,type,info,buffer,nDims);
-    std::cout << "@pynari: created DATA-array" << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created DATA-array"
+                       << std::endl);
   }
   
   Array::Array(Device::SP device,
@@ -143,15 +139,16 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
     this->handle = array;
     nDims = 1;
-    std::cout << "@pynari: created OBJECT-array of " << numObjects << " objects" << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created OBJECT-array of "
+                       << numObjects << " objects" << std::endl);
   }
 
   Array::~Array()
   {
-    PING;
     if (numObjects != 0) {
-      std::cout << "#pynari: array of objects releases its objects *** count= "
-                << numObjects<< std::endl;
+      PYNARI_TRACK_LEAKS(std::cout << "#pynari: array of objects releases its objects"
+                         << " *** count= "
+                         << numObjects<< std::endl);
       
       ANARIObject *mapped
         = (ANARIObject*)anariMapArray(device->handle,(ANARIArray)handle);
@@ -161,8 +158,8 @@ namespace pynari {
       }
       anariUnmapArray(device->handle,(ANARIArray)handle);
     }
-    std::cout << "#pynari: RELEASING array "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING array "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }

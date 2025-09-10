@@ -124,7 +124,6 @@ namespace pynari {
   {
     assertThisObjectIsValid();
     std::vector<ANARIObject> objects;
-    PING;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
       assert(object);
@@ -142,7 +141,6 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
     anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array);
     anariRelease(device->handle,array);
-    PING;
   }
   
   void Object::setArray_np(const char *name,

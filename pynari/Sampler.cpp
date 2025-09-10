@@ -24,14 +24,14 @@ namespace pynari {
       type(type)
   {
     handle = anari::newObject<anari::Sampler>(device->handle,type.c_str());
-    std::cout << "#pynari: have new sampler "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new sampler "
+                       << (int*)this << ":" << (int*)handle << std::endl);
   }
   
   Sampler::~Sampler()
   {
-    std::cout << "#pynari: RELEASING sampler "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING sampler "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }

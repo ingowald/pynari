@@ -22,14 +22,14 @@ namespace pynari {
     : Object(device)
   {
     handle = anari::newObject<anari::World>(device->handle);
-    std::cout << "#pynari: have new world "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new world "
+                       << (int*)this << ":" << (int*)handle << std::endl);
   }
   
   World::~World()
   {
-    std::cout << "#pynari: RELEASING world "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING world "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }

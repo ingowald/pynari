@@ -19,6 +19,8 @@
 #include "pynari/common.h"
 #include <set>
 
+#define PYNARI_TRACK_LEAKS(a) /* nothing */
+
 namespace pynari {
   struct Object;
   struct Context;

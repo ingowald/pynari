@@ -24,14 +24,14 @@ namespace pynari {
       type(type)
   {
     handle = anari::newObject<anari::Material>(device->handle,type.c_str());
-    std::cout << "#pynari: have new material "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new material "
+                       << (int*)this << ":" << (int*)handle << std::endl);
   }
   
   Material::~Material()
   {
-    std::cout << "#pynari: RELEASING material "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING material "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }

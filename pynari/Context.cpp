@@ -125,7 +125,7 @@ namespace pynari {
     
   Context::~Context()
   {
-    std::cout << "#pynari: ~Context is dying" << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: ~Context is dying" << std::endl);
 
     /* IW - IMPROTANT: explicitly do NOT destroy the actual anari
        device itself; only release the shared_ptr: python may release
@@ -369,7 +369,6 @@ namespace pynari {
   
   std::vector<std::string> Context::getObjectSubtypes(int type)
   {
-    // std::vector<py::object> vec;
     std::vector<std::string> vec;
     const char **ret = anariGetObjectSubtypes(device->handle, type);
     if (ret)
@@ -382,10 +381,9 @@ namespace pynari {
   void Context::destroy()
   {
     if (verbose)
-      std::cout << "#pynari: context is DESTROYING itself" << std::endl;
+      PYNARI_TRACK_LEAKS(std::cout << "#pynari: context is DESTROYING itself"
+                         << std::endl);
     if (!device)
-      // already destroyed, probably becasue the user called an
-      // explicit context::destroy()
       return;
     
     device->release();

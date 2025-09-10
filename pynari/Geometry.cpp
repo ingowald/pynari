@@ -24,14 +24,14 @@ namespace pynari {
       type(type)
   {
     handle = anari::newObject<anari::Geometry>(device->handle,type.c_str());
-    std::cout << "#pynari: have new geometry "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new geometry "
+                       << (int*)this << ":" << (int*)handle << std::endl);
   }
   
   Geometry::~Geometry()
   {
-    std::cout << "#pynari: RELEASING geometry "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING geometry "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }

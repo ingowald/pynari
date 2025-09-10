@@ -22,14 +22,14 @@ namespace pynari {
     : Object(device)
   {
     handle = anari::newObject<anari::Surface>(device->handle);
-    std::cout << "#pynari: have new surface "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: have new surface "
+                       << (int*)this << ":" << (int*)handle << std::endl);
   }
   
   Surface::~Surface()
   {
-    std::cout << "#pynari: RELEASING surface "
-              << (int*)this << ":" << (int*)handle << std::endl;
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING surface "
+                       << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
     handle = {};
   }
