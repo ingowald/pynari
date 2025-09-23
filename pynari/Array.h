@@ -23,11 +23,12 @@ namespace pynari {
   struct Array : public Object {
     typedef std::shared_ptr<Array> SP;
     
-    Array(Device::SP device, anari::DataType type,
+    Array(Device::SP device, int dims,
+          anari::DataType type,
           const py::buffer &buffer);
     Array(Device::SP device, anari::DataType type,
           const std::vector<Object::SP> &list);
-    virtual ~Array() = default;
+    virtual ~Array();
     std::string toString() const override { return "pynari::Array"; }
 
     ANARIDataType anariType() const override
@@ -42,6 +43,8 @@ namespace pynari {
     
     /*! number of DIMENSIONS of this array, NOT the 'size' */
     int          nDims  = -1;
+    anari::DataType const type;
+    int numObjects = 0;
   };
 
 }

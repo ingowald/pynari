@@ -24,74 +24,38 @@ namespace pynari {
                             ANARIDataType anariType,
                             const py::buffer_info &info,
                             const py::buffer &buffer,
-                            int &nDims)
+                            uint64_t const nDims)
   {
     py::array_t<T> asArray = py::cast<py::array_t<T>>(buffer);
-    int numScalarsInArray = 1;
+    uint64_t numScalarsInArray = 1;
     for (int i=0;i<info.ndim;i++) {
       numScalarsInArray *= (int)info.shape[i];
     }
     anari::Array handle = 0;
-    if (D == 1) {
-      /*! array over SCALARS */
-      switch (info.ndim) {
-      case 1:
-        handle = anari::newArray1D
-          (device,anariType,numScalarsInArray);
-        nDims = 1;
-        break;
-      case 2:
-        handle = anari::newArray2D
-          (device,anariType,info.shape[1],info.shape[0]);
-        nDims = 2;
-        break;
-      case 3:
-        handle = anari::newArray3D
-          (device,anariType,info.shape[2],info.shape[1],info.shape[0]);
-        nDims = 3;
-        break;
-      default:
-        PRINT(info.ndim); 
-        throw std::runtime_error("array dimensionality not implemented");
-      }
-    } else if (info.ndim == 1) {
-      /*! array over vector type but array is one-dimensional - this
-          _must_ be a one-dimensional array, but number of 'actual'
-          elements is num scalars divided by vector width */
+    if (nDims == 1) {
       handle = anari::newArray1D(device,anariType,numScalarsInArray/D);
-      nDims = 1;
-    } else if (info.ndim == 2 && info.shape[1] == D) {
-      /*! array over two-wide SCALARS, basically a phyton list/array
-          over D-length tuples. This must be a one-dimensional array
-          over anari vector type */
-      handle = anari::newArray1D
-        (device,anariType,info.shape[0]);
-      nDims = 1;
-    } else {
-      /*! array over a (anari-)vector type - first dim is vector width */
-      if (info.shape[info.ndim-1] != D)
-        throw std::runtime_error("N-dimensional array, but shape[ndim-1] doesn't match the vector width of underlying ANARI data type (ie, a 5x3 array over a ANARI_FLOAT32_VEC4 data should have shape (4,5,3)");
-      switch (info.ndim) {
-      case 2:
-        handle = anari::newArray1D
-          (device,anariType,info.shape[0]);
-        nDims = 1;
-        break;
-      case 3:
-        handle = anari::newArray2D
-          (device,anariType,info.shape[1],info.shape[0]);
-        nDims = 2;
-        break;
-      case 4:
-        handle = anari::newArray3D
-          (device,anariType,info.shape[2],info.shape[1],info.shape[0]);
-        nDims = 3;
-        break;
-      default:
-        PRINT(info.ndim);
-        throw std::runtime_error("array dimensionality not implemented");
-      }
-    }
+    } else if (nDims == 2) {
+      if (info.ndim == 2 && D == 1)
+        handle = anari::newArray2D(device,anariType,
+                                   info.shape[1],
+                                   info.shape[0]);
+      else if (info.ndim == 3 && info.shape[2] == D)
+        handle = anari::newArray2D(device,anariType,
+                                   info.shape[1],
+                                   info.shape[0]);
+      else
+        throw std::runtime_error("cannot create array of this dim and shape!?");
+    } else if (nDims == 3) {
+      if (D == 1)
+        // this is an array of scalars
+        handle = anari::newArray3D(device,anariType,
+                                   info.shape[2],
+                                   info.shape[1],
+                                   info.shape[0]);
+      else
+        throw std::runtime_error("cannot create array of this dim and shape!?");
+    } else
+      throw std::runtime_error("invalid array dimensionality");
     void *ptr = anariMapArray(device,handle);
     auto buf = asArray.request();
     const T *elems = (T*)buf.ptr;
@@ -101,10 +65,10 @@ namespace pynari {
   }
   
   anari::Array importArray(anari::Device device,
-                             anari::DataType type,
-                             const py::buffer_info &info,
-                             const py::buffer &buffer,
-                             int &nDims)
+                           anari::DataType type,
+                           const py::buffer_info &info,
+                           const py::buffer &buffer,
+                           int const nDims)
   {
     switch (type) {
     case ANARI_FLOAT32:
@@ -148,23 +112,26 @@ namespace pynari {
   }
   
   Array::Array(Device::SP device,
+               int dims,
                anari::DataType type,
                const py::buffer &buffer)
-    : Object(device)
+    : Object(device),
+      nDims(dims), type(type), numObjects(0)
   {
     py::buffer_info info = buffer.request();
     this->handle = importArray(device->handle,type,info,buffer,nDims);
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created DATA-array"
+                       << std::endl);
   }
   
   Array::Array(Device::SP device,
                anari::DataType type,
                const std::vector<Object::SP> &objects)
-    : Object(device)
+    : Object(device), type(type), numObjects(objects.size())
   {
     anari::Array1D array
       = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
 
-    PING;
     ANARIObject *mapped
       = (ANARIObject*)anariMapArray(device->handle,array);
     for (int i=0;i<objects.size();i++)
@@ -172,6 +139,28 @@ namespace pynari {
     anariUnmapArray(device->handle,array);
     this->handle = array;
     nDims = 1;
+    PYNARI_TRACK_LEAKS(std::cout << "@pynari: created OBJECT-array of "
+                       << numObjects << " objects" << std::endl);
   }
-  
+
+  Array::~Array()
+  {
+    if (numObjects != 0) {
+      PYNARI_TRACK_LEAKS(std::cout << "#pynari: array of objects releases its objects"
+                         << " *** count= "
+                         << numObjects<< std::endl);
+      
+      ANARIObject *mapped
+        = (ANARIObject*)anariMapArray(device->handle,(ANARIArray)handle);
+      for (int i=0;i<numObjects;i++) {
+        anariRelease(device->handle,mapped[i]);
+        mapped[i] = {};
+      }
+      anariUnmapArray(device->handle,(ANARIArray)handle);
+    }
+    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING array "
+                       << (int*)this << ":" << (int*)handle << std::endl);
+    anariRelease(device->handle,handle);
+    handle = {};
+  }
 }

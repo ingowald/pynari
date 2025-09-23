@@ -15,8 +15,8 @@
 # ======================================================================== #
 
 set(PYNARI_VERSION_MAJOR 1)
-set(PYNARI_VERSION_MINOR 2)
-set(PYNARI_VERSION_PATCH 9)
+set(PYNARI_VERSION_MINOR 3)
+set(PYNARI_VERSION_PATCH 0)
 
 cmake_minimum_required(VERSION 3.12)
 
@@ -33,6 +33,7 @@ project(pynari VERSION ${PYNARI_VERSION} LANGUAGES C CXX)
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)
+set(CUDA_ARCHITECTURES_INIT "all-major")
 check_language(CUDA)
 if (CMAKE_CUDA_COMPILER)
   enable_language(CUDA)

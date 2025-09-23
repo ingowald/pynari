@@ -86,7 +86,7 @@ def checkerboard(y,x,d):
     return 3.*((y//16+x//16) % 2)
 
 rad = np.fromfunction(checkerboard, (hdri_res,2*hdri_res,3), dtype=np.float32)
-radiance_array=device.newArray(anari.float3,rad.reshape((hdri_res,2*hdri_res,3)))
+radiance_array=device.newArray2D(anari.float3,rad.reshape((hdri_res,2*hdri_res,3)))
 hdri=device.newLight('hdri')
 hdri.setParameter('radiance',anari.ARRAY2D,radiance_array)
 hdri.setParameter('up',anari.float3,(0,1,0))
@@ -97,7 +97,7 @@ light.setParameter('direction', anari.float3, (0,0,1))
 light.setParameter('irradiance', anari.float, 1)
 light.commitParameters()
 
-array = device.newArray(anari.LIGHT, [light,hdri])
+array = device.newArray1D(anari.LIGHT, [light,hdri])
 world.setParameter('light', anari.ARRAY1D, array)
 
 world.commitParameters()
@@ -105,7 +105,7 @@ world.commitParameters()
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
@@ -113,7 +113,7 @@ if anari.has_cuda_capable_gpu():
     renderer.setParameter('pixelSamples', anari.INT32, 128)
 else:
     renderer.setParameter('pixelSamples', anari.INT32, 8)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.commitParameters()
 

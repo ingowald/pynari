@@ -58,11 +58,25 @@ namespace pynari {
     std::shared_ptr<Volume> newVolume(const std::string &type);
     std::shared_ptr<Sampler> newSampler(const std::string &type);
     std::shared_ptr<Array> newArray(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray1D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray2D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray3D(int type, const py::buffer &buffer);
     std::shared_ptr<Array> newArray_objects(int type,
+                                            const py::list &list); 
+    std::shared_ptr<Array> newArray1D_objects(int type,
                                             const py::list &list);
     std::shared_ptr<Material> newMaterial(const std::string &type);
     std::shared_ptr<Light> newLight(const std::string &type);
 
+    std::vector<std::string> getObjectSubtypes(int type);
+    
+    std::map<std::string/*desc*/,py::object>
+    getObjectInfo(int type, const std::string &subtype);
+    
+    std::map<std::string/*desc*/,py::object>
+    getParameterInfo(int type, const std::string &subtype,
+                     const std::string &paramName, int paramType);
+    
     /*! allows to query whether the user has already explicitly called
       contextDestroy. if so, any releases of handles are no longer
       valid because whatever they may have pointed to inside the
@@ -76,8 +90,12 @@ namespace pynari {
                    int type,
                    uint64_t v);
     void commit();
-    
 
+#ifdef NDEBUG
+    bool verbose = false;
+#else
+    bool verbose = true;
+#endif
     
     Device::SP device;
     std::mutex mutex;

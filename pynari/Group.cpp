@@ -47,5 +47,14 @@ namespace pynari {
                                  volumes.data(),volumes.size());
     anari::commitParameters(device->handle,handle);
   }
+
+  Group::~Group()
+  {
+    std::cout << "#pynari: RELEASING group "
+              << (int*)this << ":" << (int*)handle << std::endl;
+    anariRelease(device->handle,handle);
+    handle = {};
+  }
+  
 }
 

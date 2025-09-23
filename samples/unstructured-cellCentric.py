@@ -157,10 +157,10 @@ xf = np.array([0, 0, 1, 1,
                1, 0, 1, 1,
                0, 0, 1, 1,
                ],dtype=np.float32)
-xf_array = device.newArray(anari.float4,xf)
+xf_array = device.newArray1D(anari.float4,xf)
 
 volume = device.newVolume('transferFunction1D')
-volume.setParameter('color',anari.ARRAY,xf_array)
+volume.setParameter('color',anari.ARRAY1D,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
 volume.setParameter('unitDistance',anari.FLOAT32,1.)
 volume.setParameter('valueRange',anari.FLOAT32_BOX1,(0.,7.))
@@ -172,7 +172,7 @@ light = device.newLight('directional')
 light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
 light.commitParameters()
 
-array = device.newArray(anari.LIGHT, [light])
+array = device.newArray1D(anari.LIGHT, [light])
 world.setParameter('light', anari.ARRAY1D, array)
 world.commitParameters()
 
@@ -192,12 +192,12 @@ camera.commitParameters()
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)),
                      dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 
 renderer = device.newRenderer('default')
-renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.5)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('ambientRadiance',anari.FLOAT32, 3.5)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 if anari.has_cuda_capable_gpu():
     # actually we have denoising on the gpu, so probably need way less...
     renderer.setParameter('pixelSamples', anari.INT32, 128)

@@ -27,8 +27,8 @@ random.seed(80577)
 
 def add_sphere(pos, radius, material):
     geom = device.newGeometry('sphere')
-    array = device.newArray(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
-    geom.setParameter('vertex.position',anari.ARRAY,array)
+    array = device.newArray1D(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
+    geom.setParameter('vertex.position',anari.ARRAY1D,array)
     geom.setParameter('radius',anari.FLOAT32,radius)
     geom.commitParameters()
 
@@ -121,12 +121,12 @@ camera.commitParameters()
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 #bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((4,1,2))
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .8)
 renderer.setParameter('pixelSamples', anari.INT32, num_paths_per_pixel)
-renderer.setParameter('background', anari.ARRAY, bg_gradient)
+renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
 renderer.commitParameters()
 
 
