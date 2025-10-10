@@ -30,6 +30,11 @@ namespace pynari {
   
   Geometry::~Geometry()
   {
+    PING;
+    PING;
+    PING;
+    PING;
+    PING;
     PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING geometry "
                        << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);
