@@ -27,6 +27,8 @@ namespace pynari {
     case ANARI_BOOL:           return "ANARI_BOOL";
     case ANARI_STRING:         return "ANARI_STRING";
     case ANARI_OBJECT:         return "ANARI_OBJECT";
+    case ANARI_CAMERA:         return "ANARI_CAMERA";
+    case ANARI_LIGHT:          return "ANARI_LIGHT";
     case ANARI_ARRAY:          return "ANARI_ARRAY";
     case ANARI_ARRAY1D:        return "ANARI_ARRAY1D";
     case ANARI_ARRAY2D:        return "ANARI_ARRAY2D";
@@ -54,6 +56,9 @@ namespace pynari {
     case ANARI_UINT64:         return "ANARI_UINT64";
     case ANARI_INT64:          return "ANARI_INT64";
     default:
+      std::cerr << "unsupported type "
+        +std::to_string((int)type)
+        +" in pyName::toString(ANARIDataType)";
       throw std::runtime_error
         ("unsupported type "
          +std::to_string((int)type)
@@ -215,14 +220,26 @@ namespace pynari {
   {
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
-    if (object)
+    if (object) {
+      if (type != object->anariType())
+        std::cerr << "#pynari: warning - set(...type,object) called with an object "
+                  << "that has different type than the provided type"
+                  << std::endl;
+
+      PING;
+      PRINT(type);
+      PRINT(to_string(type));
+      PRINT(to_string(object->anariType()));
+      PRINT((int*)object->handle);
       anari::setParameter(device->handle,this->handle,
                           name,
-                          object->anariType(),
-                          &object->handle);
-    else
+                          type,//object->anariType(),
+                          (void*)&object->handle);
+    } else
       anari::setParameter(device->handle,this->handle,
-                          name, ANARI_OBJECT, nullptr);
+                          name,
+                          type,//ANARI_OBJECT,
+                          nullptr);
   }
     
   void Object::set_float(const char *name,

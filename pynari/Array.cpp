@@ -70,6 +70,7 @@ namespace pynari {
                            const py::buffer &buffer,
                            int const nDims)
   {
+    PING; PRINT(nDims);
     switch (type) {
     case ANARI_FLOAT32:
       return importArrayT<float,1>(device,ANARI_FLOAT32,info,buffer,nDims);
@@ -79,7 +80,7 @@ namespace pynari {
       return importArrayT<float,3>(device,ANARI_FLOAT32_VEC3,info,buffer,nDims);
     case ANARI_FLOAT32_VEC4:
       return importArrayT<float,4>(device,ANARI_FLOAT32_VEC4,info,buffer,nDims);
-
+      
     case ANARI_UINT32:
       return importArrayT<uint32_t,1>(device,ANARI_UINT32,info,buffer,nDims);
     case ANARI_UINT32_VEC2:
@@ -116,10 +117,17 @@ namespace pynari {
                anari::DataType type,
                const py::buffer &buffer)
     : Object(device),
-      nDims(dims), type(type), numObjects(0)
+      nDims(dims),
+      elementType(type),
+      numObjects(0)
   {
+    PING;
     py::buffer_info info = buffer.request();
+    PING;
+    PRINT(type);
+    PRINT(to_string(type));
     this->handle = importArray(device->handle,type,info,buffer,nDims);
+    PING;
     PYNARI_TRACK_LEAKS(std::cout << "@pynari: created DATA-array"
                        << std::endl);
   }
@@ -127,20 +135,69 @@ namespace pynari {
   Array::Array(Device::SP device,
                anari::DataType type,
                const std::vector<Object::SP> &objects)
-    : Object(device), type(type), numObjects(objects.size())
+    : Object(device),
+      elementType(type),
+      numObjects(objects.size())
   {
+#if 1
+    nDims = 1;
+    PING; PRINT(to_string(type));
+    anari::Array1D array
+      = anari::newArray1D(device->handle,
+# if 1
+                          type,
+# else
+                          ANARI_OBJECT,
+# endif
+                          objects.size());
+    this->handle = array;
+    // do we need to release here?
+    assertThisObjectIsValid();
+    std::vector<ANARIObject> anariObjects;
+    for (auto object : objects) {
+      assert(object);
+      ANARIObject handle = object->handle;
+      PRINT((int*)handle);
+      anariObjects.push_back(handle);
+    }
+      
+    ANARIObject *mapped
+      = (ANARIObject*)anariMapArray(device->handle,array);
+    for (int i=0;i<objects.size();i++)
+      if (mapped[i])
+        anariRelease(device->handle,mapped[i]);
+    std::copy(anariObjects.begin(),anariObjects.end(),mapped);
+    for (int i=0;i<objects.size();i++)
+      anariRetain(device->handle,mapped[i]);
+    anariUnmapArray(device->handle,array);
+    
+    // anari::setParameter(device->handle,this->handle,name,(ANARIArray1D)array);
+    // anariRelease(device->handle,array);
+#else
+    PING;
+    PRINT(type);
+    PRINT(to_string(type));
     anari::Array1D array
       = anari::newArray1D(device->handle,ANARI_OBJECT,objects.size());
 
     ANARIObject *mapped
       = (ANARIObject*)anariMapArray(device->handle,array);
-    for (int i=0;i<objects.size();i++)
+    PING;
+    for (int i=0;i<objects.size();i++) {
+      // if (mapped[i])
+      //   anariRelease(device->handle,mapped[i]);
       mapped[i] = objects[i]->handle;
+      PRINT((void *)mapped[i]);
+      // anariRetain(device->handle,mapped[i]);
+      PRINT(objects[i]->toString());
+    }
     anariUnmapArray(device->handle,array);
     this->handle = array;
+    PRINT((int*)this->handle);
     nDims = 1;
     PYNARI_TRACK_LEAKS(std::cout << "@pynari: created OBJECT-array of "
                        << numObjects << " objects" << std::endl);
+#endif
   }
 
   Array::~Array()
