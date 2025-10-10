@@ -31,6 +31,7 @@ namespace pynari {
 
   void Frame::render()
   {
+    PING; PRINT(handle);
     anariRenderFrame(device->handle, (ANARIFrame)handle);
     anariFrameReady(device->handle, (ANARIFrame)handle, ANARI_WAIT);
   }
