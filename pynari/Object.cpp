@@ -234,7 +234,10 @@ namespace pynari {
     if (object) {
       if (type != object->anariType())
         std::cerr << "#pynari: warning - set(...type,object) called with an object "
-                  << "that has different type than the provided type"
+                  << "that has different type than the provided type (object itself is "
+                  << to_string(object->anariType())
+                  << ", but setParam wants to set it as a "
+                  << to_string(type) << ")"
                   << std::endl;
 
       anari::setParameter(device->handle,this->handle,
