@@ -27,10 +27,15 @@ namespace pynari {
     case ANARI_BOOL:           return "ANARI_BOOL";
     case ANARI_STRING:         return "ANARI_STRING";
     case ANARI_OBJECT:         return "ANARI_OBJECT";
+    case ANARI_CAMERA:         return "ANARI_CAMERA";
+    case ANARI_LIGHT:          return "ANARI_LIGHT";
     case ANARI_ARRAY:          return "ANARI_ARRAY";
     case ANARI_ARRAY1D:        return "ANARI_ARRAY1D";
     case ANARI_ARRAY2D:        return "ANARI_ARRAY2D";
     case ANARI_ARRAY3D:        return "ANARI_ARRAY3D";
+    case ANARI_SAMPLER:        return "ANARI_SAMPLER";
+    case ANARI_VOLUME:         return "ANARI_VOLUME";
+    case ANARI_SPATIAL_FIELD:  return "ANARI_SPATIAL_FIELD";
     case ANARI_WORLD:          return "ANARI_WORLD";
     case ANARI_FLOAT32_MAT3x4: return "ANARI_FLOAT32_MAT3x4"; 
     case ANARI_FLOAT32_MAT4:   return "ANARI_FLOAT32_MAT4"; 
@@ -54,6 +59,9 @@ namespace pynari {
     case ANARI_UINT64:         return "ANARI_UINT64";
     case ANARI_INT64:          return "ANARI_INT64";
     default:
+      std::cerr << "unsupported type "
+        +std::to_string((int)type)
+        +" in pyName::toString(ANARIDataType)";
       throw std::runtime_error
         ("unsupported type "
          +std::to_string((int)type)
@@ -210,19 +218,39 @@ namespace pynari {
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray3D)array->handle);
   }
+
+  void Object::set_object_notype(const char *name,
+                                 const Object::SP &object)
+  {
+    throw std::runtime_error
+      ("#pynari: trying to set null object without specifying a type");
+    set_object(name,object->anariType(),object);
+  }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
   {
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
-    if (object)
+    if (object) {
+      if (type != object->anariType())
+        std::cerr << "#pynari: warning - set(...type,object) called with an object "
+                  << "that has different type than the provided type (object itself is "
+                  << to_string(object->anariType())
+                  << ", but setParam wants to set it as a "
+                  << to_string(type) << ")"
+                  << std::endl;
+
       anari::setParameter(device->handle,this->handle,
                           name,
-                          object->anariType(),
-                          &object->handle);
-    else
+                          type == ANARI_OBJECT
+                          ? (int)object->anariType()
+                          : (int)type,
+                          (void*)&object->handle);
+    } else
       anari::setParameter(device->handle,this->handle,
-                          name, ANARI_OBJECT, nullptr);
+                          name,
+                          type,//ANARI_OBJECT,
+                          nullptr);
   }
     
   void Object::set_float(const char *name,
