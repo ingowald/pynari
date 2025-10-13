@@ -26,12 +26,20 @@ namespace pynari {
                             const py::buffer &buffer,
                             uint64_t const nDims)
   {
+    PING;
     py::array_t<T> asArray = py::cast<py::array_t<T>>(buffer);
     uint64_t numScalarsInArray = 1;
     for (int i=0;i<info.ndim;i++) {
       numScalarsInArray *= (int)info.shape[i];
     }
+    PRINT(numScalarsInArray);
     anari::Array handle = 0;
+    PRINT(nDims);
+    PRINT(info.ndim);
+    PRINT((int)D);
+    PRINT(info.shape[0]);
+    PRINT(info.shape[1]);
+    PRINT(info.shape[2]);
     if (nDims == 1) {
       handle = anari::newArray1D(device,anariType,numScalarsInArray/D);
     } else if (nDims == 2) {
@@ -46,16 +54,23 @@ namespace pynari {
       else
         throw std::runtime_error("cannot create array of this dim and shape!?");
     } else if (nDims == 3) {
-      if (D == 1)
+      if (info.ndim == 3 && D == 1)
         // this is an array of scalars
+        handle = anari::newArray3D(device,anariType,
+                                   info.shape[2],
+                                   info.shape[1],
+                                   info.shape[0]);
+      else if (info.ndim == 4 && info.shape[3] == D)
         handle = anari::newArray3D(device,anariType,
                                    info.shape[2],
                                    info.shape[1],
                                    info.shape[0]);
       else
         throw std::runtime_error("cannot create array of this dim and shape!?");
-    } else
+    } else {
+      PING;
       throw std::runtime_error("invalid array dimensionality");
+    }
     void *ptr = anariMapArray(device,handle);
     auto buf = asArray.request();
     const T *elems = (T*)buf.ptr;
@@ -200,19 +215,6 @@ namespace pynari {
 
   Array::~Array()
   {
-    // if (numObjects != 0) {
-    //   PYNARI_TRACK_LEAKS(std::cout << "#pynari: array of objects releases its objects"
-    //                      << " *** count= "
-    //                      << numObjects<< std::endl);
-      
-    //   ANARIObject *mapped
-    //     = (ANARIObject*)anariMapArray(device->handle,(ANARIArray)handle);
-    //   for (int i=0;i<numObjects;i++) {
-    //     anariRelease(device->handle,mapped[i]);
-    //     mapped[i] = {};
-    //   }
-    //   anariUnmapArray(device->handle,(ANARIArray)handle);
-    // }
     PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING array "
                        << (int*)this << ":" << (int*)handle << std::endl);
     anariRelease(device->handle,handle);

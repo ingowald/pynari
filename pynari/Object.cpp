@@ -218,9 +218,18 @@ namespace pynari {
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray3D)array->handle);
   }
+
+  void Object::set_object_notype(const char *name,
+                                 const Object::SP &object)
+  {
+    throw std::runtime_error
+      ("#pynari: trying to set null object without specifying a type");
+    set_object(name,object->anariType(),object);
+  }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
   {
+    PING; PRINT(this);
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
     PING;
@@ -242,7 +251,9 @@ namespace pynari {
       // } else {
       anari::setParameter(device->handle,this->handle,
                           name,
-                          type,//object->anariType(),
+                          type == ANARI_OBJECT
+                          ? (int)object->anariType()
+                          : (int)type,
                           (void*)&object->handle);
       // }
     } else

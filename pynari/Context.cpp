@@ -143,6 +143,7 @@ namespace pynari {
   std::shared_ptr<World>
   Context::newWorld()
   {
+    PING;fflush(0);
     return std::make_shared<World>(device);
   }
   
@@ -155,6 +156,7 @@ namespace pynari {
   std::shared_ptr<Geometry>
   Context::newGeometry(const std::string &type)
   {
+    PING;fflush(0);
     return std::make_shared<Geometry>(device,type);
   }
   
@@ -235,6 +237,7 @@ namespace pynari {
   std::shared_ptr<Array>
   Context::newArray1D_objects(int type, const py::list &list)
   {
+    PING;
     std::vector<Object::SP> objects;
     for (auto item : list) {
       Object::SP object = item.cast<Object::SP>();
