@@ -35,18 +35,11 @@ for z in range(0,N):
             array[x,y,z,2] = b
 
 array_data = device.newArray3D(anari.FLOAT32_VEC3,array)
-print(f'array_data {array_data}')
-
-print('sampler',flush=True)
 sampler = device.newSampler('image3D')
-print(f'sampler {sampler}')
-print('set',flush=True)
 sampler.setParameter('image',anari.ARRAY3D,array_data)
 sampler.setParameter('inAttribute','worldPosition')
 #sampler.setParameter('inAttribute','attribute0')
-print('commit',flush=True)
 sampler.commitParameters()
-print('done')
 
 vertex = np.array([-.3,-.3, .5,
                    -.3,1.3,-.3,
@@ -58,14 +51,10 @@ index = np.array([0,1,2,
 
 world = device.newWorld()
 
-print('a1',flush=True)
 mesh = device.newGeometry('triangle')
-print('a2',flush=True)
 
 array = device.newArray1D(anari.FLOAT32_VEC3,vertex)
-print('as',flush=True)
 mesh.setParameter('vertex.position', anari.ARRAY1D, array)
-print('ad',flush=True)
 
 array = device.newArray1D(anari.UINT32_VEC3 , index)
 mesh.setParameter('primitive.index', anari.ARRAY1D, array)
@@ -86,12 +75,9 @@ light = device.newLight('directional')
 light.setParameter('direction', anari.float3, ( 1., -1., 1. ) )
 light.commitParameters()
 
-print('a',flush=True)
 array = device.newArray1D(anari.LIGHT, [light])
 world.setParameter('light', anari.ARRAY1D, array)
-print('d',flush=True)
 world.commitParameters()
-print('c',flush=True)
 
 
 fb_size = (800,800)
@@ -118,7 +104,6 @@ bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)),
                      dtype=np.float32).reshape((2,1,4))
 bg_gradient = device.newArray2D(anari.float4, bg_values)
 
-print('a',flush=True)
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, 1.)
 renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
@@ -134,7 +119,6 @@ frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, fb_size)
 
-print('b',flush=True)
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.OBJECT, renderer)
 frame.setParameter('camera', anari.OBJECT, camera)

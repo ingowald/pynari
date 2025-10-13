@@ -229,33 +229,20 @@ namespace pynari {
   
   void Object::set_object(const char *name, int type, const Object::SP &object)
   {
-    PING; PRINT(this);
     assertThisObjectIsValid();
     /* TODO: do some checking if 'type' matches anariType() */
-    PING;
-    PRINT(name);
-    PRINT(type);
     if (object) {
       if (type != object->anariType())
         std::cerr << "#pynari: warning - set(...type,object) called with an object "
                   << "that has different type than the provided type"
                   << std::endl;
 
-      PRINT(to_string(type));
-      PRINT(to_string(object->anariType()));
-      PRINT((int*)object->handle);
-      // if (0 && object->anariType() == ANARI_ARRAY1D) {
-      //   PING;
-      //   anari::setParameter(device->handle,this->handle,name,
-      //                       (ANARIArray1D)object->handle);
-      // } else {
       anari::setParameter(device->handle,this->handle,
                           name,
                           type == ANARI_OBJECT
                           ? (int)object->anariType()
                           : (int)type,
                           (void*)&object->handle);
-      // }
     } else
       anari::setParameter(device->handle,this->handle,
                           name,
