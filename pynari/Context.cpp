@@ -60,7 +60,7 @@ namespace pynari {
       fprintf(stderr, "[ERROR][%p] %s\n", source, message);
 #ifndef NDEBUG
     } else if (severity == ANARI_SEVERITY_DEBUG) {
-      fprintf(stderr, "[WARN ][%p] %s\n", source, message);
+      fprintf(stderr, "[DEBUG ][%p] %s\n", source, message);
     } else if (severity == ANARI_SEVERITY_WARNING) {
       fprintf(stderr, "[WARN ][%p] %s\n", source, message);
     } else if (severity == ANARI_SEVERITY_PERFORMANCE_WARNING) {

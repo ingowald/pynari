@@ -43,7 +43,7 @@ namespace pynari {
     
     /*! number of DIMENSIONS of this array, NOT the 'size' */
     int          nDims  = -1;
-    anari::DataType const type;
+    anari::DataType const elementType;
     int numObjects = 0;
   };
 

@@ -128,6 +128,7 @@ PYBIND11_MODULE(pynari, m) {
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
   /*! set FROM a python pynari object */
   object.def("setParameter",  &pynari::Object::set_object);
+  object.def("setParameter",  &pynari::Object::set_object_notype);
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameter",  &pynari::Object::set_string_notype);
