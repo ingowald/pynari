@@ -143,16 +143,15 @@ else:
     inst = device.newInstance('transform')
     inst.setParameter('group',anari.OBJECT,rootGroup)
     inst.setParameterArray1D('light', anari.LIGHT, [ light ])
-    inst.setParameter('transform',anari.FLOAT32_MAT3X4,
+    inst.setParameter('transform',anari.FLOAT32_MAT4,
                       [
-                       1,0,0,
-                       0,1,0,
-                       0,0,1,
-                       0,0,0
+                       1,0,0,0,
+                       0,1,0,0,
+                       0,0,1,0,
+                       0,0,0,1,
                       ]
                       )
     inst.commitParameters()
-    world.setParameterArray1D('instance', anari.OBJECT, [ inst ])
 
 world.commitParameters()
    
@@ -190,9 +189,9 @@ if use_floatFB:
     frame.setParameter('channel.color', anari.DATA_TYPE, anari.FLOAT32_VEC4)
 else:
     frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
-frame.setParameter('renderer', anari.OBJECT, renderer)
-frame.setParameter('camera', anari.OBJECT, camera)
-frame.setParameter('world', anari.OBJECT, world)
+frame.setParameter('renderer', anari.RENDERER, renderer)
+frame.setParameter('camera', anari.CAMERA, camera)
+frame.setParameter('world', anari.WORLD, world)
 
 frame.commitParameters()
 
