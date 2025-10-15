@@ -222,8 +222,9 @@ namespace pynari {
   void Object::set_object_notype(const char *name,
                                  const Object::SP &object)
   {
-    throw std::runtime_error
-      ("#pynari: trying to set null object without specifying a type");
+    if (!object)
+      throw std::runtime_error
+        ("#pynari: trying to set null object without specifying a type");
     set_object(name,object->anariType(),object);
   }
   
