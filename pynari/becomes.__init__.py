@@ -15,6 +15,8 @@ from .pynari import CAMERA
 from .pynari import WORLD
 from .pynari import VOLUME
 from .pynari import SAMPLER
+from .pynari import GROUP
+
 
 from .pynari import ARRAY
 from .pynari import ARRAY1D

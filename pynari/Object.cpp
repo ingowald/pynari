@@ -40,6 +40,7 @@ namespace pynari {
     case ANARI_FLOAT32_MAT3x4: return "ANARI_FLOAT32_MAT3x4"; 
     case ANARI_FLOAT32_MAT4:   return "ANARI_FLOAT32_MAT4"; 
     case ANARI_RENDERER:       return "ANARI_RENDERER";
+    case ANARI_GROUP:          return "ANARI_GROUP";
     case ANARI_MATERIAL:       return "ANARI_MATERIAL";
     case ANARI_GEOMETRY:       return "ANARI_GEOMETRY";
     case ANARI_SURFACE:        return "ANARI_SURFACE";

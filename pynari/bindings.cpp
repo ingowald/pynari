@@ -58,11 +58,11 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("LIGHT")         = py::int_((int)ANARI_LIGHT);
   m.attr("SAMPLER")       = py::int_((int)ANARI_SAMPLER);
   m.attr("RENDERER")      = py::int_((int)ANARI_RENDERER);
-  m.attr("SPATIAL_FIELD") = py::int_((int)ANARI_SPATIAL_FIELD);
   m.attr("CAMERA")        = py::int_((int)ANARI_CAMERA);
   m.attr("WORLD")         = py::int_((int)ANARI_WORLD);
   m.attr("SPATIAL_FIELD") = py::int_((int)ANARI_SPATIAL_FIELD);
   m.attr("VOLUME")        = py::int_((int)ANARI_VOLUME);
+  m.attr("GROUP")         = py::int_((int)ANARI_GROUP);
   
   m.attr("ARRAY")         = py::int_((int)ANARI_ARRAY);
   m.attr("ARRAY1D")       = py::int_((int)ANARI_ARRAY1D);
