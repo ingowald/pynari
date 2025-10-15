@@ -18,7 +18,7 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION pybind11::thin_lto)
 
 #find_package(anari)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 pybind11_add_module(pynari
   # 'thin' objects that only handle the reference without any other
