@@ -141,7 +141,7 @@ else:
     rootGroup = device.newGroup(surfaces)
     rootGroup.commitParameters()
     inst = device.newInstance('transform')
-    inst.setParameter('group',anari.OBJECT,rootGroup)
+    inst.setParameter('group',anari.GROUP,rootGroup)
     inst.setParameterArray1D('light', anari.LIGHT, [ light ])
     inst.setParameter('transform',anari.FLOAT32_MAT4,
                       [

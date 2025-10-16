@@ -101,9 +101,9 @@ frame = device.newFrame()
 frame.setParameter('size', anari.uint2, fb_size)
 
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
-frame.setParameter('renderer', anari.OBJECT, renderer)
-frame.setParameter('camera', anari.OBJECT, camera)
-frame.setParameter('world', anari.OBJECT, world)
+frame.setParameter('renderer', anari.RENDERER, renderer)
+frame.setParameter('camera', anari.CAMERA, camera)
+frame.setParameter('world', anari.WORLD, world)
 frame.commitParameters()
 
 frame.render()

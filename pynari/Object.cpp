@@ -40,6 +40,7 @@ namespace pynari {
     case ANARI_FLOAT32_MAT3x4: return "ANARI_FLOAT32_MAT3x4"; 
     case ANARI_FLOAT32_MAT4:   return "ANARI_FLOAT32_MAT4"; 
     case ANARI_RENDERER:       return "ANARI_RENDERER";
+    case ANARI_GROUP:          return "ANARI_GROUP";
     case ANARI_MATERIAL:       return "ANARI_MATERIAL";
     case ANARI_GEOMETRY:       return "ANARI_GEOMETRY";
     case ANARI_SURFACE:        return "ANARI_SURFACE";
@@ -222,8 +223,9 @@ namespace pynari {
   void Object::set_object_notype(const char *name,
                                  const Object::SP &object)
   {
-    throw std::runtime_error
-      ("#pynari: trying to set null object without specifying a type");
+    if (!object)
+      throw std::runtime_error
+        ("#pynari: trying to set null object without specifying a type");
     set_object(name,object->anariType(),object);
   }
   
