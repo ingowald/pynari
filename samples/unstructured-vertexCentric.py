@@ -156,7 +156,7 @@ xf = np.array([0, 0, 1, 1,
 xf_array = device.newArray1D(anari.float4,xf)
 
 volume = device.newVolume('transferFunction1D')
-volume.setParameter('color',anari.ARRAY2D,xf_array)
+volume.setParameter('color',anari.ARRAY1D,xf_array)
 volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
 volume.setParameter('unitDistance',anari.FLOAT32,1.)
 volume.commitParameters()
@@ -206,9 +206,9 @@ frame = device.newFrame()
 frame.setParameter('size', anari.uint2, fb_size)
 
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
-frame.setParameter('renderer', anari.OBJECT, renderer)
-frame.setParameter('camera', anari.OBJECT, camera)
-frame.setParameter('world', anari.OBJECT, world)
+frame.setParameter('renderer', anari.RENDERER, renderer)
+frame.setParameter('camera', anari.CAMERA, camera)
+frame.setParameter('world', anari.WORLD, world)
 frame.commitParameters()
 
 frame.render()

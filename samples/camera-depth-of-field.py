@@ -125,7 +125,7 @@ camera.commitParameters()
 
 # background gradient: use an image of 1 pixel wide and 2 pixels high
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-bg_gradient = device.newArray1D(anari.float4, bg_values)
+bg_gradient = device.newArray2D(anari.float4, bg_values)
 
 renderer = device.newRenderer('default')
 renderer.setParameter('ambientRadiance',anari.FLOAT32, .5)
@@ -139,9 +139,9 @@ frame = device.newFrame()
 frame.setParameter('size', anari.uint2, fb_size)
 
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
-frame.setParameter('renderer', anari.OBJECT, renderer)
-frame.setParameter('camera', anari.OBJECT, camera)
-frame.setParameter('world', anari.OBJECT, world)
+frame.setParameter('renderer', anari.RENDERER, renderer)
+frame.setParameter('camera', anari.CAMERA, camera)
+frame.setParameter('world', anari.WORLD, world)
 frame.commitParameters()
 
 frame.render()
