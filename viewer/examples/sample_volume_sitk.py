@@ -48,9 +48,9 @@ class AnariScene(AnariSceneBase):
                 
         # Store current transfer function for future comparisons        
         self.xf = xf
-        xf_array = device.newArray(anari.float4,xf)        
+        xf_array = device.newArray1D(anari.float4,xf)        
 
-        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.setParameter('color',anari.ARRAY1D,xf_array)
         self.volume.commitParameters()
 
     def create_world(self, device):
@@ -115,21 +115,21 @@ class AnariScene(AnariSceneBase):
 
             spatial_field = device.newSpatialField('unstructured')
 
-            array_vertex = device.newArray(anari.FLOAT32_VEC3,positions)
-            spatial_field.setParameter('vertex.position',anari.ARRAY,array_vertex)
+            array_vertex = device.newArray1D(anari.FLOAT32_VEC3,positions)
+            spatial_field.setParameter('vertex.position',anari.ARRAY1D,array_vertex)
         
-            array_new_cells_np = device.newArray(anari.UINT32,indices)        
-            spatial_field.setParameter('index',anari.ARRAY,array_new_cells_np)
+            array_new_cells_np = device.newArray1D(anari.UINT32,indices)        
+            spatial_field.setParameter('index',anari.ARRAY1D,array_new_cells_np)
         
-            array_cell_temperature = device.newArray(anari.FLOAT32,data)        
-            spatial_field.setParameter('cell.data',anari.ARRAY,array_cell_temperature)
+            array_cell_temperature = device.newArray1D(anari.FLOAT32,data)        
+            spatial_field.setParameter('cell.data',anari.ARRAY1D,array_cell_temperature)
 
             print('------------------------------------------------------- CELL TYPE')
-            array_cell_types_np = device.newArray(anari.UINT8,cell_types)
-            spatial_field.setParameter('cell.type',anari.ARRAY,array_cell_types_np)
+            array_cell_types_np = device.newArray1D(anari.UINT8,cell_types)
+            spatial_field.setParameter('cell.type',anari.ARRAY1D,array_cell_types_np)
 
-            array_cells_index_first_np = device.newArray(anari.UINT32,cell_index)
-            spatial_field.setParameter('cell.index',anari.ARRAY,array_cells_index_first_np)
+            array_cells_index_first_np = device.newArray1D(anari.UINT32,cell_index)
+            spatial_field.setParameter('cell.index',anari.ARRAY1D,array_cells_index_first_np)
             spatial_field.commitParameters()
             return spatial_field
         
@@ -173,7 +173,7 @@ class AnariScene(AnariSceneBase):
             cell_values, volume_dims = get_volume_sitk()
             cell_array = np.array(cell_values,dtype=np.float32).reshape(volume_dims)
 
-            structured_data = device.newArray(anari.float,cell_array)
+            structured_data = device.newArray3D(anari.float,cell_array)
 
             cellSize = (2.0/(volume_dims[0]-1),2.0/(volume_dims[1]-1),2.0/(volume_dims[2]-1))
             spatial_field = device.newSpatialField('structuredRegular')
@@ -188,21 +188,21 @@ class AnariScene(AnariSceneBase):
         #####TF####
         # Create transfer function using the DearPyGui library
         self.xf = anari_tf.color_tf
-        xf_array = device.newArray(anari.float4,self.xf)
+        xf_array = device.newArray1D(anari.float4,self.xf)
 
         self.volume = device.newVolume('transferFunction1D')
-        self.volume.setParameter('color',anari.ARRAY,xf_array)
+        self.volume.setParameter('color',anari.ARRAY1D,xf_array)
         self.volume.setParameter('value',anari.SPATIAL_FIELD,spatial_field)
-        self.volume.setParameter('unitDistance',anari.FLOAT32,100.)
+        self.volume.setParameter('unitDistance',anari.FLOAT32,0.1)
         self.volume.commitParameters()
                                                             
         world = device.newWorld()
-        world.setParameterArray('volume', anari.VOLUME, [ self.volume ] )
+        world.setParameterArray1D('volume', anari.VOLUME, [ self.volume ] )
         light = device.newLight('directional')
         light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
         light.commitParameters()
 
-        array = device.newArray(anari.LIGHT, [light])
+        array = device.newArray1D(anari.LIGHT, [light])
         world.setParameter('light', anari.ARRAY1D, array)
         world.commitParameters()
 

@@ -36,8 +36,8 @@ class AnariScene(AnariSceneBase):
 
         def add_sphere(pos, radius, material):
             geom = device.newGeometry('sphere')
-            array = device.newArray(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
-            geom.setParameter('vertex.position',anari.ARRAY,array)
+            array = device.newArray1D(anari.FLOAT32_VEC3,np.array(pos,dtype=np.float32))
+            geom.setParameter('vertex.position',anari.ARRAY1D,array)
             geom.setParameter('radius',anari.FLOAT32,radius)
             geom.commitParameters()
 
@@ -108,7 +108,7 @@ class AnariScene(AnariSceneBase):
         create_spheres()
 
         world = device.newWorld()
-        world.setParameterArray('surface', anari.SURFACE, spheres )
+        world.setParameterArray1D('surface', anari.SURFACE, spheres )
         world.commitParameters()
 
         return world

@@ -431,13 +431,9 @@ def main():
     # anari_scene = examples.sample01.AnariScene()
     # run(anari_scene)
     
-    # import examples.sample02  # Import ANARI scene module
-    # anari_scene = examples.sample02.AnariScene()
-    # run(anari_scene)
-
-    # import examples.sample04  # Import ANARI scene module
-    # anari_scene = examples.sample04.AnariScene()
-    # run(anari_scene)
+    import examples.sample02  # Import ANARI scene module
+    anari_scene = examples.sample02.AnariScene()
+    run(anari_scene)
 
     # import examples.sample05  # Import ANARI scene module
     # anari_scene = examples.sample05.AnariScene()
@@ -451,9 +447,9 @@ def main():
     # anari_scene = examples.sample_volume_vdb.AnariScene()
     # run(anari_scene)
 
-    import examples.sample_volume_sitk  # Import ANARI scene module
-    anari_scene = examples.sample_volume_sitk.AnariScene()
-    run(anari_scene)
+    # import examples.sample_volume_sitk  # Import ANARI scene module
+    # anari_scene = examples.sample_volume_sitk.AnariScene()
+    # run(anari_scene)
 
     pass
 
