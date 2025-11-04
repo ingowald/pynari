@@ -28,8 +28,11 @@ class AnariSceneBase:
         self.frame = None
 
     def create_device(self):
-        return anari.newDevice('barney')
+        #return anari.newDevice('barney')
         #return anari.newDevice('helide')
+        import os
+        value = os.getenv("ANARI_LIBRARY")  # returns None if not set
+        return anari.newDevice(value) 
 
     def create_world(self, device):
         """Create and return an ANARI device. Must be implemented by subclass."""
@@ -41,13 +44,13 @@ class AnariSceneBase:
     def create_background(self): 
         # background gradient: use an image of 1 pixel wide and 2 pixels high
         bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
-        return self.device.newArray(anari.float4, bg_values)    
+        return self.device.newArray2D(anari.float4, bg_values)    
 
     def create_renderer(self):
         renderer = self.device.newRenderer('default')
         renderer.setParameter('ambientRadiance',anari.FLOAT32, .8)
         renderer.setParameter('pixelSamples', anari.INT32, 1)
-        renderer.setParameter('background', anari.ARRAY, self.create_background())
+        renderer.setParameter('background', anari.ARRAY2D, self.create_background())
         renderer.commitParameters()
 
         return renderer
@@ -94,9 +97,9 @@ class AnariSceneBase:
         self.frame.setParameter('size', anari.uint2, self.fb_size)
         #self.frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_VEC4)
         self.frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
-        self.frame.setParameter('renderer', anari.OBJECT, self.renderer)
-        self.frame.setParameter('camera', anari.OBJECT, self.camera)
-        self.frame.setParameter('world', anari.OBJECT, self.world)
+        self.frame.setParameter('renderer', anari.RENDERER, self.renderer)
+        self.frame.setParameter('camera', anari.CAMERA, self.camera)
+        self.frame.setParameter('world', anari.WORLD, self.world)
         self.frame.commitParameters()
 
         self.frame.render()

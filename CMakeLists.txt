@@ -47,8 +47,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 find_package(anari 0.15.0 COMPONENTS code_gen)
 
-set(PYBIND11_FINDPYTHON ON)
-add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
+find_package(pybind11 CONFIG REQUIRED)
+#set(PYBIND11_FINDPYTHON ON)
+#add_subdirectory(external/pybind11 build_pybin EXCLUDE_FROM_ALL)
 if (NOT (TARGET stb_image))
   add_subdirectory(external/stb_image  EXCLUDE_FROM_ALL)
 endif()

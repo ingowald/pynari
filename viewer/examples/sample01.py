@@ -55,14 +55,14 @@ class AnariScene(AnariSceneBase):
 
         mesh = device.newGeometry('triangle')
 
-        array = device.newArray(anari.FLOAT32_VEC3,vertex)
-        mesh.setParameter('vertex.position', anari.ARRAY, array)
+        array = device.newArray1D(anari.FLOAT32_VEC3,vertex)
+        mesh.setParameter('vertex.position', anari.ARRAY1D, array)
 
-        array = device.newArray(anari.FLOAT32_VEC4, color)
-        mesh.setParameter('vertex.color', anari.ARRAY, array)
+        array = device.newArray1D(anari.FLOAT32_VEC4, color)
+        mesh.setParameter('vertex.color', anari.ARRAY1D, array)
 
-        array = device.newArray(anari.UINT32_VEC3 , index)
-        mesh.setParameter('primitive.index', anari.ARRAY, array)
+        array = device.newArray1D(anari.UINT32_VEC3 , index)
+        mesh.setParameter('primitive.index', anari.ARRAY1D, array)
         mesh.commitParameters()
 
         material = device.newMaterial('matte')
@@ -73,14 +73,14 @@ class AnariScene(AnariSceneBase):
         surface.setParameter('material', anari.MATERIAL, material)
         surface.commitParameters()
 
-        world.setParameterArray('surface', anari.SURFACE, [ surface ])
+        world.setParameterArray1D('surface', anari.SURFACE, [ surface ])
 
         light = device.newLight('directional')
         light.setParameter('direction', anari.float3, (0,0,1))
         light.setParameter('irradiance', anari.float, 1)
         light.commitParameters()
 
-        array = device.newArray(anari.LIGHT, [light])
+        array = device.newArray1D(anari.LIGHT, [light])
         world.setParameter('light', anari.ARRAY1D, array)
 
         world.commitParameters()

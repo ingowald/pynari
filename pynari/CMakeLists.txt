@@ -115,6 +115,7 @@ target_link_libraries(pynari
   anari::anari
   )
 
+set(PYNARI_BUILD_FOR_PIP OFF)
 message("PYNARI_BUILD_FOR_PIP ${PYNARI_BUILD_FOR_PIP}")
 if (PYNARI_BUILD_FOR_PIP)
 find_package(barney)
@@ -156,24 +157,4 @@ find_package(barney)
     DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
 else()
-  install(
-    TARGETS pynari
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    )
-  install(
-  # note(iw): the reason we store this as 'becomes.__init__.py'
-  # in the source tree is because we want this file to be
-  # 'recognized' by python _only_ when installed through a pip
-  # package. If it is called __init__.py in the source
-  # tree, python will try to call it even if we run on a
-  # local build that's not a pip package, which will
-  # fail.
-    FILES becomes.__init__.py
-    RENAME __init__.py
-    # where to put it - we want this in <install>/pynari
-    # $(install_dir)/<packagename(=pynari)>/__init__.py
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    )
 endif()
