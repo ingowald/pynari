@@ -200,6 +200,9 @@ PYBIND11_MODULE(pynari, m) {
   auto world
     = py::class_<pynari::World,pynari::Object,
                  std::shared_ptr<pynari::World>>(m, "anari::World");
+
+  world.def("getBounds", &pynari::World::getBounds);
+  
   // -------------------------------------------------------
   auto group
     = py::class_<pynari::Group,pynari::Object,
