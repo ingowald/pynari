@@ -63,6 +63,7 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("SPATIAL_FIELD") = py::int_((int)ANARI_SPATIAL_FIELD);
   m.attr("VOLUME")        = py::int_((int)ANARI_VOLUME);
   m.attr("GROUP")         = py::int_((int)ANARI_GROUP);
+  m.attr("INSTANCE")      = py::int_((int)ANARI_INSTANCE);  
   
   m.attr("ARRAY")         = py::int_((int)ANARI_ARRAY);
   m.attr("ARRAY1D")       = py::int_((int)ANARI_ARRAY1D);
