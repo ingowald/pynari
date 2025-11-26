@@ -577,7 +577,21 @@ namespace pynari {
         (std::string(__PRETTY_FUNCTION__)+" unsupported type "+to_string((anari::DataType)type));
     }
   }
-    
+
+  void Object::set_bool(const char* name,
+      int type,
+      bool v)
+  {
+      assertThisObjectIsValid();
+      switch (type) {
+      case ANARI_BOOL:
+          return anari::setParameter(device->handle, handle, name, (bool)v);
+      default:
+          throw std::runtime_error
+          (std::string(__PRETTY_FUNCTION__)
+              + " unsupported type " + to_string((anari::DataType)type));
+      }
+  }
   
 }
 

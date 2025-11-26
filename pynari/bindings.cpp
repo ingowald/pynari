@@ -95,6 +95,8 @@ PYBIND11_MODULE(pynari, m) {
   m.attr("UFIXED8_VEC4")  = py::int_((int)ANARI_UFIXED8_VEC4);
   m.attr("UFIXED8_RGBA_SRGB")  = py::int_((int)ANARI_UFIXED8_RGBA_SRGB);
 
+  m.attr("BOOL") = py::int_((int)ANARI_BOOL);
+
   // iw - not anari spelling, but ...
   m.attr("FLOAT")  = py::int_((int)ANARI_FLOAT32);
   m.attr("float")  = py::int_((int)ANARI_FLOAT32);
@@ -158,6 +160,8 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_uint3);
   object.def("setParameter",  &pynari::Object::set_uint4);
   object.def("setParameter",  &pynari::Object::set_uint_vec);
+
+  object.def("setParameter", &pynari::Object::set_bool);
   
   object.def("commitParameters", &pynari::Object::commit);
   object.def("release", &pynari::Object::release);

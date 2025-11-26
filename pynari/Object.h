@@ -105,6 +105,8 @@ namespace pynari {
                    const std::tuple<uint,uint,uint,uint> &v);
     void set_uint_vec(const char *name, int type, 
                       const std::vector<uint> &v);
+    void set_bool(const char* name, int type,
+        bool v);
     virtual void release();
 
     void assertThisObjectIsValid();
