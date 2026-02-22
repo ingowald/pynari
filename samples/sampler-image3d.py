@@ -38,7 +38,6 @@ array_data = device.newArray3D(anari.FLOAT32_VEC3,array)
 sampler = device.newSampler('image3D')
 sampler.setParameter('image',anari.ARRAY3D,array_data)
 sampler.setParameter('inAttribute','worldPosition')
-#sampler.setParameter('inAttribute','attribute0')
 sampler.commitParameters()
 
 vertex = np.array([-.3,-.3, .5,

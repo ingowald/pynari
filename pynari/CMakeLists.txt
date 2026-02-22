@@ -157,4 +157,24 @@ find_package(barney)
     DESTINATION ${CMAKE_INSTALL_PREFIX}/pynari
     )
 else()
+  include(GNUInstallDirs)
+  install(
+    IMPORTED_RUNTIME_ARTIFACTS pynari
+    
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ #   NAMELINK_SKIP
+    # on Windows put the dlls into bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    # ... and the import lib into the devel package
+#    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+  install(
+    TARGETS pynari
+#    NAMELINK_SKIP
+    # on Windows put the dlls into bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    # ... and the import lib into the devel package
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
 endif()

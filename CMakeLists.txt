@@ -59,5 +59,3 @@ if (NOT (TARGET stb_image))
 endif()
 
 add_subdirectory(pynari)
-
-
