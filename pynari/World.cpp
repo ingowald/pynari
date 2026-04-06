@@ -33,4 +33,22 @@ namespace pynari {
     anariRelease(device->handle,handle);
     handle = {};
   }
+
+  const std::tuple<float, float, float, float, float, float> World::getBounds()
+  {
+      anari::math::float3 bounds[2] = { {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f} };
+
+      if (!anariGetProperty(device->handle,
+          handle,
+          "bounds",
+          ANARI_FLOAT32_BOX3,
+          &bounds[0],
+          sizeof(bounds),
+          ANARI_WAIT)) {
+          printf("WARNING: bounds not returned by the device! Using unit cube.\n");
+      }
+
+	  return std::make_tuple(bounds[0].x, bounds[0].y, bounds[0].z,
+		  bounds[1].x, bounds[1].y, bounds[1].z);
+  }
 }

@@ -35,6 +35,8 @@ namespace pynari {
     
     std::string toString() const override { return "pynari::World"; }
     ANARIDataType anariType() const override { return ANARI_WORLD; }
+
+    const std::tuple<float, float, float, float, float, float> getBounds();
   };
 
 }

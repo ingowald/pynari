@@ -38,12 +38,17 @@ array_data = device.newArray3D(anari.FLOAT32_VEC3,array)
 sampler = device.newSampler('image3D')
 sampler.setParameter('image',anari.ARRAY3D,array_data)
 sampler.setParameter('inAttribute','worldPosition')
+#sampler.setParameter('inAttribute','attribute0')
 sampler.commitParameters()
+sampler.setParameter('borderColor',anari.float4,(1.,1.,0.,1.))
+sampler.setParameter('wrapMode1',anari.STRING,'clampToBorder')
+sampler.setParameter('wrapMode2',anari.STRING,'clampToBorder')
+sampler.setParameter('wrapMode3',anari.STRING,'clampToBorder')
 
-vertex = np.array([-.3,-.3, .5,
-                   -.3,1.3,-.3,
-                   1.3,-.3,1.3,
-                   1.3,1.3,1.3]
+vertex = np.array([-1.3,-1.3, .5,
+                   -1.3,2.3,-1.3,
+                   2.3,-1.3,2.3,
+                   2.3,2.3,2.3]
                   ,dtype=np.float32)
 index = np.array([0,1,2,
          1,3,2],dtype=np.uint32)
@@ -80,7 +85,8 @@ world.commitParameters()
 
 
 fb_size = (800,800)
-look_from = (.5,.5,-2)
+look_from = (.5,.5,-5)
+#look_from = (.5,.5,-2)
 look_at = (.5,.5,.5)
 look_up = (0.,1.,0.)
 fovy = 40.

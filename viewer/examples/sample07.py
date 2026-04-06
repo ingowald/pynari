@@ -163,16 +163,16 @@ class AnariScene(AnariSceneBase):
             geom = device.newGeometry('curve')
 
             np_position = np.array(curves_vertex_position,dtype=np.float32).flatten()
-            position = device.newArray(anari.FLOAT32_VEC3,np_position)
-            geom.setParameter('vertex.position',anari.ARRAY,position)
+            position = device.newArray1D(anari.FLOAT32_VEC3,np_position)
+            geom.setParameter('vertex.position',anari.ARRAY1D,position)
             
             np_radius = np.array(curves_vertex_radius,dtype=np.float32).flatten()
-            radius = device.newArray(anari.FLOAT32,np_radius)
-            geom.setParameter('vertex.radius',anari.ARRAY,radius)
+            radius = device.newArray1D(anari.FLOAT32,np_radius)
+            geom.setParameter('vertex.radius',anari.ARRAY1D,radius)
 
             np_index = np.array(curves_primitive_index,dtype=np.uint32).flatten()
-            index = device.newArray(anari.UINT32,np_index)
-            geom.setParameter('primitive.index',anari.ARRAY,index)
+            index = device.newArray1D(anari.UINT32,np_index)
+            geom.setParameter('primitive.index',anari.ARRAY1D,index)
 
             geom.commitParameters()
 
@@ -187,12 +187,12 @@ class AnariScene(AnariSceneBase):
             geom = device.newGeometry('sphere')
 
             np_position = np.array(spheres_vertex_position,dtype=np.float32).flatten()
-            position = device.newArray(anari.FLOAT32_VEC3,np_position)
-            geom.setParameter('vertex.position',anari.ARRAY,position)
+            position = device.newArray1D(anari.FLOAT32_VEC3,np_position)
+            geom.setParameter('vertex.position',anari.ARRAY1D,position)
             
             np_radius = np.array(spheres_vertex_radius,dtype=np.float32).flatten()
-            radius = device.newArray(anari.FLOAT32,np_radius)
-            geom.setParameter('vertex.radius',anari.ARRAY,radius)
+            radius = device.newArray1D(anari.FLOAT32,np_radius)
+            geom.setParameter('vertex.radius',anari.ARRAY1D,radius)
 
             geom.commitParameters()
 
@@ -213,8 +213,8 @@ class AnariScene(AnariSceneBase):
         world = device.newWorld()
         spheres_surf = make_anari_spheres()
         curves_surf = make_anari_curves()
-        surfaces = device.newArray( anari.SURFACE, [ spheres_surf, curves_surf ])
-        world.setParameter('surface', anari.ARRAY, surfaces )
+        surfaces = device.newArray1D( anari.SURFACE, [ spheres_surf, curves_surf ])
+        world.setParameter('surface', anari.ARRAY1D, surfaces )
 
         light = device.newLight('directional')
         light.setParameter('direction', anari.float3, (1,-1,1))
@@ -222,7 +222,7 @@ class AnariScene(AnariSceneBase):
         light.setParameter('color', anari.float3, (1,1,1))
         light.commitParameters()
 
-        array = device.newArray(anari.LIGHT, [light])
+        array = device.newArray1D(anari.LIGHT, [light])
         world.setParameter('light', anari.ARRAY1D, array)
 
         world.commitParameters()

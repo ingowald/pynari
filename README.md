@@ -31,7 +31,7 @@ vertex = np.array([
    1.0, -1.0, 3.0,
    0.1,  0.1, 0.3
 ], dtype = np.float32)
-array = device.newArray(anari.FLOAT32_VEC3,vertex)
+array = device.newArray1D(anari.FLOAT32_VEC3,vertex)
 mesh.setParameter('vertex.position', anari.ARRAY, array)
 ...
 frame = device.newFrame()
@@ -77,7 +77,7 @@ vertex = np.array([
    1.0, -1.0, 3.0,
    0.1,  0.1, 0.3
 ], dtype = np.float32)
-array = device.newArray(anari.FLOAT32_VEC3,vertex)
+array = device.newArray1D(anari.FLOAT32_VEC3,vertex)
 ```
 
 Note that arrays of vector types and arrays of scalar types will
