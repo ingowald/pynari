@@ -271,17 +271,25 @@ namespace pynari {
   }
     
   void Object::set_float2(const char *name,
-                          int type, 
-                          const std::tuple<float,float> &v)
-  { 
+                          int type,
+                          const std::tuple<float,float> &_v)
+  {
     assertThisObjectIsValid();
+    
+    // careful (issue #23): a tuple is not guaranteed to be in
+    // standard layout (linear order of elements). use std::get
+    // accessors to 'reformat' accordingly.
+    float v[2] = {
+      std::get<0>(_v),
+      std::get<1>(_v)
+    };
     switch(type) {
     case ANARI_FLOAT32_VEC2:
       return anari::setParameter(device->handle,handle,name,
-                                 math::float2(std::get<0>(v),
-                                              std::get<1>(v)));
+                                 math::float2(v[0],v[1]));
     case ANARI_FLOAT32_BOX1: 
-      return anariSetParameter(device->handle,handle,name,type,&v);
+      return anariSetParameter(device->handle,handle,name,type,v);
+      
     default:
       throw std::runtime_error
         (std::string(__PRETTY_FUNCTION__)
