@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024 Ingo Wald                                                 //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -160,7 +160,7 @@ PYBIND11_MODULE(pynari, m) {
   object.def("setParameter",  &pynari::Object::set_uint_vec);
   
   object.def("commitParameters", &pynari::Object::commit);
-  object.def("release", &pynari::Object::release);
+  object.def("release", &pynari::Object::releaseFromApp);
   // -------------------------------------------------------
   auto camera
     = py::class_<pynari::Camera,pynari::Object,

@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -28,7 +28,7 @@ namespace pynari {
     /*! constructor, for given subtype on given device */
     Sampler(Device::SP device,
             const std::string &type);
-    virtual ~Sampler();
+    ~Sampler() override;
     
     std::string   toString()  const override { return "pynari::Sampler"; }
     ANARIDataType anariType() const override { return ANARI_SAMPLER; }

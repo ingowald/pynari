@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -42,9 +42,9 @@ namespace pynari {
     };
     
     /*! number of DIMENSIONS of this array, NOT the 'size' */
-    int          nDims  = -1;
+    int                   nDims  = -1;
     anari::DataType const elementType;
-    int numObjects = 0;
+    int                   numObjects = 0;
   };
 
 }

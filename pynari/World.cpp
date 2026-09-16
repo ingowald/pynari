@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -28,27 +28,29 @@ namespace pynari {
   
   World::~World()
   {
-    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING world "
-                       << (int*)this << ":" << (int*)handle << std::endl);
-    anariRelease(device->handle,handle);
-    handle = {};
+    /* do NOT anariRelease() our handle here, for two reasons: First,
+       this should have been released already in 'releaseFromApp()',
+       when the app called pynari_object.release() (as it _should_
+       have done). Second, even if the app 'forgot' to do that we want
+       this to be detected and handled cleanly by device and parent
+       object:: code, so let's not interfere with this here. */
   }
 
   const std::tuple<float, float, float, float, float, float> World::getBounds()
   {
-      anari::math::float3 bounds[2] = { {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f} };
-
-      if (!anariGetProperty(device->handle,
-          handle,
-          "bounds",
-          ANARI_FLOAT32_BOX3,
-          &bounds[0],
-          sizeof(bounds),
-          ANARI_WAIT)) {
-          printf("WARNING: bounds not returned by the device! Using unit cube.\n");
-      }
-
-	  return std::make_tuple(bounds[0].x, bounds[0].y, bounds[0].z,
-		  bounds[1].x, bounds[1].y, bounds[1].z);
+    anari::math::float3 bounds[2] = { {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f} };
+    
+    if (!anariGetProperty(device->handle,
+                          handle,
+                          "bounds",
+                          ANARI_FLOAT32_BOX3,
+                          &bounds[0],
+                          sizeof(bounds),
+                          ANARI_WAIT)) {
+      printf("WARNING: bounds not returned by the device! Using unit cube.\n");
+    }
+    
+    return std::make_tuple(bounds[0].x, bounds[0].y, bounds[0].z,
+                           bounds[1].x, bounds[1].y, bounds[1].z);
   }
 }

@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -26,7 +26,7 @@ namespace pynari {
     
     Geometry(Device::SP device,
              const std::string &type);
-    virtual ~Geometry();
+    ~Geometry() override;
 
     std::string toString() const override { return "pynari::Geometry<"+type+">"; }
     ANARIDataType anariType() const override { return ANARI_GEOMETRY; }

@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -30,9 +30,14 @@ namespace pynari {
   
   Light::~Light()
   {
-    PYNARI_TRACK_LEAKS(std::cout << "#pynari: RELEASING light "
-                       << (int*)this << ":" << (int*)handle << std::endl);
-    anariRelease(device->handle,handle);
-    handle = {};
+    /* do NOT anariRelease() our handle here, for two reasons: First,
+       this should have been released already in 'releaseFromApp()',
+       when the app called pynari_object.release() (as it _should_
+       have done). Second, even if the app 'forgot' to do that we want
+       this to be detected and handled cleanly by device and parent
+       object:: code, so let's not interfere with this here. */
+    if (handle)
+      // this should always be called in the specific object's constructor, not here.
+      fallbackDestructAndWarn(toString());
   }
 }

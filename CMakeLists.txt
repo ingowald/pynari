@@ -1,5 +1,5 @@
 # ======================================================================== #
-# Copyright 2024-2024 Ingo Wald                                            #
+# Copyright 2024-2026 Ingo Wald                                            #
 #                                                                          #
 # Licensed under the Apache License, Version 2.0 (the "License");          #
 # you may not use this file except in compliance with the License.         #
@@ -15,10 +15,10 @@
 # ======================================================================== #
 
 set(PYNARI_VERSION_MAJOR 1)
-set(PYNARI_VERSION_MINOR 3)
+set(PYNARI_VERSION_MINOR 4)
 set(PYNARI_VERSION_PATCH 0)
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.28)
 
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.18)
   cmake_policy(SET CMP0104 NEW)
@@ -30,6 +30,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # project command is required to come after cmake_minimum_required command.
 set(PYNARI_VERSION ${PYNARI_VERSION_MAJOR}.${PYNARI_VERSION_MINOR}.${PYNARI_VERSION_PATCH})
 project(pynari VERSION ${PYNARI_VERSION} LANGUAGES C CXX)
+if (CMAKE_BUILD_TYPE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" 
+    "MinSizeRel" "RelWithDebInfo")
+endif()
 
 set(PYNARI_HAVE_CUDA OFF)
 include(CheckLanguage)

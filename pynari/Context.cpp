@@ -380,17 +380,17 @@ namespace pynari {
   }
   
   
-  void Context::destroy()
-  {
-    if (verbose)
-      PYNARI_TRACK_LEAKS(std::cout << "#pynari: context is DESTROYING itself"
-                         << std::endl);
-    if (!device)
-      return;
+  // void Context::destroy()
+  // {
+  //   if (verbose)
+  //     PYNARI_TRACK_LEAKS(std::cout << "#pynari: context is DESTROYING itself"
+  //                        << std::endl);
+  //   if (!device)
+  //     return;
     
-    device->release();
-    device = nullptr;
-  }
+  //   device->release();
+  //   device = nullptr;
+  // }
 
   void Context::set_ulong(const char *name,
                           int type,

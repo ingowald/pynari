@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -31,7 +31,7 @@ namespace pynari {
     typedef std::shared_ptr<World> SP;
     
     World(Device::SP device);
-    virtual ~World();
+    ~World() override;
     
     std::string toString() const override { return "pynari::World"; }
     ANARIDataType anariType() const override { return ANARI_WORLD; }

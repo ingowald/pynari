@@ -83,7 +83,7 @@ namespace pynari {
       (owl-)context is already dead */
     bool alive();
 
-    void destroy();
+    // void destroy();
 
     /*! DEVICE setparamter ... */
     void set_ulong(const char *name,

@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024-2024 Ingo Wald                                            //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -76,10 +76,61 @@ namespace pynari {
     device->listOfAllObjectsCreatedOnThisDevice.insert(this);
   }
 
+  void Object::releaseInternalDataAndDeregisterOnDevice()
+  {
+    // let's first release the anari handle itself, while device is
+    // still alive
+    if (handle) {
+      assert(device);
+      anariRelease(device->handle,handle);
+      handle = {};
+    }
+
+    // second, let's re-register ourselves on the device
+    if (device)
+      device->listOfAllObjectsCreatedOnThisDevice.erase(this);
+
+    // finally, release our refcount on the device
+    device = {};
+
+    // from now on, we should be an empty hulk waiting for python
+    // garbarge collection to delete us, but not storing any data nor
+    // keeping any other objects alive.
+  }
+
+
+  /*! for objects that die while still having an active device
+    handle (ie, it dies in python garbage collectio without haivng
+    been formally release()'d by the app); this will print some
+    debug info and force-release the specific object. In theory we
+    could do this in ::~Object(), but this would require calling
+    the virtual toString(), which at the point in time when parent
+    descrutor gets called is no longer valid. */
+  void Object::fallbackDestructAndWarn(const std::string &objectDescription)
+  {
+    assert(handle && "this warning should never get called for objects that"
+           " have already been released!?");
+    assert(device && "should never have a anari handle without a valid device");
+
+    // iw - this can only happen if the app didn't properly release
+    // either the object (which would have relased the handle),
+    // _nor_ the device (which would have force-released all objects
+    // when _it_ got released), so this is clearly the user not
+    // following clean anari behavior.
+    if (device->context->verbose) {
+      std::cout << "#pynari: python garbage collection removed a pynari" << std::endl;
+      std::cout << "#pynari: object (" << this->toString() << ") that hasn't been" << std::endl;
+      std::cout << "#pynari: properly released." << std::endl;
+    }
+    releaseInternalDataAndDeregisterOnDevice();
+  }
+
   Object::~Object()
   {
-    assert(this);
-    release();
+    assert(this && "deleted null object!?");
+    if (handle)
+      // this should always be called in the specific object's constructor, not here.
+      fallbackDestructAndWarn("un-specified pynari object");
   }
 
   void Object::assertThisObjectIsValid()
@@ -94,16 +145,19 @@ namespace pynari {
     anariCommitParameters(device->handle,this->handle);
   }
 
-  void Object::release()
+  void Object::releaseFromApp()
   {
-    if (!handle) return;
-    if (!device->handle) return;
+    /* iw - the _app_ called pynari_object.release() (as it should
+       have). This means we can (and should) release all internal data
+       (->releaseInternalDataAndDeregisterOnDevice()), but keep in
+       mind that this wrapper object itself may, thanks to python
+       reference counting still be around for a while until python GC
+       decides to actually delete it. This is ok - it's how python
+       works - but make sure to NOT manually delete this (or any
+       other) object; that's python's just, not ours. */
 
-    device->listOfAllObjectsCreatedOnThisDevice.erase(this);
-    
-    anari::release(device->handle,handle);
-    handle = {};
-    device = nullptr;
+    // let's lose all internal data and reference counts:
+    releaseInternalDataAndDeregisterOnDevice();
   }
 
   void Object::setArray_list(const char *name,

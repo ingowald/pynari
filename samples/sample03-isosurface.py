@@ -242,6 +242,7 @@ frame.setParameter('world', anari.WORLD, world)
 frame.commitParameters()
 
 frame.render()
+
 fb_color = frame.get('channel.color')
 pixels = np.array(fb_color)
 
