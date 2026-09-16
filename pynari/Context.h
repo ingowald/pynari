@@ -96,6 +96,19 @@ namespace pynari {
 #else
     bool verbose = true;
 #endif
+
+    /*! this gets called if - and only if - the python app calls
+      anariDevice.release(). If so this will go over all the pynari
+      object still alive at this moment, and force-release their
+      anari handles (the pynari wrapper objects themselves are
+      refcoutned by python and may thus stay alive for a while
+      longer) */
+    void releaseFromApp()
+    {
+      assert(device);
+      device->releaseFromApp();
+      device = {};
+    }
     
     Device::SP device;
     std::mutex mutex;

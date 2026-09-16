@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -14,27 +14,34 @@
 // limitations under the License.                                           //
 // ======================================================================== //
 
-#pragma once
-
-#include "pynari/common.h"
-#include "pynari/Group.h"
+#include "pynari/Renderer.h"
 
 namespace pynari {
-
-  struct Geometry;
   
-  struct Instance : public Object {
-    typedef std::shared_ptr<Instance> SP;
-    
-    Instance(Device::SP device,
-             const std::string &type);
-    ~Instance() override;
+  Renderer::Renderer(Device::SP device,
+                     const std::string &type)
+    : Object(device),
+      type(type)
+  {
+    handle = anari::newObject<anari::Renderer>(device->handle,type.c_str());
+  }
 
-    std::string toString() const override;
-    ANARIDataType anariType() const override { return ANARI_INSTANCE; }
-    
-    const std::string type;
-    
-  };
+  Renderer::~Renderer()
+  {
+    /* do NOT anariRelease() our handle here, for two reasons: First,
+       this should have been released already in 'releaseFromApp()',
+       when the app called pynari_object.release() (as it _should_
+       have done). Second, even if the app 'forgot' to do that we want
+       this to be detected and handled cleanly by device and parent
+       object:: code, so let's not interfere with this here. */
+    if (handle)
+      // this should always be called in the specific object's constructor, not here.
+      fallbackDestructAndWarn(toString());
+  }
 
+  std::string Renderer::toString() const
+  { return "pynari::Renderer<"+type+">"; }
+  
 }
+
+

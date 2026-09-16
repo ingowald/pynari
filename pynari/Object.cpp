@@ -92,7 +92,6 @@ namespace pynari {
 
     // finally, release our refcount on the device
     device = {};
-
     // from now on, we should be an empty hulk waiting for python
     // garbarge collection to delete us, but not storing any data nor
     // keeping any other objects alive.
@@ -118,9 +117,7 @@ namespace pynari {
     // when _it_ got released), so this is clearly the user not
     // following clean anari behavior.
     if (device->context->verbose) {
-      std::cout << "#pynari: python garbage collection removed a pynari" << std::endl;
-      std::cout << "#pynari: object (" << this->toString() << ") that hasn't been" << std::endl;
-      std::cout << "#pynari: properly released." << std::endl;
+      std::cout << "#pynari: python garbage'd a " << objectDescription << " object that hasn't been properly released." << std::endl;
     }
     releaseInternalDataAndDeregisterOnDevice();
   }
@@ -242,6 +239,7 @@ namespace pynari {
     default:
       throw std::runtime_error("invalid array type in Object::setArray_np()");
     }
+    array->releaseFromApp();
   }
   
   void Object::setArray1D_np(const char *name,
@@ -252,6 +250,7 @@ namespace pynari {
       = device->context->newArray1D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray1D)array->handle);
+    array->releaseFromApp();
   }
   
   void Object::setArray2D_np(const char *name,
@@ -262,6 +261,7 @@ namespace pynari {
       = device->context->newArray2D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray2D)array->handle);
+    array->releaseFromApp();
   }
   
   void Object::setArray3D_np(const char *name,
@@ -272,8 +272,17 @@ namespace pynari {
       = device->context->newArray3D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray3D)array->handle);
+    array->releaseFromApp();
   }
 
+  void Object::set_and_release_object_notype(const char *name,
+                                             const Object::SP &object)
+  {
+    set_object_notype(name,object);
+    if (object)
+      object->releaseFromApp();
+  }
+  
   void Object::set_object_notype(const char *name,
                                  const Object::SP &object)
   {
@@ -281,6 +290,15 @@ namespace pynari {
       throw std::runtime_error
         ("#pynari: trying to set null object without specifying a type");
     set_object(name,object->anariType(),object);
+  }
+  
+  void Object::set_and_release_object(const char *name,
+                                      int type,
+                                      const Object::SP &object)
+  {
+    set_object(name,type,object);
+    if (object)
+      object->releaseFromApp();
   }
   
   void Object::set_object(const char *name, int type, const Object::SP &object)

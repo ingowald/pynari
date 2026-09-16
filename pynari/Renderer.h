@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -25,20 +25,12 @@ namespace pynari {
     
     Renderer(Device::SP device,
            const std::string &type);
-    virtual ~Renderer() = default;
+    ~Renderer() override;
 
-    std::string toString() const override { return "pynari::Renderer<"+type+">"; }
+    std::string toString() const override;
     ANARIDataType anariType() const override { return ANARI_RENDERER; }
     
     const std::string type;
   };
-
-  inline Renderer::Renderer(Device::SP device,
-                 const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Renderer>(device->handle,type.c_str());
-  }
 
 }

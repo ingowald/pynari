@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -25,21 +25,12 @@ namespace pynari {
     
     SpatialField(Device::SP device,
                  const std::string &type);
-    virtual ~SpatialField() = default;
-    std::string toString() const override
-    { return "pynari::SpatialField<"+type+">"; }
+    ~SpatialField() override;
+    std::string toString() const override;
     
     ANARIDataType anariType() const override { return ANARI_SPATIAL_FIELD; }
     
     const std::string type;
   };
-
-  inline SpatialField::SpatialField(Device::SP device,
-                             const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::SpatialField>(device->handle,type.c_str());
-  }
 
 }

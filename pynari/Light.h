@@ -27,7 +27,7 @@ namespace pynari {
           const std::string &type);
     ~Light() override;
     
-    std::string toString() const override { return "py_barn::Light"; }
+    std::string toString() const override;
     ANARIDataType anariType() const override { return ANARI_LIGHT; }
     
     const std::string type;

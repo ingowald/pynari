@@ -40,4 +40,8 @@ namespace pynari {
       // this should always be called in the specific object's constructor, not here.
       fallbackDestructAndWarn(toString());
   }
+
+  std::string Light::toString() const
+  { return "pynari::Light<"+type+">"; }
+  
 }

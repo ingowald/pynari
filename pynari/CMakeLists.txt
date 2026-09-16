@@ -32,14 +32,17 @@ pybind11_add_module(pynari
   World.h
   World.cpp
   Volume.h
-  Group.h
+  Volume.cpp
   Geometry.h
   Geometry.cpp
   Camera.h
+  Camera.cpp
   Renderer.h
+  Renderer.cpp
   Surface.h
   Surface.cpp
   SpatialField.h
+  SpatialField.cpp
   Instance.h
   Instance.cpp
 

@@ -25,21 +25,13 @@ namespace pynari {
     
     Volume(Device::SP device,
                  const std::string &type);
-    virtual ~Volume() = default;
-    std::string toString() const override
-    { return "pynari::Volume<"+type+">"; }
+    ~Volume() override;
+    
+    std::string toString() const override;
     
     ANARIDataType anariType() const override { return ANARI_VOLUME; }
 
     const std::string type;
   };
-
-  inline Volume::Volume(Device::SP device,
-                 const std::string &type)
-    : Object(device),
-      type(type)
-  {
-    handle = anari::newObject<anari::Volume>(device->handle,type.c_str());
-  }
 
 }

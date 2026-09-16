@@ -44,6 +44,10 @@ namespace pynari {
                     const Object::SP &object);
     void set_object_notype(const char *name, 
                     const Object::SP &object);
+    void set_and_release_object(const char *name, int type,
+                               const Object::SP &object);
+    void set_and_release_object_notype(const char *name, 
+                                      const Object::SP &object);
     void set_string(const char *name, int type, 
                     const std::string &stringValue);
     void set_string_notype(const char *name, //int type,

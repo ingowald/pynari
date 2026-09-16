@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2024++ Ingo Wald                                               //
+// Copyright 2024-2026 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -31,9 +31,9 @@ namespace pynari {
     typedef std::shared_ptr<Frame> SP;
     
     Frame(Device::SP device);
-    virtual ~Frame() = default;
+    ~Frame() override;
     
-    std::string toString() const override { return "pynari::Frame"; }
+    std::string toString() const override;
     ANARIDataType anariType() const override { return ANARI_FRAME; }
 
     /*! trigger rendering a frame; unlike native anari that not only

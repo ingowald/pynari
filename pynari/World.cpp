@@ -34,6 +34,9 @@ namespace pynari {
        have done). Second, even if the app 'forgot' to do that we want
        this to be detected and handled cleanly by device and parent
        object:: code, so let's not interfere with this here. */
+    if (handle)
+      // this should always be called in the specific object's constructor, not here.
+      fallbackDestructAndWarn(toString());
   }
 
   const std::tuple<float, float, float, float, float, float> World::getBounds()

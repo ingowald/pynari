@@ -26,6 +26,22 @@ namespace pynari {
   {
     handle = anari::newObject<anari::Instance>(device->handle,type.c_str());
   }
+  
+  Instance::~Instance()
+  {
+    /* do NOT anariRelease() our handle here, for two reasons: First,
+       this should have been released already in 'releaseFromApp()',
+       when the app called pynari_object.release() (as it _should_
+       have done). Second, even if the app 'forgot' to do that we want
+       this to be detected and handled cleanly by device and parent
+       object:: code, so let's not interfere with this here. */
+    if (handle)
+      // this should always be called in the specific object's constructor, not here.
+      fallbackDestructAndWarn(toString());
+  }
+
+  std::string Instance::toString() const
+  { return "pynari::Instance<"+type+">"; }
 
 }
 

@@ -129,7 +129,9 @@ PYBIND11_MODULE(pynari, m) {
                  std::shared_ptr<pynari::Object>>(m, "anari::Object");
   /*! set FROM a python pynari object */
   object.def("setParameter",  &pynari::Object::set_object);
+  object.def("setAndReleaseParameter",  &pynari::Object::set_and_release_object);
   object.def("setParameter",  &pynari::Object::set_object_notype);
+  object.def("setAndReleaseParameter",  &pynari::Object::set_and_release_object_notype);
   /*! set FROM a python string */
   object.def("setParameter",  &pynari::Object::set_string);
   object.def("setParameter",  &pynari::Object::set_string_notype);
@@ -232,6 +234,7 @@ PYBIND11_MODULE(pynari, m) {
                  std::shared_ptr<Context>>(m, "anari::Device");
   context.def("setParameter",  &pynari::Context::set_ulong);
   context.def("commitParameters", &pynari::Context::commit);
+  context.def("release", &pynari::Context::releaseFromApp);
   
   
   // // -------------------------------------------------------

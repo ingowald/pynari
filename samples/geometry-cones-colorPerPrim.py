@@ -105,17 +105,18 @@ device = anari.newDevice('default')
 mat    = device.newMaterial('physicallyBased')
 
 cones  = device.newGeometry('cone')
-cones.setParameter('vertex.radius',anari.ARRAY1D,
+cones.setAndReleaseParameter('vertex.radius',anari.ARRAY1D,
                        device.newArray1D(anari.float,np_vertex_radius))
-cones.setParameter('primitive.index',anari.ARRAY1D,
+print("=======================================================\n")
+cones.setAndReleaseParameter('primitive.index',anari.ARRAY1D,
                        device.newArray1D(anari.uint2,np_primitive_index))
-cones.setParameter('vertex.position',anari.ARRAY1D,
+cones.setAndReleaseParameter('vertex.position',anari.ARRAY1D,
                        device.newArray1D(anari.float3,np_vertex_position))
 if use_vertex_color:
-    cones.setParameter('vertex.color',anari.ARRAY1D,
+    cones.setAndReleaseParameter('vertex.color',anari.ARRAY1D,
                         device.newArray1D(anari.float3,np_vertex_color))
 else:
-    cones.setParameter('primitive.color',anari.ARRAY1D,
+    cones.setAndReleaseParameter('primitive.color',anari.ARRAY1D,
                         device.newArray1D(anari.float3,np_primitive_color))
     
 mat.setParameter("baseColor",anari.STRING,"color")
@@ -124,7 +125,9 @@ cones.commitParameters()
 
 surface = device.newSurface()
 surface.setParameter('geometry', anari.GEOMETRY, cones)
+cones.release()
 surface.setParameter('material', anari.MATERIAL, mat)
+mat.release()
 surface.commitParameters()
 
 light = device.newLight('directional')
@@ -132,10 +135,13 @@ light.setParameter('direction', anari.float3, ( 1., -1., -1. ) )
 light.commitParameters()
 
 array = device.newArray1D(anari.LIGHT, [light])
+light.release()
 
 world = device.newWorld();
 world.setParameterArray1D('surface',anari.SURFACE,[surface]);
+surface.release()
 world.setParameter('light', anari.ARRAY1D, array)
+array.release()
 world.commitParameters()
 camera = device.newCamera('perspective')
 camera.setParameter('up',anari.float3,(0,1,0))
@@ -150,16 +156,20 @@ renderer.setParameter('pixelSamples', anari.INT32, 16)
 bg_values = np.array(((.9,.9,.9,1.),(.15,.25,.8,1.)), dtype=np.float32).reshape((2,1,4))
 bg_gradient = device.newArray2D(anari.float4, bg_values)
 renderer.setParameter('background', anari.ARRAY2D, bg_gradient)
+bg_gradient.release()
 renderer.commitParameters()
-
+ 
 frame = device.newFrame()
 
 frame.setParameter('size', anari.uint2, (1024,1024))
 
 frame.setParameter('channel.color', anari.DATA_TYPE, anari.UFIXED8_RGBA_SRGB)
 frame.setParameter('renderer', anari.RENDERER, renderer)
+renderer.release()
 frame.setParameter('camera', anari.CAMERA, camera)
+camera.release()
 frame.setParameter('world', anari.WORLD, world)
+world.release()
 frame.commitParameters()
 
 frame.render()
@@ -178,4 +188,7 @@ for opt,arg in opts:
         out_file_name = arg
 print(f'@pynari: done. saving to {out_file_name}')
 im.save(out_file_name)
+
+frame.release()
+device.release()
 

@@ -52,12 +52,9 @@ namespace pynari {
     // handle.
     if (handle) {
       if (context->verbose) {
-        std::cout << "#pynari: warning - pynari device is dying without" << std::endl;
-        std::cout << "#pynari: having been formally release()'d by the app." << std::endl;
-        std::cout << "#pynari: I'll properly release everything in the" << std::endl;
-        std::cout << "#pynari: proper order, but according to anari spec" << std::endl;
-        std::cout << "#pynari: the app _should_ have formally released" << std::endl;
-        std::cout << "#pynari: the device instead of just leaving it to" << std::endl;
+        std::cout << "#pynari: warning - pynari device is dying without having been formally release()'d by the app." << std::endl;
+        std::cout << "#pynari: I'll properly release everything in the proper order, but according to anari spec" << std::endl;
+        std::cout << "#pynari: the app _should_ have formally released the device instead of just leaving it to" << std::endl;
         std::cout << "#pynari: python's garbage collection." << std::endl;
       }
       // iw: mind this is only the 'fallback' release if the app
@@ -90,12 +87,9 @@ namespace pynari {
 
     if (!listOfAllObjectsCreatedOnThisDevice.empty()) {
       if (context->verbose) {
-        std::cout << "#pynari: warning - user release()'d device, while" << std::endl;
-        std::cout << "#pynari: there are still un-released objects that" << std::endl;
-        std::cout << "#pynari: were created on this device." << std::endl;
-        std::cout << "#pynari: I'll force-release those here, but the" << std::endl;
-        std::cout << "#pynari: cleaner way would have been to release all" << std::endl;
-        std::cout << "#pynari: objects before releasing the device." << std::endl;
+        std::cout << "#pynari: warning - user release()'d device, while there are still un-released objects that" << std::endl;
+        std::cout << "#pynari: were created on this device. I'll force-release those here, but the" << std::endl;
+        std::cout << "#pynari: cleaner way would have been to release all objects before releasing the device." << std::endl;
         std::cout << "#pynari: for your info, found these still-alive objects:" << std::endl;
         for (Object *obj : listOfAllObjectsCreatedOnThisDevice)
           std::cout << " - " << obj->toString() << std::endl;
