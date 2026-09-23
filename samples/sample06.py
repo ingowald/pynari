@@ -7,13 +7,11 @@
 # different colors, with the color of each cube indicating which rank
 # generated that data.
 
-import matplotlib.pyplot as plt
 import numpy as np
 import os
-#from pynari import *
 import pynari as anari
 import random
-import sys, getopt,PIL
+import sys, getopt
 from mpi4py import MPI
 
 fb_size = (1024,1024)
@@ -114,8 +112,8 @@ def create_surfaces(mpi_rank,mpi_size):
 
 anariDeviceToUse = os.getenv('ANARI_LIBRARY')
 if anariDeviceToUse == None:
-    anariDeviceToUse = 'barney_mpi'
-device = anari.newDevice(anariDeviceToUse,'default')
+    anariDeviceToUse = 'barney'
+device = anari.newDevice(anariDeviceToUse,'mpi')
 
 name = MPI.COMM_WORLD.Get_name()
 addr = MPI._addressof(MPI.COMM_WORLD)
@@ -214,12 +212,14 @@ if MPI.COMM_WORLD.Get_rank() == 0:
         pixels[2::3] = b
         pixels = pixels.reshape((width,height,3))
     if out_file_name == '':
+        import matplotlib.pyplot as plt
         plt.imshow(pixels)
         plt.gca().invert_yaxis()
         plt.show()
     else:
-        im = PIL.Image.fromarray(pixels)
-        im = im.transpose(PIL.Image.FLIP_TOP_BOTTOM)
+        from PIL import Image
+        im = Image.fromarray(pixels)
+        im = im.transpose(Image.FLIP_TOP_BOTTOM)
         im = im.convert('RGB')
         im.save(out_file_name)
 MPI.Finalize()
