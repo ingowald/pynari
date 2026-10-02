@@ -24,17 +24,18 @@
 
 namespace pynari {
   struct Object;
-  struct Context;
+  struct Array;
   
-  /*! python-wrapper object for an ANARIDevice - not that in pynari
-      all functionality of a device lives in the pynari::Context
-      object; this only handles the lifetime (so all objects created
-      from this device can hold a std::shared_ptr to it and thus make
-      sure the device doesn't die before the obejcts */
+  /*! wrapper object for an ANARIDevice - note that the 'device'
+      created by the python app is actually a 'Context' - not this
+      device: the context is what a pynari app talks to (through
+      python), but it may go out of scope even while other obejcts are
+      still alive. This 'Device' class is what stay alive until every
+      other object (including said context) has gone out of scope. */
   struct Device : public std::enable_shared_from_this<Device> {
     typedef std::shared_ptr<Device> SP;
     
-    Device(anari::Device handle, Context *context);
+    Device(anari::Device handle);
     virtual ~Device();
 
     /*! this gets called if - and only if - the python app calls
@@ -45,10 +46,15 @@ namespace pynari {
         longer) */
     void releaseFromApp();
 
+    std::shared_ptr<Array> newArray(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray1D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray2D(int type, const py::buffer &buffer);
+    std::shared_ptr<Array> newArray3D(int type, const py::buffer &buffer);
+    
+    
     std::set<Object*> listOfAllObjectsCreatedOnThisDevice;
     
     anari::Device handle = 0;
-    Context *const context;
   };
 
 }

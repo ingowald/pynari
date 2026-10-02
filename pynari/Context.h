@@ -21,6 +21,12 @@
 
 namespace pynari {
 
+#ifdef NDEBUG
+  static const bool verbose = false;
+#else
+  static const bool verbose = true;
+#endif
+
   struct Camera;
   struct Renderer;
   struct Surface;
@@ -35,7 +41,11 @@ namespace pynari {
   struct SpatialField;
   struct Volume;
   struct Sampler;
-  
+
+  /*! the context is JSUT the python handle to the device - the way
+      through which the python code can create objects, etc, but
+      created objects themselves should only ever refernce or use the
+      'Device' class, not this context */
   struct Context {
     typedef std::shared_ptr<Context> SP;
     
@@ -91,24 +101,13 @@ namespace pynari {
                    uint64_t v);
     void commit();
 
-#ifdef NDEBUG
-    bool verbose = false;
-#else
-    bool verbose = true;
-#endif
-
     /*! this gets called if - and only if - the python app calls
       anariDevice.release(). If so this will go over all the pynari
       object still alive at this moment, and force-release their
       anari handles (the pynari wrapper objects themselves are
       refcoutned by python and may thus stay alive for a while
       longer) */
-    void releaseFromApp()
-    {
-      assert(device);
-      device->releaseFromApp();
-      device = {};
-    }
+    void releaseFromApp();
     
     Device::SP device;
     std::mutex mutex;

@@ -122,21 +122,25 @@ namespace pynari {
   Context::Context(const std::string &explicitLibName, const std::string &subName)
   {
     this->device
-      = std::make_shared<Device>(createDevice(explicitLibName,subName),this);
+      = std::make_shared<Device>(createDevice(explicitLibName,subName));
   }
     
   Context::~Context()
   {
-    PYNARI_TRACK_LEAKS(std::cout << "#pynari: ~Context is dying" << std::endl);
-
-    /* IW - IMPROTANT: explicitly do NOT destroy the actual anari
-       device itself; only release the shared_ptr: python may release
-       some of the created objects only after it relases this context
-       wrapper, and these other objects need the device around to tell
-       anari to release their respective handles. This is why each
-       object has a shared-ptr to the device in the first place - to
-       make sure devices live until all the objects have been
-       released. */ 
+    /* IW - IMPORTANT: explicitly do NOT destroy the actual anari
+       device itself, not should we tell that device to release the
+       obejcts it still owns, because the python app may still
+       actively use some of the objects it created even if the device
+       object that crated them already went out of scope and got
+       garbage collected (which is exactly what happened to get us to
+       where we are right now). Instead, we only release the
+       shared_ptr: this will _allow_ the actual device object to die
+       if nobody else still needs it, but this keeps it alive if any
+       other object is still alive (because that object would itself
+       have a shared-ptr to the device object); if _if_ there are any
+       objects still alive they always have a valid device object to
+       work on
+    */ 
     device = {};
   }
 
@@ -252,47 +256,23 @@ namespace pynari {
 
   std::shared_ptr<Array>
   Context::newArray(int type, const py::buffer &buffer)
-  {
-    static bool warned = false;
-    if (warned == false) {
-      std::cout
-        << "#pynari: this python app using pynari just called Object::newArray()\n"
-        << "#pynari: due to some changes in the ANARI SDK these calls are now (starting\n"
-        << "#pynari: with v0.15) any such call should now be replaced with either\n"
-        << "#pynari: newArray1D, newArray2D, or newArray3D,\n"
-        << "#pynari: depending on what dimensionality the underlying array is\n"
-        << "#pynari: supposed to be. I'm trying my best to figure this out, but\n"
-        << "#pynari: the better way would be for the app to swtich to the new\n"
-        << "#pynari: intended behavior.\n"
-        ;
-      warned = true;
-    }
-    return newArray1D(type,buffer);
-  }
-
+  { return device->newArray(type,buffer); }
+  
   std::shared_ptr<Array>
   Context::newArray1D(int type, const py::buffer &buffer)
-  {
-    return std::make_shared<Array>(device,1,(anari::DataType)type,buffer);
-  }
+  { return device->newArray1D(type,buffer); }
   
   std::shared_ptr<Array>
   Context::newArray2D(int type, const py::buffer &buffer)
-  {
-    return std::make_shared<Array>(device,2,(anari::DataType)type,buffer);
-  }
+  { return device->newArray2D(type,buffer); }
   
   std::shared_ptr<Array>
   Context::newArray3D(int type, const py::buffer &buffer)
-  {
-    return std::make_shared<Array>(device,3,(anari::DataType)type,buffer);
-  }
+  { return device->newArray3D(type,buffer); }
   
   std::shared_ptr<Context> createContext(const std::string &libName,
                                          const std::string &subName)
-  {
-    return std::make_shared<Context>(libName,subName);
-  }
+  { return std::make_shared<Context>(libName,subName); }
 
   /*! allows to query whether the user has already explicitly called
     contextDestroy. if so, any releases of handles are no longer
@@ -303,6 +283,19 @@ namespace pynari {
     return (bool)device;
   }
 
+    /*! this gets called if - and only if - the python app calls
+      anariDevice.release(). If so this will go over all the pynari
+      object still alive at this moment, and force-release their
+      anari handles (the pynari wrapper objects themselves are
+      refcoutned by python and may thus stay alive for a while
+      longer) */
+  void Context::releaseFromApp()
+  {
+    assert(device && "device already released - app has called release() twice on tsame device?");
+    device->releaseFromApp();
+    device = {};
+  }
+  
   std::map<std::string/*desc*/,py::object>
   Context::getParameterInfo(int type,
                             const std::string &subType,
@@ -379,19 +372,6 @@ namespace pynari {
     return vec;
   }
   
-  
-  // void Context::destroy()
-  // {
-  //   if (verbose)
-  //     PYNARI_TRACK_LEAKS(std::cout << "#pynari: context is DESTROYING itself"
-  //                        << std::endl);
-  //   if (!device)
-  //     return;
-    
-  //   device->release();
-  //   device = nullptr;
-  // }
-
   void Context::set_ulong(const char *name,
                           int type,
                           uint64_t v)

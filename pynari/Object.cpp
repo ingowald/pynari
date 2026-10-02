@@ -116,7 +116,7 @@ namespace pynari {
     // _nor_ the device (which would have force-released all objects
     // when _it_ got released), so this is clearly the user not
     // following clean anari behavior.
-    if (device->context->verbose) {
+    if (pynari::verbose) {
       std::cout << "#pynari: python garbage'd a " << objectDescription << " object that hasn't been properly released." << std::endl;
     }
     releaseInternalDataAndDeregisterOnDevice();
@@ -222,7 +222,7 @@ namespace pynari {
       warned = true;
     }
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray(type,buffer);
+      = device->newArray(type,buffer);
     switch (array->nDims) {
     case 1:
       anari::setParameter(device->handle,this->handle,name,
@@ -241,24 +241,25 @@ namespace pynari {
     }
     array->releaseFromApp();
   }
-  
+
   void Object::setArray1D_np(const char *name,
                              int type, 
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray1D(type,buffer);
+      = device->newArray1D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray1D)array->handle);
     array->releaseFromApp();
   }
+
   
   void Object::setArray2D_np(const char *name,
                              int type, 
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray2D(type,buffer);
+      = device->newArray2D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray2D)array->handle);
     array->releaseFromApp();
@@ -269,7 +270,7 @@ namespace pynari {
                              const py::buffer &buffer)
   {
     std::shared_ptr<pynari::Array> array
-      = device->context->newArray3D(type,buffer);
+      = device->newArray3D(type,buffer);
     anari::setParameter(device->handle,this->handle,name,
                         (ANARIArray3D)array->handle);
     array->releaseFromApp();
