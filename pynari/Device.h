@@ -53,7 +53,11 @@ namespace pynari {
     
     
     std::set<Object*> listOfAllObjectsCreatedOnThisDevice;
-    
+
+    /*! if enabled (via env-var PYNARI_WARN_MISSING_RELEASES) this
+        will print warning messages when objects to out of scope
+        without having been properly released */
+    const bool warnMissingReleases;
     anari::Device handle = 0;
   };
 

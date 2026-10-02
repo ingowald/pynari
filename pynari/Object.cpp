@@ -116,7 +116,7 @@ namespace pynari {
     // _nor_ the device (which would have force-released all objects
     // when _it_ got released), so this is clearly the user not
     // following clean anari behavior.
-    if (pynari::verbose) {
+    if (device->warnMissingReleases) {
       std::cout << "#pynari: python garbage'd a " << objectDescription << " object that hasn't been properly released." << std::endl;
     }
     releaseInternalDataAndDeregisterOnDevice();

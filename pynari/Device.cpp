@@ -21,8 +21,16 @@
 
 namespace pynari {
 
+  bool getFromEnv(const char *envVarName)
+  {
+    const char *env = std::getenv(envVarName);
+    if (!env) return false;
+    return std::stoi(env);
+  }
+  
   Device::Device(anari::Device handle)
-    : handle(handle)
+    : handle(handle),
+      warnMissingReleases(getFromEnv("PYNARI_WARN_MISSING_RELEASES"))
   {}
 
   Device::~Device()
@@ -53,7 +61,7 @@ namespace pynari {
     // 'wrong' order we should still die last - so all we have to do
     // is release the dangling anari handle.
     if (handle) {
-      if (pynari::verbose) {
+      if (warnMissingReleases) {
         std::cout << "#pynari: warning - pynari device is dying without having been formally release()'d by the app." << std::endl;
         std::cout << "#pynari: I'll properly release everything in the proper order, but according to anari spec" << std::endl;
         std::cout << "#pynari: the app _should_ have formally released the device instead of just leaving it to" << std::endl;
